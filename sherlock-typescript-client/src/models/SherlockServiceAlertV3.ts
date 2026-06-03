@@ -63,7 +63,7 @@ export interface SherlockServiceAlertV3 {
     onEnvironment?: string;
     /**
      * 
-     * @type {string}
+     * @type {SherlockServiceAlertV3SeverityEnum}
      * @memberof SherlockServiceAlertV3
      */
     severity?: SherlockServiceAlertV3SeverityEnum;

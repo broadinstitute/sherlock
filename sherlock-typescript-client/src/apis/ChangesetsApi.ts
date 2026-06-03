@@ -12,21 +12,22 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockChangesetV3,
-  SherlockChangesetV3PlanRequest,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockChangesetV3,
     SherlockChangesetV3FromJSON,
     SherlockChangesetV3ToJSON,
+} from '../models/SherlockChangesetV3';
+import {
+    type SherlockChangesetV3PlanRequest,
     SherlockChangesetV3PlanRequestFromJSON,
     SherlockChangesetV3PlanRequestToJSON,
-} from '../models/index';
+} from '../models/SherlockChangesetV3PlanRequest';
 
 export interface ApiChangesetsProceduresV3ApplyPostRequest {
     applyRequest: Array<string>;
@@ -102,10 +103,9 @@ export interface ApiChangesetsV3IdGetRequest {
 export class ChangesetsApi extends runtime.BaseAPI {
 
     /**
-     * Looks up and applies previously-planned version diffs given by the ID. Other stored plans against the same Chart Releases are marked as superseded. Multiple Changesets can be specified simply by passing multiple IDs in the list.
-     * Apply previously planned version changes to Chart Releases
+     * Creates request options for apiChangesetsProceduresV3ApplyPost without sending the request
      */
-    async apiChangesetsProceduresV3ApplyPostRaw(requestParameters: ApiChangesetsProceduresV3ApplyPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
+    async apiChangesetsProceduresV3ApplyPostRequestOpts(requestParameters: ApiChangesetsProceduresV3ApplyPostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['applyRequest'] == null) {
             throw new runtime.RequiredError(
                 'applyRequest',
@@ -126,13 +126,22 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/changesets/procedures/v3/apply`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: requestParameters['applyRequest'],
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Looks up and applies previously-planned version diffs given by the ID. Other stored plans against the same Chart Releases are marked as superseded. Multiple Changesets can be specified simply by passing multiple IDs in the list.
+     * Apply previously planned version changes to Chart Releases
+     */
+    async apiChangesetsProceduresV3ApplyPostRaw(requestParameters: ApiChangesetsProceduresV3ApplyPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
+        const requestOptions = await this.apiChangesetsProceduresV3ApplyPostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockChangesetV3FromJSON));
     }
@@ -147,10 +156,9 @@ export class ChangesetsApi extends runtime.BaseAPI {
     }
 
     /**
-     * List existing applied Changesets for a particular Chart Release, ordered by most recently applied.
-     * List applied Changesets for a Chart Release
+     * Creates request options for apiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGet without sending the request
      */
-    async apiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGetRaw(requestParameters: ApiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
+    async apiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGetRequestOpts(requestParameters: ApiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['chartRelease'] == null) {
             throw new runtime.RequiredError(
                 'chartRelease',
@@ -172,14 +180,23 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/changesets/procedures/v3/chart-release-history/{chart-release}`;
-        urlPath = urlPath.replace(`{${"chart-release"}}`, encodeURIComponent(String(requestParameters['chartRelease'])));
+        urlPath = urlPath.replace('{chart-release}', encodeURIComponent(String(requestParameters['chartRelease'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List existing applied Changesets for a particular Chart Release, ordered by most recently applied.
+     * List applied Changesets for a Chart Release
+     */
+    async apiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGetRaw(requestParameters: ApiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
+        const requestOptions = await this.apiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockChangesetV3FromJSON));
     }
@@ -194,10 +211,9 @@ export class ChangesetsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Like calling the plan procedure immediately followed by the apply procedure. See those endpoints for more information.
-     * Plan and apply version changes in one step
+     * Creates request options for apiChangesetsProceduresV3PlanAndApplyPost without sending the request
      */
-    async apiChangesetsProceduresV3PlanAndApplyPostRaw(requestParameters: ApiChangesetsProceduresV3PlanAndApplyPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
+    async apiChangesetsProceduresV3PlanAndApplyPostRequestOpts(requestParameters: ApiChangesetsProceduresV3PlanAndApplyPostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['changesetPlanRequest'] == null) {
             throw new runtime.RequiredError(
                 'changesetPlanRequest',
@@ -218,13 +234,22 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/changesets/procedures/v3/plan-and-apply`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockChangesetV3PlanRequestToJSON(requestParameters['changesetPlanRequest']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Like calling the plan procedure immediately followed by the apply procedure. See those endpoints for more information.
+     * Plan and apply version changes in one step
+     */
+    async apiChangesetsProceduresV3PlanAndApplyPostRaw(requestParameters: ApiChangesetsProceduresV3PlanAndApplyPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
+        const requestOptions = await this.apiChangesetsProceduresV3PlanAndApplyPostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockChangesetV3FromJSON));
     }
@@ -239,10 +264,9 @@ export class ChangesetsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Refreshes and calculates version diffs for Chart Releases. If there\'s a diff, the plan is stored and returned so it can be applied later.
-     * Plan--but do not apply--version changes to Chart Releases
+     * Creates request options for apiChangesetsProceduresV3PlanPost without sending the request
      */
-    async apiChangesetsProceduresV3PlanPostRaw(requestParameters: ApiChangesetsProceduresV3PlanPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
+    async apiChangesetsProceduresV3PlanPostRequestOpts(requestParameters: ApiChangesetsProceduresV3PlanPostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['changesetPlanRequest'] == null) {
             throw new runtime.RequiredError(
                 'changesetPlanRequest',
@@ -263,13 +287,22 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/changesets/procedures/v3/plan`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockChangesetV3PlanRequestToJSON(requestParameters['changesetPlanRequest']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Refreshes and calculates version diffs for Chart Releases. If there\'s a diff, the plan is stored and returned so it can be applied later.
+     * Plan--but do not apply--version changes to Chart Releases
+     */
+    async apiChangesetsProceduresV3PlanPostRaw(requestParameters: ApiChangesetsProceduresV3PlanPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
+        const requestOptions = await this.apiChangesetsProceduresV3PlanPostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockChangesetV3FromJSON));
     }
@@ -284,10 +317,9 @@ export class ChangesetsApi extends runtime.BaseAPI {
     }
 
     /**
-     * List existing applied Changesets that newly deployed a given App Version or Chart Version, ordered by most recently applied.
-     * List applied Changesets for an App or Chart Version
+     * Creates request options for apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGet without sending the request
      */
-    async apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetRaw(requestParameters: ApiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
+    async apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetRequestOpts(requestParameters: ApiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['versionType'] == null) {
             throw new runtime.RequiredError(
                 'versionType',
@@ -315,16 +347,25 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/changesets/procedures/v3/version-history/{version-type}/{chart}/{version}`;
-        urlPath = urlPath.replace(`{${"version-type"}}`, encodeURIComponent(String(requestParameters['versionType'])));
-        urlPath = urlPath.replace(`{${"chart"}}`, encodeURIComponent(String(requestParameters['chart'])));
-        urlPath = urlPath.replace(`{${"version"}}`, encodeURIComponent(String(requestParameters['version'])));
+        urlPath = urlPath.replace('{version-type}', encodeURIComponent(String(requestParameters['versionType'])));
+        urlPath = urlPath.replace('{chart}', encodeURIComponent(String(requestParameters['chart'])));
+        urlPath = urlPath.replace('{version}', encodeURIComponent(String(requestParameters['version'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List existing applied Changesets that newly deployed a given App Version or Chart Version, ordered by most recently applied.
+     * List applied Changesets for an App or Chart Version
+     */
+    async apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetRaw(requestParameters: ApiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
+        const requestOptions = await this.apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockChangesetV3FromJSON));
     }
@@ -339,10 +380,9 @@ export class ChangesetsApi extends runtime.BaseAPI {
     }
 
     /**
-     * List Changesets matching a filter.
-     * List Changesets matching a filter
+     * Creates request options for apiChangesetsV3Get without sending the request
      */
-    async apiChangesetsV3GetRaw(requestParameters: ApiChangesetsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
+    async apiChangesetsV3GetRequestOpts(requestParameters: ApiChangesetsV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['appliedAt'] != null) {
@@ -486,12 +526,21 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/changesets/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List Changesets matching a filter.
+     * List Changesets matching a filter
+     */
+    async apiChangesetsV3GetRaw(requestParameters: ApiChangesetsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
+        const requestOptions = await this.apiChangesetsV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockChangesetV3FromJSON));
     }
@@ -506,10 +555,9 @@ export class ChangesetsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an individual Changeset.
-     * Get an individual Changeset
+     * Creates request options for apiChangesetsV3IdGet without sending the request
      */
-    async apiChangesetsV3IdGetRaw(requestParameters: ApiChangesetsV3IdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChangesetV3>> {
+    async apiChangesetsV3IdGetRequestOpts(requestParameters: ApiChangesetsV3IdGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
@@ -523,14 +571,23 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/changesets/v3/{id}`;
-        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get an individual Changeset.
+     * Get an individual Changeset
+     */
+    async apiChangesetsV3IdGetRaw(requestParameters: ApiChangesetsV3IdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChangesetV3>> {
+        const requestOptions = await this.apiChangesetsV3IdGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChangesetV3FromJSON(jsonValue));
     }

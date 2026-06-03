@@ -12,18 +12,17 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockCiIdentifierV3,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockCiIdentifierV3,
     SherlockCiIdentifierV3FromJSON,
     SherlockCiIdentifierV3ToJSON,
-} from '../models/index';
+} from '../models/SherlockCiIdentifierV3';
 
 export interface ApiCiIdentifiersV3GetRequest {
     createdAt?: Date;
@@ -49,10 +48,9 @@ export interface ApiCiIdentifiersV3SelectorGetRequest {
 export class CiIdentifiersApi extends runtime.BaseAPI {
 
     /**
-     * List CiIdentifiers matching a filter. The CiRuns would have to re-queried directly to load the CiRuns. This is mainly helpful for debugging and directly querying the existence of a CiIdentifier. Results are ordered by creation date, starting at most recent.
-     * List CiIdentifiers matching a filter
+     * Creates request options for apiCiIdentifiersV3Get without sending the request
      */
-    async apiCiIdentifiersV3GetRaw(requestParameters: ApiCiIdentifiersV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockCiIdentifierV3>>> {
+    async apiCiIdentifiersV3GetRequestOpts(requestParameters: ApiCiIdentifiersV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['createdAt'] != null) {
@@ -92,12 +90,21 @@ export class CiIdentifiersApi extends runtime.BaseAPI {
 
         let urlPath = `/api/ci-identifiers/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List CiIdentifiers matching a filter. The CiRuns would have to re-queried directly to load the CiRuns. This is mainly helpful for debugging and directly querying the existence of a CiIdentifier. Results are ordered by creation date, starting at most recent.
+     * List CiIdentifiers matching a filter
+     */
+    async apiCiIdentifiersV3GetRaw(requestParameters: ApiCiIdentifiersV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockCiIdentifierV3>>> {
+        const requestOptions = await this.apiCiIdentifiersV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockCiIdentifierV3FromJSON));
     }
@@ -112,10 +119,9 @@ export class CiIdentifiersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get CiRuns for a resource by its CiIdentifier, which can be referenced by \'{type}/{selector...}\'.
-     * Get CiRuns for a resource by its CiIdentifier
+     * Creates request options for apiCiIdentifiersV3SelectorGet without sending the request
      */
-    async apiCiIdentifiersV3SelectorGetRaw(requestParameters: ApiCiIdentifiersV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockCiIdentifierV3>> {
+    async apiCiIdentifiersV3SelectorGetRequestOpts(requestParameters: ApiCiIdentifiersV3SelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -141,14 +147,23 @@ export class CiIdentifiersApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/ci-identifiers/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get CiRuns for a resource by its CiIdentifier, which can be referenced by \'{type}/{selector...}\'.
+     * Get CiRuns for a resource by its CiIdentifier
+     */
+    async apiCiIdentifiersV3SelectorGetRaw(requestParameters: ApiCiIdentifiersV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockCiIdentifierV3>> {
+        const requestOptions = await this.apiCiIdentifiersV3SelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockCiIdentifierV3FromJSON(jsonValue));
     }

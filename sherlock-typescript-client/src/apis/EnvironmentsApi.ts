@@ -12,24 +12,27 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockEnvironmentV3,
-  SherlockEnvironmentV3Create,
-  SherlockEnvironmentV3Edit,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockEnvironmentV3,
     SherlockEnvironmentV3FromJSON,
     SherlockEnvironmentV3ToJSON,
+} from '../models/SherlockEnvironmentV3';
+import {
+    type SherlockEnvironmentV3Create,
     SherlockEnvironmentV3CreateFromJSON,
     SherlockEnvironmentV3CreateToJSON,
+} from '../models/SherlockEnvironmentV3Create';
+import {
+    type SherlockEnvironmentV3Edit,
     SherlockEnvironmentV3EditFromJSON,
     SherlockEnvironmentV3EditToJSON,
-} from '../models/index';
+} from '../models/SherlockEnvironmentV3Edit';
 
 export interface ApiEnvironmentsV3GetRequest {
     autoPopulateChartReleases?: boolean;
@@ -90,10 +93,9 @@ export interface ApiEnvironmentsV3SelectorPatchRequest {
 export class EnvironmentsApi extends runtime.BaseAPI {
 
     /**
-     * List Environments matching a filter.
-     * List Environments matching a filter
+     * Creates request options for apiEnvironmentsV3Get without sending the request
      */
-    async apiEnvironmentsV3GetRaw(requestParameters: ApiEnvironmentsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockEnvironmentV3>>> {
+    async apiEnvironmentsV3GetRequestOpts(requestParameters: ApiEnvironmentsV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['autoPopulateChartReleases'] != null) {
@@ -233,12 +235,21 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/environments/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List Environments matching a filter.
+     * List Environments matching a filter
+     */
+    async apiEnvironmentsV3GetRaw(requestParameters: ApiEnvironmentsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockEnvironmentV3>>> {
+        const requestOptions = await this.apiEnvironmentsV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockEnvironmentV3FromJSON));
     }
@@ -253,10 +264,9 @@ export class EnvironmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a Environment.
-     * Create a Environment
+     * Creates request options for apiEnvironmentsV3Post without sending the request
      */
-    async apiEnvironmentsV3PostRaw(requestParameters: ApiEnvironmentsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
+    async apiEnvironmentsV3PostRequestOpts(requestParameters: ApiEnvironmentsV3PostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['environment'] == null) {
             throw new runtime.RequiredError(
                 'environment',
@@ -273,13 +283,22 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/environments/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockEnvironmentV3CreateToJSON(requestParameters['environment']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create a Environment.
+     * Create a Environment
+     */
+    async apiEnvironmentsV3PostRaw(requestParameters: ApiEnvironmentsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
+        const requestOptions = await this.apiEnvironmentsV3PostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockEnvironmentV3FromJSON(jsonValue));
     }
@@ -294,10 +313,9 @@ export class EnvironmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete an individual Environment by its ID.
-     * Delete an individual Environment
+     * Creates request options for apiEnvironmentsV3SelectorDelete without sending the request
      */
-    async apiEnvironmentsV3SelectorDeleteRaw(requestParameters: ApiEnvironmentsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
+    async apiEnvironmentsV3SelectorDeleteRequestOpts(requestParameters: ApiEnvironmentsV3SelectorDeleteRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -311,14 +329,23 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/environments/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Delete an individual Environment by its ID.
+     * Delete an individual Environment
+     */
+    async apiEnvironmentsV3SelectorDeleteRaw(requestParameters: ApiEnvironmentsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
+        const requestOptions = await this.apiEnvironmentsV3SelectorDeleteRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockEnvironmentV3FromJSON(jsonValue));
     }
@@ -333,10 +360,9 @@ export class EnvironmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an individual Environment.
-     * Get an individual Environment
+     * Creates request options for apiEnvironmentsV3SelectorGet without sending the request
      */
-    async apiEnvironmentsV3SelectorGetRaw(requestParameters: ApiEnvironmentsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
+    async apiEnvironmentsV3SelectorGetRequestOpts(requestParameters: ApiEnvironmentsV3SelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -350,14 +376,23 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/environments/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get an individual Environment.
+     * Get an individual Environment
+     */
+    async apiEnvironmentsV3SelectorGetRaw(requestParameters: ApiEnvironmentsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
+        const requestOptions = await this.apiEnvironmentsV3SelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockEnvironmentV3FromJSON(jsonValue));
     }
@@ -372,10 +407,9 @@ export class EnvironmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit an individual Environment.
-     * Edit an individual Environment
+     * Creates request options for apiEnvironmentsV3SelectorPatch without sending the request
      */
-    async apiEnvironmentsV3SelectorPatchRaw(requestParameters: ApiEnvironmentsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
+    async apiEnvironmentsV3SelectorPatchRequestOpts(requestParameters: ApiEnvironmentsV3SelectorPatchRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -398,15 +432,24 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/environments/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockEnvironmentV3EditToJSON(requestParameters['environment']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Edit an individual Environment.
+     * Edit an individual Environment
+     */
+    async apiEnvironmentsV3SelectorPatchRaw(requestParameters: ApiEnvironmentsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
+        const requestOptions = await this.apiEnvironmentsV3SelectorPatchRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockEnvironmentV3FromJSON(jsonValue));
     }

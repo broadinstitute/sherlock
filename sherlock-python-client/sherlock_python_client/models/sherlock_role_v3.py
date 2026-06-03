@@ -24,6 +24,7 @@ from typing import Any, ClassVar, Dict, List, Optional
 from sherlock_python_client.models.sherlock_role_assignment_v3 import SherlockRoleAssignmentV3
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class SherlockRoleV3(BaseModel):
     """
@@ -57,7 +58,8 @@ class SherlockRoleV3(BaseModel):
     __properties: ClassVar[List[str]] = ["assignments", "autoAssignAllUsers", "canBeGlassBrokenByRole", "canBeGlassBrokenByRoleInfo", "createdAt", "defaultGlassBreakDuration", "grantsBroadInstituteGroup", "grantsDevAzureAccount", "grantsDevAzureDirectoryRoles", "grantsDevAzureGroup", "grantsDevFirecloudFolderOwner", "grantsDevFirecloudGroup", "grantsProdAzureAccount", "grantsProdAzureDirectoryRoles", "grantsProdAzureGroup", "grantsProdFirecloudFolderOwner", "grantsProdFirecloudGroup", "grantsQaFirecloudFolderOwner", "grantsQaFirecloudGroup", "grantsSherlockSuperAdmin", "id", "name", "suspendNonSuitableUsers", "updatedAt"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -69,8 +71,7 @@ class SherlockRoleV3(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:

@@ -12,45 +12,62 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockGithubActionsDeployHookTestRunRequest,
-  SherlockGithubActionsDeployHookTestRunResponse,
-  SherlockGithubActionsDeployHookV3,
-  SherlockGithubActionsDeployHookV3Create,
-  SherlockGithubActionsDeployHookV3Edit,
-  SherlockSlackDeployHookTestRunRequest,
-  SherlockSlackDeployHookTestRunResponse,
-  SherlockSlackDeployHookV3,
-  SherlockSlackDeployHookV3Create,
-  SherlockSlackDeployHookV3Edit,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockGithubActionsDeployHookTestRunRequest,
     SherlockGithubActionsDeployHookTestRunRequestFromJSON,
     SherlockGithubActionsDeployHookTestRunRequestToJSON,
+} from '../models/SherlockGithubActionsDeployHookTestRunRequest';
+import {
+    type SherlockGithubActionsDeployHookTestRunResponse,
     SherlockGithubActionsDeployHookTestRunResponseFromJSON,
     SherlockGithubActionsDeployHookTestRunResponseToJSON,
+} from '../models/SherlockGithubActionsDeployHookTestRunResponse';
+import {
+    type SherlockGithubActionsDeployHookV3,
     SherlockGithubActionsDeployHookV3FromJSON,
     SherlockGithubActionsDeployHookV3ToJSON,
+} from '../models/SherlockGithubActionsDeployHookV3';
+import {
+    type SherlockGithubActionsDeployHookV3Create,
     SherlockGithubActionsDeployHookV3CreateFromJSON,
     SherlockGithubActionsDeployHookV3CreateToJSON,
+} from '../models/SherlockGithubActionsDeployHookV3Create';
+import {
+    type SherlockGithubActionsDeployHookV3Edit,
     SherlockGithubActionsDeployHookV3EditFromJSON,
     SherlockGithubActionsDeployHookV3EditToJSON,
+} from '../models/SherlockGithubActionsDeployHookV3Edit';
+import {
+    type SherlockSlackDeployHookTestRunRequest,
     SherlockSlackDeployHookTestRunRequestFromJSON,
     SherlockSlackDeployHookTestRunRequestToJSON,
+} from '../models/SherlockSlackDeployHookTestRunRequest';
+import {
+    type SherlockSlackDeployHookTestRunResponse,
     SherlockSlackDeployHookTestRunResponseFromJSON,
     SherlockSlackDeployHookTestRunResponseToJSON,
+} from '../models/SherlockSlackDeployHookTestRunResponse';
+import {
+    type SherlockSlackDeployHookV3,
     SherlockSlackDeployHookV3FromJSON,
     SherlockSlackDeployHookV3ToJSON,
+} from '../models/SherlockSlackDeployHookV3';
+import {
+    type SherlockSlackDeployHookV3Create,
     SherlockSlackDeployHookV3CreateFromJSON,
     SherlockSlackDeployHookV3CreateToJSON,
+} from '../models/SherlockSlackDeployHookV3Create';
+import {
+    type SherlockSlackDeployHookV3Edit,
     SherlockSlackDeployHookV3EditFromJSON,
     SherlockSlackDeployHookV3EditToJSON,
-} from '../models/index';
+} from '../models/SherlockSlackDeployHookV3Edit';
 
 export interface ApiDeployHooksGithubActionsProceduresV3TestSelectorPostRequest {
     selector: string;
@@ -133,10 +150,9 @@ export interface ApiDeployHooksSlackV3SelectorPatchRequest {
 export class DeployHooksApi extends runtime.BaseAPI {
 
     /**
-     * Run a GitHub Action to simulate a GithubActionsDeployHook
-     * Test a GithubActionsDeployHook
+     * Creates request options for apiDeployHooksGithubActionsProceduresV3TestSelectorPost without sending the request
      */
-    async apiDeployHooksGithubActionsProceduresV3TestSelectorPostRaw(requestParameters: ApiDeployHooksGithubActionsProceduresV3TestSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookTestRunResponse>> {
+    async apiDeployHooksGithubActionsProceduresV3TestSelectorPostRequestOpts(requestParameters: ApiDeployHooksGithubActionsProceduresV3TestSelectorPostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -159,15 +175,24 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/deploy-hooks/github-actions/procedures/v3/test/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockGithubActionsDeployHookTestRunRequestToJSON(requestParameters['request']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Run a GitHub Action to simulate a GithubActionsDeployHook
+     * Test a GithubActionsDeployHook
+     */
+    async apiDeployHooksGithubActionsProceduresV3TestSelectorPostRaw(requestParameters: ApiDeployHooksGithubActionsProceduresV3TestSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookTestRunResponse>> {
+        const requestOptions = await this.apiDeployHooksGithubActionsProceduresV3TestSelectorPostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockGithubActionsDeployHookTestRunResponseFromJSON(jsonValue));
     }
@@ -182,10 +207,9 @@ export class DeployHooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * List GithubActionsDeployHooks matching a filter.
-     * List GithubActionsDeployHooks matching a filter
+     * Creates request options for apiDeployHooksGithubActionsV3Get without sending the request
      */
-    async apiDeployHooksGithubActionsV3GetRaw(requestParameters: ApiDeployHooksGithubActionsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockGithubActionsDeployHookV3>>> {
+    async apiDeployHooksGithubActionsV3GetRequestOpts(requestParameters: ApiDeployHooksGithubActionsV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['createdAt'] != null) {
@@ -249,12 +273,21 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         let urlPath = `/api/deploy-hooks/github-actions/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List GithubActionsDeployHooks matching a filter.
+     * List GithubActionsDeployHooks matching a filter
+     */
+    async apiDeployHooksGithubActionsV3GetRaw(requestParameters: ApiDeployHooksGithubActionsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockGithubActionsDeployHookV3>>> {
+        const requestOptions = await this.apiDeployHooksGithubActionsV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockGithubActionsDeployHookV3FromJSON));
     }
@@ -269,10 +302,9 @@ export class DeployHooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a GithubActionsDeployHook.
-     * Create a GithubActionsDeployHook
+     * Creates request options for apiDeployHooksGithubActionsV3Post without sending the request
      */
-    async apiDeployHooksGithubActionsV3PostRaw(requestParameters: ApiDeployHooksGithubActionsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookV3>> {
+    async apiDeployHooksGithubActionsV3PostRequestOpts(requestParameters: ApiDeployHooksGithubActionsV3PostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['githubActionsDeployHook'] == null) {
             throw new runtime.RequiredError(
                 'githubActionsDeployHook',
@@ -289,13 +321,22 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         let urlPath = `/api/deploy-hooks/github-actions/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockGithubActionsDeployHookV3CreateToJSON(requestParameters['githubActionsDeployHook']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create a GithubActionsDeployHook.
+     * Create a GithubActionsDeployHook
+     */
+    async apiDeployHooksGithubActionsV3PostRaw(requestParameters: ApiDeployHooksGithubActionsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookV3>> {
+        const requestOptions = await this.apiDeployHooksGithubActionsV3PostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockGithubActionsDeployHookV3FromJSON(jsonValue));
     }
@@ -310,10 +351,9 @@ export class DeployHooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete an individual GithubActionsDeployHook by its ID.
-     * Delete an individual GithubActionsDeployHook
+     * Creates request options for apiDeployHooksGithubActionsV3SelectorDelete without sending the request
      */
-    async apiDeployHooksGithubActionsV3SelectorDeleteRaw(requestParameters: ApiDeployHooksGithubActionsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookV3>> {
+    async apiDeployHooksGithubActionsV3SelectorDeleteRequestOpts(requestParameters: ApiDeployHooksGithubActionsV3SelectorDeleteRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -327,14 +367,23 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/deploy-hooks/github-actions/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Delete an individual GithubActionsDeployHook by its ID.
+     * Delete an individual GithubActionsDeployHook
+     */
+    async apiDeployHooksGithubActionsV3SelectorDeleteRaw(requestParameters: ApiDeployHooksGithubActionsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookV3>> {
+        const requestOptions = await this.apiDeployHooksGithubActionsV3SelectorDeleteRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockGithubActionsDeployHookV3FromJSON(jsonValue));
     }
@@ -349,10 +398,9 @@ export class DeployHooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an individual GithubActionsDeployHook by its ID.
-     * Get an individual GithubActionsDeployHook
+     * Creates request options for apiDeployHooksGithubActionsV3SelectorGet without sending the request
      */
-    async apiDeployHooksGithubActionsV3SelectorGetRaw(requestParameters: ApiDeployHooksGithubActionsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookV3>> {
+    async apiDeployHooksGithubActionsV3SelectorGetRequestOpts(requestParameters: ApiDeployHooksGithubActionsV3SelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -366,14 +414,23 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/deploy-hooks/github-actions/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get an individual GithubActionsDeployHook by its ID.
+     * Get an individual GithubActionsDeployHook
+     */
+    async apiDeployHooksGithubActionsV3SelectorGetRaw(requestParameters: ApiDeployHooksGithubActionsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookV3>> {
+        const requestOptions = await this.apiDeployHooksGithubActionsV3SelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockGithubActionsDeployHookV3FromJSON(jsonValue));
     }
@@ -388,10 +445,9 @@ export class DeployHooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit an individual GithubActionsDeployHook by its ID.
-     * Edit an individual GithubActionsDeployHook
+     * Creates request options for apiDeployHooksGithubActionsV3SelectorPatch without sending the request
      */
-    async apiDeployHooksGithubActionsV3SelectorPatchRaw(requestParameters: ApiDeployHooksGithubActionsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookV3>> {
+    async apiDeployHooksGithubActionsV3SelectorPatchRequestOpts(requestParameters: ApiDeployHooksGithubActionsV3SelectorPatchRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -414,15 +470,24 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/deploy-hooks/github-actions/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockGithubActionsDeployHookV3EditToJSON(requestParameters['githubActionsDeployHook']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Edit an individual GithubActionsDeployHook by its ID.
+     * Edit an individual GithubActionsDeployHook
+     */
+    async apiDeployHooksGithubActionsV3SelectorPatchRaw(requestParameters: ApiDeployHooksGithubActionsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookV3>> {
+        const requestOptions = await this.apiDeployHooksGithubActionsV3SelectorPatchRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockGithubActionsDeployHookV3FromJSON(jsonValue));
     }
@@ -437,10 +502,9 @@ export class DeployHooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * Send a Slack message to simulate a SlackDeployHook
-     * Test a SlackDeployHook
+     * Creates request options for apiDeployHooksSlackProceduresV3TestSelectorPost without sending the request
      */
-    async apiDeployHooksSlackProceduresV3TestSelectorPostRaw(requestParameters: ApiDeployHooksSlackProceduresV3TestSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookTestRunResponse>> {
+    async apiDeployHooksSlackProceduresV3TestSelectorPostRequestOpts(requestParameters: ApiDeployHooksSlackProceduresV3TestSelectorPostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -463,15 +527,24 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/deploy-hooks/slack/procedures/v3/test/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockSlackDeployHookTestRunRequestToJSON(requestParameters['request']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Send a Slack message to simulate a SlackDeployHook
+     * Test a SlackDeployHook
+     */
+    async apiDeployHooksSlackProceduresV3TestSelectorPostRaw(requestParameters: ApiDeployHooksSlackProceduresV3TestSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookTestRunResponse>> {
+        const requestOptions = await this.apiDeployHooksSlackProceduresV3TestSelectorPostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockSlackDeployHookTestRunResponseFromJSON(jsonValue));
     }
@@ -486,10 +559,9 @@ export class DeployHooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * List SlackDeployHooks matching a filter.
-     * List SlackDeployHooks matching a filter
+     * Creates request options for apiDeployHooksSlackV3Get without sending the request
      */
-    async apiDeployHooksSlackV3GetRaw(requestParameters: ApiDeployHooksSlackV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockSlackDeployHookV3>>> {
+    async apiDeployHooksSlackV3GetRequestOpts(requestParameters: ApiDeployHooksSlackV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['createdAt'] != null) {
@@ -541,12 +613,21 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         let urlPath = `/api/deploy-hooks/slack/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List SlackDeployHooks matching a filter.
+     * List SlackDeployHooks matching a filter
+     */
+    async apiDeployHooksSlackV3GetRaw(requestParameters: ApiDeployHooksSlackV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockSlackDeployHookV3>>> {
+        const requestOptions = await this.apiDeployHooksSlackV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockSlackDeployHookV3FromJSON));
     }
@@ -561,10 +642,9 @@ export class DeployHooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a SlackDeployHook.
-     * Create a SlackDeployHook
+     * Creates request options for apiDeployHooksSlackV3Post without sending the request
      */
-    async apiDeployHooksSlackV3PostRaw(requestParameters: ApiDeployHooksSlackV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookV3>> {
+    async apiDeployHooksSlackV3PostRequestOpts(requestParameters: ApiDeployHooksSlackV3PostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['slackDeployHook'] == null) {
             throw new runtime.RequiredError(
                 'slackDeployHook',
@@ -581,13 +661,22 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         let urlPath = `/api/deploy-hooks/slack/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockSlackDeployHookV3CreateToJSON(requestParameters['slackDeployHook']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create a SlackDeployHook.
+     * Create a SlackDeployHook
+     */
+    async apiDeployHooksSlackV3PostRaw(requestParameters: ApiDeployHooksSlackV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookV3>> {
+        const requestOptions = await this.apiDeployHooksSlackV3PostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockSlackDeployHookV3FromJSON(jsonValue));
     }
@@ -602,10 +691,9 @@ export class DeployHooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete an individual SlackDeployHook by its ID.
-     * Delete an individual SlackDeployHook
+     * Creates request options for apiDeployHooksSlackV3SelectorDelete without sending the request
      */
-    async apiDeployHooksSlackV3SelectorDeleteRaw(requestParameters: ApiDeployHooksSlackV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookV3>> {
+    async apiDeployHooksSlackV3SelectorDeleteRequestOpts(requestParameters: ApiDeployHooksSlackV3SelectorDeleteRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -619,14 +707,23 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/deploy-hooks/slack/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Delete an individual SlackDeployHook by its ID.
+     * Delete an individual SlackDeployHook
+     */
+    async apiDeployHooksSlackV3SelectorDeleteRaw(requestParameters: ApiDeployHooksSlackV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookV3>> {
+        const requestOptions = await this.apiDeployHooksSlackV3SelectorDeleteRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockSlackDeployHookV3FromJSON(jsonValue));
     }
@@ -641,10 +738,9 @@ export class DeployHooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an individual SlackDeployHook by its ID.
-     * Get an individual SlackDeployHook
+     * Creates request options for apiDeployHooksSlackV3SelectorGet without sending the request
      */
-    async apiDeployHooksSlackV3SelectorGetRaw(requestParameters: ApiDeployHooksSlackV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookV3>> {
+    async apiDeployHooksSlackV3SelectorGetRequestOpts(requestParameters: ApiDeployHooksSlackV3SelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -658,14 +754,23 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/deploy-hooks/slack/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get an individual SlackDeployHook by its ID.
+     * Get an individual SlackDeployHook
+     */
+    async apiDeployHooksSlackV3SelectorGetRaw(requestParameters: ApiDeployHooksSlackV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookV3>> {
+        const requestOptions = await this.apiDeployHooksSlackV3SelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockSlackDeployHookV3FromJSON(jsonValue));
     }
@@ -680,10 +785,9 @@ export class DeployHooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit an individual SlackDeployHook by its ID.
-     * Edit an individual SlackDeployHook
+     * Creates request options for apiDeployHooksSlackV3SelectorPatch without sending the request
      */
-    async apiDeployHooksSlackV3SelectorPatchRaw(requestParameters: ApiDeployHooksSlackV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookV3>> {
+    async apiDeployHooksSlackV3SelectorPatchRequestOpts(requestParameters: ApiDeployHooksSlackV3SelectorPatchRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -706,15 +810,24 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/deploy-hooks/slack/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockSlackDeployHookV3EditToJSON(requestParameters['slackDeployHook']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Edit an individual SlackDeployHook by its ID.
+     * Edit an individual SlackDeployHook
+     */
+    async apiDeployHooksSlackV3SelectorPatchRaw(requestParameters: ApiDeployHooksSlackV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookV3>> {
+        const requestOptions = await this.apiDeployHooksSlackV3SelectorPatchRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockSlackDeployHookV3FromJSON(jsonValue));
     }

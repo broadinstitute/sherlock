@@ -24,6 +24,7 @@ from sherlock_python_client.models.sherlock_changeset_v3_plan_request_chart_rele
 from sherlock_python_client.models.sherlock_changeset_v3_plan_request_environment_entry import SherlockChangesetV3PlanRequestEnvironmentEntry
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class SherlockChangesetV3PlanRequest(BaseModel):
     """
@@ -36,7 +37,8 @@ class SherlockChangesetV3PlanRequest(BaseModel):
     __properties: ClassVar[List[str]] = ["chartReleases", "environments", "recreateChangesets"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -48,8 +50,7 @@ class SherlockChangesetV3PlanRequest(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:

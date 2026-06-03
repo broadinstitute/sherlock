@@ -12,27 +12,32 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockServiceAlertV3,
-  SherlockServiceAlertV3Create,
-  SherlockServiceAlertV3EditableFields,
-  SherlockServiceAlertV3SyncRequest,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockServiceAlertV3,
     SherlockServiceAlertV3FromJSON,
     SherlockServiceAlertV3ToJSON,
+} from '../models/SherlockServiceAlertV3';
+import {
+    type SherlockServiceAlertV3Create,
     SherlockServiceAlertV3CreateFromJSON,
     SherlockServiceAlertV3CreateToJSON,
+} from '../models/SherlockServiceAlertV3Create';
+import {
+    type SherlockServiceAlertV3EditableFields,
     SherlockServiceAlertV3EditableFieldsFromJSON,
     SherlockServiceAlertV3EditableFieldsToJSON,
+} from '../models/SherlockServiceAlertV3EditableFields';
+import {
+    type SherlockServiceAlertV3SyncRequest,
     SherlockServiceAlertV3SyncRequestFromJSON,
     SherlockServiceAlertV3SyncRequestToJSON,
-} from '../models/index';
+} from '../models/SherlockServiceAlertV3SyncRequest';
 
 export interface ApiServiceAlertsProceduresV3SyncPostRequest {
     environment: SherlockServiceAlertV3SyncRequest;
@@ -80,10 +85,9 @@ export interface ApiServiceAlertsV3SelectorPatchRequest {
 export class ServiceAlertApi extends runtime.BaseAPI {
 
     /**
-     * Method to get all currently active service alerts from Sherlock\'s DB and ensure that the service alert json files placed in Google Buckets for Terra match.
-     * Sync service alerts
+     * Creates request options for apiServiceAlertsProceduresV3SyncPost without sending the request
      */
-    async apiServiceAlertsProceduresV3SyncPostRaw(requestParameters: ApiServiceAlertsProceduresV3SyncPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockServiceAlertV3>>> {
+    async apiServiceAlertsProceduresV3SyncPostRequestOpts(requestParameters: ApiServiceAlertsProceduresV3SyncPostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['environment'] == null) {
             throw new runtime.RequiredError(
                 'environment',
@@ -100,13 +104,22 @@ export class ServiceAlertApi extends runtime.BaseAPI {
 
         let urlPath = `/api/service-alerts/procedures/v3/sync`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockServiceAlertV3SyncRequestToJSON(requestParameters['environment']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Method to get all currently active service alerts from Sherlock\'s DB and ensure that the service alert json files placed in Google Buckets for Terra match.
+     * Sync service alerts
+     */
+    async apiServiceAlertsProceduresV3SyncPostRaw(requestParameters: ApiServiceAlertsProceduresV3SyncPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockServiceAlertV3>>> {
+        const requestOptions = await this.apiServiceAlertsProceduresV3SyncPostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockServiceAlertV3FromJSON));
     }
@@ -121,10 +134,9 @@ export class ServiceAlertApi extends runtime.BaseAPI {
     }
 
     /**
-     * List ServiceAlerts matching a filter.
-     * List ServiceAlerts matching a filter
+     * Creates request options for apiServiceAlertsV3Get without sending the request
      */
-    async apiServiceAlertsV3GetRaw(requestParameters: ApiServiceAlertsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockServiceAlertV3>>> {
+    async apiServiceAlertsV3GetRequestOpts(requestParameters: ApiServiceAlertsV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['createdAt'] != null) {
@@ -192,12 +204,21 @@ export class ServiceAlertApi extends runtime.BaseAPI {
 
         let urlPath = `/api/service-alerts/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List ServiceAlerts matching a filter.
+     * List ServiceAlerts matching a filter
+     */
+    async apiServiceAlertsV3GetRaw(requestParameters: ApiServiceAlertsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockServiceAlertV3>>> {
+        const requestOptions = await this.apiServiceAlertsV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockServiceAlertV3FromJSON));
     }
@@ -212,10 +233,9 @@ export class ServiceAlertApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a service alert to be displayed within terra.
-     * Create a service alert
+     * Creates request options for apiServiceAlertsV3Post without sending the request
      */
-    async apiServiceAlertsV3PostRaw(requestParameters: ApiServiceAlertsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockServiceAlertV3>> {
+    async apiServiceAlertsV3PostRequestOpts(requestParameters: ApiServiceAlertsV3PostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['serviceAlert'] == null) {
             throw new runtime.RequiredError(
                 'serviceAlert',
@@ -232,13 +252,22 @@ export class ServiceAlertApi extends runtime.BaseAPI {
 
         let urlPath = `/api/service-alerts/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockServiceAlertV3CreateToJSON(requestParameters['serviceAlert']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create a service alert to be displayed within terra.
+     * Create a service alert
+     */
+    async apiServiceAlertsV3PostRaw(requestParameters: ApiServiceAlertsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockServiceAlertV3>> {
+        const requestOptions = await this.apiServiceAlertsV3PostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockServiceAlertV3FromJSON(jsonValue));
     }
@@ -253,10 +282,9 @@ export class ServiceAlertApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete an individual ServiceAlert.
-     * Delete a ServiceAlert
+     * Creates request options for apiServiceAlertsV3SelectorDelete without sending the request
      */
-    async apiServiceAlertsV3SelectorDeleteRaw(requestParameters: ApiServiceAlertsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockServiceAlertV3>> {
+    async apiServiceAlertsV3SelectorDeleteRequestOpts(requestParameters: ApiServiceAlertsV3SelectorDeleteRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -270,14 +298,23 @@ export class ServiceAlertApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/service-alerts/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Delete an individual ServiceAlert.
+     * Delete a ServiceAlert
+     */
+    async apiServiceAlertsV3SelectorDeleteRaw(requestParameters: ApiServiceAlertsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockServiceAlertV3>> {
+        const requestOptions = await this.apiServiceAlertsV3SelectorDeleteRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockServiceAlertV3FromJSON(jsonValue));
     }
@@ -292,10 +329,9 @@ export class ServiceAlertApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an individual Service Alert and it\'s metadata.
-     * Get a Service Alert
+     * Creates request options for apiServiceAlertsV3SelectorGet without sending the request
      */
-    async apiServiceAlertsV3SelectorGetRaw(requestParameters: ApiServiceAlertsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockServiceAlertV3>> {
+    async apiServiceAlertsV3SelectorGetRequestOpts(requestParameters: ApiServiceAlertsV3SelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -313,14 +349,23 @@ export class ServiceAlertApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/service-alerts/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get an individual Service Alert and it\'s metadata.
+     * Get a Service Alert
+     */
+    async apiServiceAlertsV3SelectorGetRaw(requestParameters: ApiServiceAlertsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockServiceAlertV3>> {
+        const requestOptions = await this.apiServiceAlertsV3SelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockServiceAlertV3FromJSON(jsonValue));
     }
@@ -335,10 +380,9 @@ export class ServiceAlertApi extends runtime.BaseAPI {
     }
 
     /**
-     * Update a service alert with new information.
-     * Edit a service alert
+     * Creates request options for apiServiceAlertsV3SelectorPatch without sending the request
      */
-    async apiServiceAlertsV3SelectorPatchRaw(requestParameters: ApiServiceAlertsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockServiceAlertV3>> {
+    async apiServiceAlertsV3SelectorPatchRequestOpts(requestParameters: ApiServiceAlertsV3SelectorPatchRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -361,15 +405,24 @@ export class ServiceAlertApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/service-alerts/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockServiceAlertV3EditableFieldsToJSON(requestParameters['serviceAlert']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Update a service alert with new information.
+     * Edit a service alert
+     */
+    async apiServiceAlertsV3SelectorPatchRaw(requestParameters: ApiServiceAlertsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockServiceAlertV3>> {
+        const requestOptions = await this.apiServiceAlertsV3SelectorPatchRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockServiceAlertV3FromJSON(jsonValue));
     }

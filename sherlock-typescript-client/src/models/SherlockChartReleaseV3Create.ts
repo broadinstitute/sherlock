@@ -45,7 +45,7 @@ export interface SherlockChartReleaseV3Create {
     appVersionFollowChartRelease?: string;
     /**
      * // When creating, will default to automatically reference any provided app version fields
-     * @type {string}
+     * @type {SherlockChartReleaseV3CreateAppVersionResolverEnum}
      * @memberof SherlockChartReleaseV3Create
      */
     appVersionResolver?: SherlockChartReleaseV3CreateAppVersionResolverEnum;
@@ -69,7 +69,7 @@ export interface SherlockChartReleaseV3Create {
     chartVersionFollowChartRelease?: string;
     /**
      * When creating, will default to automatically reference any provided chart version
-     * @type {string}
+     * @type {SherlockChartReleaseV3CreateChartVersionResolverEnum}
      * @memberof SherlockChartReleaseV3Create
      */
     chartVersionResolver?: SherlockChartReleaseV3CreateChartVersionResolverEnum;

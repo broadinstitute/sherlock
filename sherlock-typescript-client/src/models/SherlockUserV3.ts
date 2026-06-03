@@ -83,7 +83,7 @@ export interface SherlockUserV3 {
     name?: string;
     /**
      * 
-     * @type {string}
+     * @type {SherlockUserV3NameFromEnum}
      * @memberof SherlockUserV3
      */
     nameFrom?: SherlockUserV3NameFromEnum;

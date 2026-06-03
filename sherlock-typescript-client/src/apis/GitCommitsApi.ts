@@ -12,21 +12,22 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockGitCommitV3,
-  SherlockGitCommitV3Upsert,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockGitCommitV3,
     SherlockGitCommitV3FromJSON,
     SherlockGitCommitV3ToJSON,
+} from '../models/SherlockGitCommitV3';
+import {
+    type SherlockGitCommitV3Upsert,
     SherlockGitCommitV3UpsertFromJSON,
     SherlockGitCommitV3UpsertToJSON,
-} from '../models/index';
+} from '../models/SherlockGitCommitV3Upsert';
 
 export interface ApiGitCommitsV3PutRequest {
     gitCommit: SherlockGitCommitV3Upsert;
@@ -38,10 +39,9 @@ export interface ApiGitCommitsV3PutRequest {
 export class GitCommitsApi extends runtime.BaseAPI {
 
     /**
-     * Upsert a GitCommit.
-     * Upsert a GitCommit
+     * Creates request options for apiGitCommitsV3Put without sending the request
      */
-    async apiGitCommitsV3PutRaw(requestParameters: ApiGitCommitsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGitCommitV3>> {
+    async apiGitCommitsV3PutRequestOpts(requestParameters: ApiGitCommitsV3PutRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['gitCommit'] == null) {
             throw new runtime.RequiredError(
                 'gitCommit',
@@ -58,13 +58,22 @@ export class GitCommitsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/git-commits/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockGitCommitV3UpsertToJSON(requestParameters['gitCommit']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Upsert a GitCommit.
+     * Upsert a GitCommit
+     */
+    async apiGitCommitsV3PutRaw(requestParameters: ApiGitCommitsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGitCommitV3>> {
+        const requestOptions = await this.apiGitCommitsV3PutRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockGitCommitV3FromJSON(jsonValue));
     }

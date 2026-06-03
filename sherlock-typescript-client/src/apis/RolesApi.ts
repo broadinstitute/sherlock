@@ -12,21 +12,22 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockRoleV3,
-  SherlockRoleV3Edit,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockRoleV3,
     SherlockRoleV3FromJSON,
     SherlockRoleV3ToJSON,
+} from '../models/SherlockRoleV3';
+import {
+    type SherlockRoleV3Edit,
     SherlockRoleV3EditFromJSON,
     SherlockRoleV3EditToJSON,
-} from '../models/index';
+} from '../models/SherlockRoleV3Edit';
 
 export interface ApiRolesV3GetRequest {
     autoAssignAllUsers?: boolean;
@@ -78,10 +79,9 @@ export interface ApiRolesV3SelectorPatchRequest {
 export class RolesApi extends runtime.BaseAPI {
 
     /**
-     * List Roles matching a filter.
-     * List Roles matching a filter
+     * Creates request options for apiRolesV3Get without sending the request
      */
-    async apiRolesV3GetRaw(requestParameters: ApiRolesV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockRoleV3>>> {
+    async apiRolesV3GetRequestOpts(requestParameters: ApiRolesV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['autoAssignAllUsers'] != null) {
@@ -185,12 +185,21 @@ export class RolesApi extends runtime.BaseAPI {
 
         let urlPath = `/api/roles/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List Roles matching a filter.
+     * List Roles matching a filter
+     */
+    async apiRolesV3GetRaw(requestParameters: ApiRolesV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockRoleV3>>> {
+        const requestOptions = await this.apiRolesV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockRoleV3FromJSON));
     }
@@ -205,10 +214,9 @@ export class RolesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create an individual Role with no one assigned to it. Only super-admins may mutate Roles. Propagation will be triggered after this operation.
-     * Create a Role
+     * Creates request options for apiRolesV3Post without sending the request
      */
-    async apiRolesV3PostRaw(requestParameters: ApiRolesV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
+    async apiRolesV3PostRequestOpts(requestParameters: ApiRolesV3PostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['role'] == null) {
             throw new runtime.RequiredError(
                 'role',
@@ -225,13 +233,22 @@ export class RolesApi extends runtime.BaseAPI {
 
         let urlPath = `/api/roles/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockRoleV3EditToJSON(requestParameters['role']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create an individual Role with no one assigned to it. Only super-admins may mutate Roles. Propagation will be triggered after this operation.
+     * Create a Role
+     */
+    async apiRolesV3PostRaw(requestParameters: ApiRolesV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
+        const requestOptions = await this.apiRolesV3PostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockRoleV3FromJSON(jsonValue));
     }
@@ -246,10 +263,9 @@ export class RolesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete an individual Role. Only super-admins may mutate Roles. Propagation will NOT be triggered after this operation -- the grants will become un-managed by Sherlock and left as-is. Remove role assignments first to remove users from grants.
-     * Delete a Role
+     * Creates request options for apiRolesV3SelectorDelete without sending the request
      */
-    async apiRolesV3SelectorDeleteRaw(requestParameters: ApiRolesV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
+    async apiRolesV3SelectorDeleteRequestOpts(requestParameters: ApiRolesV3SelectorDeleteRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -263,14 +279,23 @@ export class RolesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/roles/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Delete an individual Role. Only super-admins may mutate Roles. Propagation will NOT be triggered after this operation -- the grants will become un-managed by Sherlock and left as-is. Remove role assignments first to remove users from grants.
+     * Delete a Role
+     */
+    async apiRolesV3SelectorDeleteRaw(requestParameters: ApiRolesV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
+        const requestOptions = await this.apiRolesV3SelectorDeleteRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockRoleV3FromJSON(jsonValue));
     }
@@ -285,10 +310,9 @@ export class RolesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an individual Role and the Users assigned to it.
-     * Get a Role
+     * Creates request options for apiRolesV3SelectorGet without sending the request
      */
-    async apiRolesV3SelectorGetRaw(requestParameters: ApiRolesV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
+    async apiRolesV3SelectorGetRequestOpts(requestParameters: ApiRolesV3SelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -302,14 +326,23 @@ export class RolesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/roles/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get an individual Role and the Users assigned to it.
+     * Get a Role
+     */
+    async apiRolesV3SelectorGetRaw(requestParameters: ApiRolesV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
+        const requestOptions = await this.apiRolesV3SelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockRoleV3FromJSON(jsonValue));
     }
@@ -324,10 +357,9 @@ export class RolesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit an individual Role. Only super-admins may mutate Roles. Propagation will be triggered after this operation.
-     * Edit a Role
+     * Creates request options for apiRolesV3SelectorPatch without sending the request
      */
-    async apiRolesV3SelectorPatchRaw(requestParameters: ApiRolesV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
+    async apiRolesV3SelectorPatchRequestOpts(requestParameters: ApiRolesV3SelectorPatchRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -350,15 +382,24 @@ export class RolesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/roles/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockRoleV3EditToJSON(requestParameters['role']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Edit an individual Role. Only super-admins may mutate Roles. Propagation will be triggered after this operation.
+     * Edit a Role
+     */
+    async apiRolesV3SelectorPatchRaw(requestParameters: ApiRolesV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
+        const requestOptions = await this.apiRolesV3SelectorPatchRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockRoleV3FromJSON(jsonValue));
     }

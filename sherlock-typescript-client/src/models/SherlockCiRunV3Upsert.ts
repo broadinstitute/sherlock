@@ -154,7 +154,7 @@ export interface SherlockCiRunV3Upsert {
     platform?: string;
     /**
      * Makes entries in the changesets field also spread to new app versions and chart versions deployed by the changeset. 'when-static' is the default and does this spreading only when the chart release is in a static environment.
-     * @type {string}
+     * @type {SherlockCiRunV3UpsertRelateToChangesetNewVersionsEnum}
      * @memberof SherlockCiRunV3Upsert
      */
     relateToChangesetNewVersions?: SherlockCiRunV3UpsertRelateToChangesetNewVersionsEnum;

@@ -35,7 +35,7 @@ export interface SherlockUserV3Upsert {
     name?: string;
     /**
      * 
-     * @type {string}
+     * @type {SherlockUserV3UpsertNameFromEnum}
      * @memberof SherlockUserV3Upsert
      */
     nameFrom?: SherlockUserV3UpsertNameFromEnum;

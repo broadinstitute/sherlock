@@ -12,27 +12,32 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockChartVersionV3,
-  SherlockChartVersionV3ChangelogResponse,
-  SherlockChartVersionV3Create,
-  SherlockChartVersionV3Edit,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockChartVersionV3,
     SherlockChartVersionV3FromJSON,
     SherlockChartVersionV3ToJSON,
+} from '../models/SherlockChartVersionV3';
+import {
+    type SherlockChartVersionV3ChangelogResponse,
     SherlockChartVersionV3ChangelogResponseFromJSON,
     SherlockChartVersionV3ChangelogResponseToJSON,
+} from '../models/SherlockChartVersionV3ChangelogResponse';
+import {
+    type SherlockChartVersionV3Create,
     SherlockChartVersionV3CreateFromJSON,
     SherlockChartVersionV3CreateToJSON,
+} from '../models/SherlockChartVersionV3Create';
+import {
+    type SherlockChartVersionV3Edit,
     SherlockChartVersionV3EditFromJSON,
     SherlockChartVersionV3EditToJSON,
-} from '../models/index';
+} from '../models/SherlockChartVersionV3Edit';
 
 export interface ApiChartVersionsProceduresV3ChangelogGetRequest {
     child: string;
@@ -71,10 +76,9 @@ export interface ApiChartVersionsV3SelectorPatchRequest {
 export class ChartVersionsApi extends runtime.BaseAPI {
 
     /**
-     * Get the path through parent references from a child ChartVersion (inclusive) to a parent ChartVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer ChartVersion should be the child. The result will always exclude the parent.
-     * Get a changelog between two ChartVersions
+     * Creates request options for apiChartVersionsProceduresV3ChangelogGet without sending the request
      */
-    async apiChartVersionsProceduresV3ChangelogGetRaw(requestParameters: ApiChartVersionsProceduresV3ChangelogGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3ChangelogResponse>> {
+    async apiChartVersionsProceduresV3ChangelogGetRequestOpts(requestParameters: ApiChartVersionsProceduresV3ChangelogGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['child'] == null) {
             throw new runtime.RequiredError(
                 'child',
@@ -104,12 +108,21 @@ export class ChartVersionsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/chart-versions/procedures/v3/changelog`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get the path through parent references from a child ChartVersion (inclusive) to a parent ChartVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer ChartVersion should be the child. The result will always exclude the parent.
+     * Get a changelog between two ChartVersions
+     */
+    async apiChartVersionsProceduresV3ChangelogGetRaw(requestParameters: ApiChartVersionsProceduresV3ChangelogGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3ChangelogResponse>> {
+        const requestOptions = await this.apiChartVersionsProceduresV3ChangelogGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartVersionV3ChangelogResponseFromJSON(jsonValue));
     }
@@ -124,10 +137,9 @@ export class ChartVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * List ChartVersions matching a filter.
-     * List ChartVersions matching a filter
+     * Creates request options for apiChartVersionsV3Get without sending the request
      */
-    async apiChartVersionsV3GetRaw(requestParameters: ApiChartVersionsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChartVersionV3>>> {
+    async apiChartVersionsV3GetRequestOpts(requestParameters: ApiChartVersionsV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['authoredBy'] != null) {
@@ -175,12 +187,21 @@ export class ChartVersionsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/chart-versions/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List ChartVersions matching a filter.
+     * List ChartVersions matching a filter
+     */
+    async apiChartVersionsV3GetRaw(requestParameters: ApiChartVersionsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChartVersionV3>>> {
+        const requestOptions = await this.apiChartVersionsV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockChartVersionV3FromJSON));
     }
@@ -195,10 +216,9 @@ export class ChartVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Upsert a ChartVersion.
-     * Upsert a ChartVersion
+     * Creates request options for apiChartVersionsV3Put without sending the request
      */
-    async apiChartVersionsV3PutRaw(requestParameters: ApiChartVersionsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3>> {
+    async apiChartVersionsV3PutRequestOpts(requestParameters: ApiChartVersionsV3PutRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['chartVersion'] == null) {
             throw new runtime.RequiredError(
                 'chartVersion',
@@ -215,13 +235,22 @@ export class ChartVersionsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/chart-versions/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockChartVersionV3CreateToJSON(requestParameters['chartVersion']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Upsert a ChartVersion.
+     * Upsert a ChartVersion
+     */
+    async apiChartVersionsV3PutRaw(requestParameters: ApiChartVersionsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3>> {
+        const requestOptions = await this.apiChartVersionsV3PutRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartVersionV3FromJSON(jsonValue));
     }
@@ -236,10 +265,9 @@ export class ChartVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an individual ChartVersion.
-     * Get an individual ChartVersion
+     * Creates request options for apiChartVersionsV3SelectorGet without sending the request
      */
-    async apiChartVersionsV3SelectorGetRaw(requestParameters: ApiChartVersionsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3>> {
+    async apiChartVersionsV3SelectorGetRequestOpts(requestParameters: ApiChartVersionsV3SelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -253,14 +281,23 @@ export class ChartVersionsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/chart-versions/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get an individual ChartVersion.
+     * Get an individual ChartVersion
+     */
+    async apiChartVersionsV3SelectorGetRaw(requestParameters: ApiChartVersionsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3>> {
+        const requestOptions = await this.apiChartVersionsV3SelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartVersionV3FromJSON(jsonValue));
     }
@@ -275,10 +312,9 @@ export class ChartVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit an individual ChartVersion.
-     * Edit an individual ChartVersion
+     * Creates request options for apiChartVersionsV3SelectorPatch without sending the request
      */
-    async apiChartVersionsV3SelectorPatchRaw(requestParameters: ApiChartVersionsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3>> {
+    async apiChartVersionsV3SelectorPatchRequestOpts(requestParameters: ApiChartVersionsV3SelectorPatchRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -301,15 +337,24 @@ export class ChartVersionsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/chart-versions/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockChartVersionV3EditToJSON(requestParameters['chartVersion']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Edit an individual ChartVersion.
+     * Edit an individual ChartVersion
+     */
+    async apiChartVersionsV3SelectorPatchRaw(requestParameters: ApiChartVersionsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3>> {
+        const requestOptions = await this.apiChartVersionsV3SelectorPatchRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartVersionV3FromJSON(jsonValue));
     }

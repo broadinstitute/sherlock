@@ -12,24 +12,27 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockIncidentV3,
-  SherlockIncidentV3Create,
-  SherlockIncidentV3Edit,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockIncidentV3,
     SherlockIncidentV3FromJSON,
     SherlockIncidentV3ToJSON,
+} from '../models/SherlockIncidentV3';
+import {
+    type SherlockIncidentV3Create,
     SherlockIncidentV3CreateFromJSON,
     SherlockIncidentV3CreateToJSON,
+} from '../models/SherlockIncidentV3Create';
+import {
+    type SherlockIncidentV3Edit,
     SherlockIncidentV3EditFromJSON,
     SherlockIncidentV3EditToJSON,
-} from '../models/index';
+} from '../models/SherlockIncidentV3Edit';
 
 export interface ApiIncidentsV3GetRequest {
     createdAt?: Date;
@@ -67,10 +70,9 @@ export interface ApiIncidentsV3SelectorPatchRequest {
 export class IncidentsApi extends runtime.BaseAPI {
 
     /**
-     * List Incidents matching a filter.
-     * List Incidents matching a filter
+     * Creates request options for apiIncidentsV3Get without sending the request
      */
-    async apiIncidentsV3GetRaw(requestParameters: ApiIncidentsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockIncidentV3>>> {
+    async apiIncidentsV3GetRequestOpts(requestParameters: ApiIncidentsV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['createdAt'] != null) {
@@ -118,12 +120,21 @@ export class IncidentsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/incidents/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List Incidents matching a filter.
+     * List Incidents matching a filter
+     */
+    async apiIncidentsV3GetRaw(requestParameters: ApiIncidentsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockIncidentV3>>> {
+        const requestOptions = await this.apiIncidentsV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockIncidentV3FromJSON));
     }
@@ -138,10 +149,9 @@ export class IncidentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a Incident.
-     * Create a Incident
+     * Creates request options for apiIncidentsV3Post without sending the request
      */
-    async apiIncidentsV3PostRaw(requestParameters: ApiIncidentsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockIncidentV3>> {
+    async apiIncidentsV3PostRequestOpts(requestParameters: ApiIncidentsV3PostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['incident'] == null) {
             throw new runtime.RequiredError(
                 'incident',
@@ -158,13 +168,22 @@ export class IncidentsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/incidents/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockIncidentV3CreateToJSON(requestParameters['incident']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create a Incident.
+     * Create a Incident
+     */
+    async apiIncidentsV3PostRaw(requestParameters: ApiIncidentsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockIncidentV3>> {
+        const requestOptions = await this.apiIncidentsV3PostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockIncidentV3FromJSON(jsonValue));
     }
@@ -179,10 +198,9 @@ export class IncidentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete an individual Incident by its ID.
-     * Delete an individual Incident
+     * Creates request options for apiIncidentsV3SelectorDelete without sending the request
      */
-    async apiIncidentsV3SelectorDeleteRaw(requestParameters: ApiIncidentsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockIncidentV3>> {
+    async apiIncidentsV3SelectorDeleteRequestOpts(requestParameters: ApiIncidentsV3SelectorDeleteRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -196,14 +214,23 @@ export class IncidentsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/incidents/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Delete an individual Incident by its ID.
+     * Delete an individual Incident
+     */
+    async apiIncidentsV3SelectorDeleteRaw(requestParameters: ApiIncidentsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockIncidentV3>> {
+        const requestOptions = await this.apiIncidentsV3SelectorDeleteRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockIncidentV3FromJSON(jsonValue));
     }
@@ -218,10 +245,9 @@ export class IncidentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an individual Incident.
-     * Get an individual Incident
+     * Creates request options for apiIncidentsV3SelectorGet without sending the request
      */
-    async apiIncidentsV3SelectorGetRaw(requestParameters: ApiIncidentsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockIncidentV3>> {
+    async apiIncidentsV3SelectorGetRequestOpts(requestParameters: ApiIncidentsV3SelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -235,14 +261,23 @@ export class IncidentsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/incidents/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get an individual Incident.
+     * Get an individual Incident
+     */
+    async apiIncidentsV3SelectorGetRaw(requestParameters: ApiIncidentsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockIncidentV3>> {
+        const requestOptions = await this.apiIncidentsV3SelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockIncidentV3FromJSON(jsonValue));
     }
@@ -257,10 +292,9 @@ export class IncidentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit an individual Incident.
-     * Edit an individual Incident
+     * Creates request options for apiIncidentsV3SelectorPatch without sending the request
      */
-    async apiIncidentsV3SelectorPatchRaw(requestParameters: ApiIncidentsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockIncidentV3>> {
+    async apiIncidentsV3SelectorPatchRequestOpts(requestParameters: ApiIncidentsV3SelectorPatchRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -283,15 +317,24 @@ export class IncidentsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/incidents/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockIncidentV3EditToJSON(requestParameters['incident']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Edit an individual Incident.
+     * Edit an individual Incident
+     */
+    async apiIncidentsV3SelectorPatchRaw(requestParameters: ApiIncidentsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockIncidentV3>> {
+        const requestOptions = await this.apiIncidentsV3SelectorPatchRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockIncidentV3FromJSON(jsonValue));
     }

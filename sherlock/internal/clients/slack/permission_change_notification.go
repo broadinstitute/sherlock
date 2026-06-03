@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"math/rand"
 
+	"context"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
 	"github.com/slack-go/slack"
-	"context"
 )
 
 type squelchContextKey struct{}

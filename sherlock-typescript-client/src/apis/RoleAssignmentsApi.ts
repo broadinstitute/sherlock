@@ -12,21 +12,22 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockRoleAssignmentV3,
-  SherlockRoleAssignmentV3Edit,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockRoleAssignmentV3,
     SherlockRoleAssignmentV3FromJSON,
     SherlockRoleAssignmentV3ToJSON,
+} from '../models/SherlockRoleAssignmentV3';
+import {
+    type SherlockRoleAssignmentV3Edit,
     SherlockRoleAssignmentV3EditFromJSON,
     SherlockRoleAssignmentV3EditToJSON,
-} from '../models/index';
+} from '../models/SherlockRoleAssignmentV3Edit';
 
 export interface ApiRoleAssignmentsV3GetRequest {
     expiresAt?: Date;
@@ -64,10 +65,9 @@ export interface ApiRoleAssignmentsV3RoleSelectorUserSelectorPostRequest {
 export class RoleAssignmentsApi extends runtime.BaseAPI {
 
     /**
-     * List RoleAssignments matching a filter. The correct way to list RoleAssignments for a particular Role or User is to get that Role or User specifically, not to use this endpoint.
-     * List RoleAssignments matching a filter
+     * Creates request options for apiRoleAssignmentsV3Get without sending the request
      */
-    async apiRoleAssignmentsV3GetRaw(requestParameters: ApiRoleAssignmentsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockRoleAssignmentV3>>> {
+    async apiRoleAssignmentsV3GetRequestOpts(requestParameters: ApiRoleAssignmentsV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['expiresAt'] != null) {
@@ -95,12 +95,21 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/role-assignments/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List RoleAssignments matching a filter. The correct way to list RoleAssignments for a particular Role or User is to get that Role or User specifically, not to use this endpoint.
+     * List RoleAssignments matching a filter
+     */
+    async apiRoleAssignmentsV3GetRaw(requestParameters: ApiRoleAssignmentsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockRoleAssignmentV3>>> {
+        const requestOptions = await this.apiRoleAssignmentsV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockRoleAssignmentV3FromJSON));
     }
@@ -115,10 +124,9 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future. Propagation will be triggered after this operation.
-     * Delete a RoleAssignment
+     * Creates request options for apiRoleAssignmentsV3RoleSelectorUserSelectorDelete without sending the request
      */
-    async apiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRaw(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRequestOpts(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['roleSelector'] == null) {
             throw new runtime.RequiredError(
                 'roleSelector',
@@ -139,15 +147,24 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/role-assignments/v3/{role-selector}/{user-selector}`;
-        urlPath = urlPath.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector'])));
-        urlPath = urlPath.replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector'])));
+        urlPath = urlPath.replace('{role-selector}', encodeURIComponent(String(requestParameters['roleSelector'])));
+        urlPath = urlPath.replace('{user-selector}', encodeURIComponent(String(requestParameters['userSelector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Delete the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future. Propagation will be triggered after this operation.
+     * Delete a RoleAssignment
+     */
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRaw(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.apiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.VoidApiResponse(response);
     }
@@ -161,10 +178,9 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get the RoleAssignment between a given Role and User.
-     * Get a RoleAssignment
+     * Creates request options for apiRoleAssignmentsV3RoleSelectorUserSelectorGet without sending the request
      */
-    async apiRoleAssignmentsV3RoleSelectorUserSelectorGetRaw(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleAssignmentV3>> {
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorGetRequestOpts(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['roleSelector'] == null) {
             throw new runtime.RequiredError(
                 'roleSelector',
@@ -185,15 +201,24 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/role-assignments/v3/{role-selector}/{user-selector}`;
-        urlPath = urlPath.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector'])));
-        urlPath = urlPath.replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector'])));
+        urlPath = urlPath.replace('{role-selector}', encodeURIComponent(String(requestParameters['roleSelector'])));
+        urlPath = urlPath.replace('{user-selector}', encodeURIComponent(String(requestParameters['userSelector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get the RoleAssignment between a given Role and User.
+     * Get a RoleAssignment
+     */
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorGetRaw(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleAssignmentV3>> {
+        const requestOptions = await this.apiRoleAssignmentsV3RoleSelectorUserSelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockRoleAssignmentV3FromJSON(jsonValue));
     }
@@ -208,10 +233,9 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future. Propagation will be triggered after this operation.
-     * Edit a RoleAssignment
+     * Creates request options for apiRoleAssignmentsV3RoleSelectorUserSelectorPatch without sending the request
      */
-    async apiRoleAssignmentsV3RoleSelectorUserSelectorPatchRaw(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleAssignmentV3>> {
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorPatchRequestOpts(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorPatchRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['roleSelector'] == null) {
             throw new runtime.RequiredError(
                 'roleSelector',
@@ -241,16 +265,25 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/role-assignments/v3/{role-selector}/{user-selector}`;
-        urlPath = urlPath.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector'])));
-        urlPath = urlPath.replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector'])));
+        urlPath = urlPath.replace('{role-selector}', encodeURIComponent(String(requestParameters['roleSelector'])));
+        urlPath = urlPath.replace('{user-selector}', encodeURIComponent(String(requestParameters['userSelector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockRoleAssignmentV3EditToJSON(requestParameters['roleAssignment']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Edit the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future. Propagation will be triggered after this operation.
+     * Edit a RoleAssignment
+     */
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorPatchRaw(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleAssignmentV3>> {
+        const requestOptions = await this.apiRoleAssignmentsV3RoleSelectorUserSelectorPatchRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockRoleAssignmentV3FromJSON(jsonValue));
     }
@@ -265,10 +298,9 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future. Propagation will be triggered after this operation.
-     * Create a RoleAssignment
+     * Creates request options for apiRoleAssignmentsV3RoleSelectorUserSelectorPost without sending the request
      */
-    async apiRoleAssignmentsV3RoleSelectorUserSelectorPostRaw(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleAssignmentV3>> {
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorPostRequestOpts(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorPostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['roleSelector'] == null) {
             throw new runtime.RequiredError(
                 'roleSelector',
@@ -298,16 +330,25 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/role-assignments/v3/{role-selector}/{user-selector}`;
-        urlPath = urlPath.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector'])));
-        urlPath = urlPath.replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector'])));
+        urlPath = urlPath.replace('{role-selector}', encodeURIComponent(String(requestParameters['roleSelector'])));
+        urlPath = urlPath.replace('{user-selector}', encodeURIComponent(String(requestParameters['userSelector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockRoleAssignmentV3EditToJSON(requestParameters['roleAssignment']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future. Propagation will be triggered after this operation.
+     * Create a RoleAssignment
+     */
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorPostRaw(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleAssignmentV3>> {
+        const requestOptions = await this.apiRoleAssignmentsV3RoleSelectorUserSelectorPostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockRoleAssignmentV3FromJSON(jsonValue));
     }

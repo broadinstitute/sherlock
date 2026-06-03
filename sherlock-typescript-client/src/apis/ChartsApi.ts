@@ -12,24 +12,27 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockChartV3,
-  SherlockChartV3Create,
-  SherlockChartV3Edit,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockChartV3,
     SherlockChartV3FromJSON,
     SherlockChartV3ToJSON,
+} from '../models/SherlockChartV3';
+import {
+    type SherlockChartV3Create,
     SherlockChartV3CreateFromJSON,
     SherlockChartV3CreateToJSON,
+} from '../models/SherlockChartV3Create';
+import {
+    type SherlockChartV3Edit,
     SherlockChartV3EditFromJSON,
     SherlockChartV3EditToJSON,
-} from '../models/index';
+} from '../models/SherlockChartV3Edit';
 
 export interface ApiChartsV3GetRequest {
     appImageGitMainBranch?: string;
@@ -73,10 +76,9 @@ export interface ApiChartsV3SelectorPatchRequest {
 export class ChartsApi extends runtime.BaseAPI {
 
     /**
-     * List Charts matching a filter.
-     * List Charts matching a filter
+     * Creates request options for apiChartsV3Get without sending the request
      */
-    async apiChartsV3GetRaw(requestParameters: ApiChartsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChartV3>>> {
+    async apiChartsV3GetRequestOpts(requestParameters: ApiChartsV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['appImageGitMainBranch'] != null) {
@@ -148,12 +150,21 @@ export class ChartsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/charts/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List Charts matching a filter.
+     * List Charts matching a filter
+     */
+    async apiChartsV3GetRaw(requestParameters: ApiChartsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChartV3>>> {
+        const requestOptions = await this.apiChartsV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockChartV3FromJSON));
     }
@@ -168,10 +179,9 @@ export class ChartsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a Chart.
-     * Create a Chart
+     * Creates request options for apiChartsV3Post without sending the request
      */
-    async apiChartsV3PostRaw(requestParameters: ApiChartsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartV3>> {
+    async apiChartsV3PostRequestOpts(requestParameters: ApiChartsV3PostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['chart'] == null) {
             throw new runtime.RequiredError(
                 'chart',
@@ -188,13 +198,22 @@ export class ChartsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/charts/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockChartV3CreateToJSON(requestParameters['chart']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create a Chart.
+     * Create a Chart
+     */
+    async apiChartsV3PostRaw(requestParameters: ApiChartsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartV3>> {
+        const requestOptions = await this.apiChartsV3PostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartV3FromJSON(jsonValue));
     }
@@ -209,10 +228,9 @@ export class ChartsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete an individual Chart by its ID.
-     * Delete an individual Chart
+     * Creates request options for apiChartsV3SelectorDelete without sending the request
      */
-    async apiChartsV3SelectorDeleteRaw(requestParameters: ApiChartsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartV3>> {
+    async apiChartsV3SelectorDeleteRequestOpts(requestParameters: ApiChartsV3SelectorDeleteRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -226,14 +244,23 @@ export class ChartsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/charts/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Delete an individual Chart by its ID.
+     * Delete an individual Chart
+     */
+    async apiChartsV3SelectorDeleteRaw(requestParameters: ApiChartsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartV3>> {
+        const requestOptions = await this.apiChartsV3SelectorDeleteRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartV3FromJSON(jsonValue));
     }
@@ -248,10 +275,9 @@ export class ChartsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an individual Chart.
-     * Get an individual Chart
+     * Creates request options for apiChartsV3SelectorGet without sending the request
      */
-    async apiChartsV3SelectorGetRaw(requestParameters: ApiChartsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartV3>> {
+    async apiChartsV3SelectorGetRequestOpts(requestParameters: ApiChartsV3SelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -265,14 +291,23 @@ export class ChartsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/charts/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get an individual Chart.
+     * Get an individual Chart
+     */
+    async apiChartsV3SelectorGetRaw(requestParameters: ApiChartsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartV3>> {
+        const requestOptions = await this.apiChartsV3SelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartV3FromJSON(jsonValue));
     }
@@ -287,10 +322,9 @@ export class ChartsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit an individual Chart.
-     * Edit an individual Chart
+     * Creates request options for apiChartsV3SelectorPatch without sending the request
      */
-    async apiChartsV3SelectorPatchRaw(requestParameters: ApiChartsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartV3>> {
+    async apiChartsV3SelectorPatchRequestOpts(requestParameters: ApiChartsV3SelectorPatchRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -313,15 +347,24 @@ export class ChartsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/charts/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockChartV3EditToJSON(requestParameters['chart']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Edit an individual Chart.
+     * Edit an individual Chart
+     */
+    async apiChartsV3SelectorPatchRaw(requestParameters: ApiChartsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartV3>> {
+        const requestOptions = await this.apiChartsV3SelectorPatchRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartV3FromJSON(jsonValue));
     }

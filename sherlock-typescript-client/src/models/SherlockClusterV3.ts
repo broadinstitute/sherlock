@@ -96,7 +96,7 @@ export interface SherlockClusterV3 {
     name?: string;
     /**
      * 
-     * @type {string}
+     * @type {SherlockClusterV3ProviderEnum}
      * @memberof SherlockClusterV3
      */
     provider?: SherlockClusterV3ProviderEnum;

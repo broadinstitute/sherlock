@@ -12,21 +12,22 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockCiRunV3,
-  SherlockCiRunV3Upsert,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockCiRunV3,
     SherlockCiRunV3FromJSON,
     SherlockCiRunV3ToJSON,
+} from '../models/SherlockCiRunV3';
+import {
+    type SherlockCiRunV3Upsert,
     SherlockCiRunV3UpsertFromJSON,
     SherlockCiRunV3UpsertToJSON,
-} from '../models/index';
+} from '../models/SherlockCiRunV3Upsert';
 
 export interface ApiCiRunsV3GetRequest {
     argoWorkflowsName?: string;
@@ -68,10 +69,9 @@ export interface ApiCiRunsV3SelectorGetRequest {
 export class CiRunsApi extends runtime.BaseAPI {
 
     /**
-     * List info about GitHub repos and their workflow files as determined by CiRuns from the past 90 days. This is a useful proxy for figuring out what repos Sherlock probably has access to: workflows listed here can probably successfully called by a GitHub Actions deploy hook.
-     * List GitHub info gleaned from CiRuns
+     * Creates request options for apiCiRunsProceduresV3GithubInfoGet without sending the request
      */
-    async apiCiRunsProceduresV3GithubInfoGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: { [key: string]: Array<string>; }; }>> {
+    async apiCiRunsProceduresV3GithubInfoGetRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -79,12 +79,21 @@ export class CiRunsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/ci-runs/procedures/v3/github-info`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List info about GitHub repos and their workflow files as determined by CiRuns from the past 90 days. This is a useful proxy for figuring out what repos Sherlock probably has access to: workflows listed here can probably successfully called by a GitHub Actions deploy hook.
+     * List GitHub info gleaned from CiRuns
+     */
+    async apiCiRunsProceduresV3GithubInfoGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: { [key: string]: Array<string>; }; }>> {
+        const requestOptions = await this.apiCiRunsProceduresV3GithubInfoGetRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse<any>(response);
     }
@@ -99,10 +108,9 @@ export class CiRunsApi extends runtime.BaseAPI {
     }
 
     /**
-     * List CiRuns matching a filter. The CiRuns would have to re-queried directly to load any related resources. Results are ordered by start time, starting at most recent.
-     * List CiRuns matching a filter
+     * Creates request options for apiCiRunsV3Get without sending the request
      */
-    async apiCiRunsV3GetRaw(requestParameters: ApiCiRunsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockCiRunV3>>> {
+    async apiCiRunsV3GetRequestOpts(requestParameters: ApiCiRunsV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['argoWorkflowsName'] != null) {
@@ -202,12 +210,21 @@ export class CiRunsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/ci-runs/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List CiRuns matching a filter. The CiRuns would have to re-queried directly to load any related resources. Results are ordered by start time, starting at most recent.
+     * List CiRuns matching a filter
+     */
+    async apiCiRunsV3GetRaw(requestParameters: ApiCiRunsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockCiRunV3>>> {
+        const requestOptions = await this.apiCiRunsV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockCiRunV3FromJSON));
     }
@@ -222,10 +239,9 @@ export class CiRunsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create or update a CiRun with timing, status, and related resource information. This endpoint is idempotent. The fields for clusters, charts, chart releases, environments, etc. all accept selectors, and they will be smart about \"spreading\" to indirect relations. More info is available on the CiRunV3Upsert data type, but the gist is that specifying a changeset implies its chart release (and optionally app/chart versions), specifying or implying a chart release implies its environment/cluster, and specifying an environment/cluster implies all chart releases they contain.
-     * Create or update a CiRun
+     * Creates request options for apiCiRunsV3Put without sending the request
      */
-    async apiCiRunsV3PutRaw(requestParameters: ApiCiRunsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockCiRunV3>> {
+    async apiCiRunsV3PutRequestOpts(requestParameters: ApiCiRunsV3PutRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['ciRun'] == null) {
             throw new runtime.RequiredError(
                 'ciRun',
@@ -242,13 +258,22 @@ export class CiRunsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/ci-runs/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockCiRunV3UpsertToJSON(requestParameters['ciRun']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create or update a CiRun with timing, status, and related resource information. This endpoint is idempotent. The fields for clusters, charts, chart releases, environments, etc. all accept selectors, and they will be smart about \"spreading\" to indirect relations. More info is available on the CiRunV3Upsert data type, but the gist is that specifying a changeset implies its chart release (and optionally app/chart versions), specifying or implying a chart release implies its environment/cluster, and specifying an environment/cluster implies all chart releases they contain.
+     * Create or update a CiRun
+     */
+    async apiCiRunsV3PutRaw(requestParameters: ApiCiRunsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockCiRunV3>> {
+        const requestOptions = await this.apiCiRunsV3PutRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockCiRunV3FromJSON(jsonValue));
     }
@@ -263,10 +288,9 @@ export class CiRunsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get a CiRun, including CiIdentifiers representing related resources or resources it affected.
-     * Get a CiRun, including CiIdentifiers for related resources
+     * Creates request options for apiCiRunsV3SelectorGet without sending the request
      */
-    async apiCiRunsV3SelectorGetRaw(requestParameters: ApiCiRunsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockCiRunV3>> {
+    async apiCiRunsV3SelectorGetRequestOpts(requestParameters: ApiCiRunsV3SelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -280,14 +304,23 @@ export class CiRunsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/ci-runs/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get a CiRun, including CiIdentifiers representing related resources or resources it affected.
+     * Get a CiRun, including CiIdentifiers for related resources
+     */
+    async apiCiRunsV3SelectorGetRaw(requestParameters: ApiCiRunsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockCiRunV3>> {
+        const requestOptions = await this.apiCiRunsV3SelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockCiRunV3FromJSON(jsonValue));
     }

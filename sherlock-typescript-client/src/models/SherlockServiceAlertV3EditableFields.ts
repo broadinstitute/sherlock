@@ -33,7 +33,7 @@ export interface SherlockServiceAlertV3EditableFields {
     message?: string;
     /**
      * 
-     * @type {string}
+     * @type {SherlockServiceAlertV3EditableFieldsSeverityEnum}
      * @memberof SherlockServiceAlertV3EditableFields
      */
     severity?: SherlockServiceAlertV3EditableFieldsSeverityEnum;

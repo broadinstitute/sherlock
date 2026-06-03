@@ -12,27 +12,32 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockUserV3,
-  SherlockUserV3DeactivateRequest,
-  SherlockUserV3DeactivateResponse,
-  SherlockUserV3Upsert,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockUserV3,
     SherlockUserV3FromJSON,
     SherlockUserV3ToJSON,
+} from '../models/SherlockUserV3';
+import {
+    type SherlockUserV3DeactivateRequest,
     SherlockUserV3DeactivateRequestFromJSON,
     SherlockUserV3DeactivateRequestToJSON,
+} from '../models/SherlockUserV3DeactivateRequest';
+import {
+    type SherlockUserV3DeactivateResponse,
     SherlockUserV3DeactivateResponseFromJSON,
     SherlockUserV3DeactivateResponseToJSON,
+} from '../models/SherlockUserV3DeactivateResponse';
+import {
+    type SherlockUserV3Upsert,
     SherlockUserV3UpsertFromJSON,
     SherlockUserV3UpsertToJSON,
-} from '../models/index';
+} from '../models/SherlockUserV3Upsert';
 
 export interface ApiUsersProceduresV3DeactivatePostRequest {
     users: SherlockUserV3DeactivateRequest;
@@ -72,10 +77,9 @@ export interface ApiUsersV3SelectorGetRequest {
 export class UsersApi extends runtime.BaseAPI {
 
     /**
-     * Super-admin only method to deactivate users. Deactivated users will be removed from all roles and can\'t authenticate to Sherlock. This endpoint can optionally also attempt to suspend the same email handles across given Google Workspace domains, substituting email domains as necessary. It will do so by impersonating the caller in each given domain.
-     * Deactivate Users
+     * Creates request options for apiUsersProceduresV3DeactivatePost without sending the request
      */
-    async apiUsersProceduresV3DeactivatePostRaw(requestParameters: ApiUsersProceduresV3DeactivatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockUserV3DeactivateResponse>> {
+    async apiUsersProceduresV3DeactivatePostRequestOpts(requestParameters: ApiUsersProceduresV3DeactivatePostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['users'] == null) {
             throw new runtime.RequiredError(
                 'users',
@@ -92,13 +96,22 @@ export class UsersApi extends runtime.BaseAPI {
 
         let urlPath = `/api/users/procedures/v3/deactivate`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockUserV3DeactivateRequestToJSON(requestParameters['users']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Super-admin only method to deactivate users. Deactivated users will be removed from all roles and can\'t authenticate to Sherlock. This endpoint can optionally also attempt to suspend the same email handles across given Google Workspace domains, substituting email domains as necessary. It will do so by impersonating the caller in each given domain.
+     * Deactivate Users
+     */
+    async apiUsersProceduresV3DeactivatePostRaw(requestParameters: ApiUsersProceduresV3DeactivatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockUserV3DeactivateResponse>> {
+        const requestOptions = await this.apiUsersProceduresV3DeactivatePostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockUserV3DeactivateResponseFromJSON(jsonValue));
     }
@@ -113,10 +126,9 @@ export class UsersApi extends runtime.BaseAPI {
     }
 
     /**
-     * List Users matching a filter. The results will include suitability and other information. Note that the suitability info can\'t directly be filtered for at this time.
-     * List Users matching a filter
+     * Creates request options for apiUsersV3Get without sending the request
      */
-    async apiUsersV3GetRaw(requestParameters: ApiUsersV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockUserV3>>> {
+    async apiUsersV3GetRequestOpts(requestParameters: ApiUsersV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['createdAt'] != null) {
@@ -192,12 +204,21 @@ export class UsersApi extends runtime.BaseAPI {
 
         let urlPath = `/api/users/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List Users matching a filter. The results will include suitability and other information. Note that the suitability info can\'t directly be filtered for at this time.
+     * List Users matching a filter
+     */
+    async apiUsersV3GetRaw(requestParameters: ApiUsersV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockUserV3>>> {
+        const requestOptions = await this.apiUsersV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockUserV3FromJSON));
     }
@@ -212,10 +233,9 @@ export class UsersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Update the calling User\'s information. As with all authenticated Sherlock endpoints, newly-observed callers will have a User record added, meaning that this endpoint behaves like an upsert.
-     * Update the calling User\'s information
+     * Creates request options for apiUsersV3Put without sending the request
      */
-    async apiUsersV3PutRaw(requestParameters: ApiUsersV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockUserV3>> {
+    async apiUsersV3PutRequestOpts(requestParameters: ApiUsersV3PutRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -225,13 +245,22 @@ export class UsersApi extends runtime.BaseAPI {
 
         let urlPath = `/api/users/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockUserV3UpsertToJSON(requestParameters['user']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Update the calling User\'s information. As with all authenticated Sherlock endpoints, newly-observed callers will have a User record added, meaning that this endpoint behaves like an upsert.
+     * Update the calling User\'s information
+     */
+    async apiUsersV3PutRaw(requestParameters: ApiUsersV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockUserV3>> {
+        const requestOptions = await this.apiUsersV3PutRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockUserV3FromJSON(jsonValue));
     }
@@ -246,10 +275,9 @@ export class UsersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an individual User. As a special case, \"me\" or \"self\" can be passed as the selector to get the current user.
-     * Get an individual User
+     * Creates request options for apiUsersV3SelectorGet without sending the request
      */
-    async apiUsersV3SelectorGetRaw(requestParameters: ApiUsersV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockUserV3>> {
+    async apiUsersV3SelectorGetRequestOpts(requestParameters: ApiUsersV3SelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -263,14 +291,23 @@ export class UsersApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/users/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get an individual User. As a special case, \"me\" or \"self\" can be passed as the selector to get the current user.
+     * Get an individual User
+     */
+    async apiUsersV3SelectorGetRaw(requestParameters: ApiUsersV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockUserV3>> {
+        const requestOptions = await this.apiUsersV3SelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockUserV3FromJSON(jsonValue));
     }

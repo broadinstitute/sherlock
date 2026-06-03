@@ -12,24 +12,27 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockDatabaseInstanceV3,
-  SherlockDatabaseInstanceV3Create,
-  SherlockDatabaseInstanceV3Edit,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockDatabaseInstanceV3,
     SherlockDatabaseInstanceV3FromJSON,
     SherlockDatabaseInstanceV3ToJSON,
+} from '../models/SherlockDatabaseInstanceV3';
+import {
+    type SherlockDatabaseInstanceV3Create,
     SherlockDatabaseInstanceV3CreateFromJSON,
     SherlockDatabaseInstanceV3CreateToJSON,
+} from '../models/SherlockDatabaseInstanceV3Create';
+import {
+    type SherlockDatabaseInstanceV3Edit,
     SherlockDatabaseInstanceV3EditFromJSON,
     SherlockDatabaseInstanceV3EditToJSON,
-} from '../models/index';
+} from '../models/SherlockDatabaseInstanceV3Edit';
 
 export interface ApiDatabaseInstancesV3GetRequest {
     chartRelease?: string;
@@ -71,10 +74,9 @@ export interface ApiDatabaseInstancesV3SelectorPatchRequest {
 export class DatabaseInstancesApi extends runtime.BaseAPI {
 
     /**
-     * List DatabaseInstances matching a filter.
-     * List DatabaseInstances matching a filter
+     * Creates request options for apiDatabaseInstancesV3Get without sending the request
      */
-    async apiDatabaseInstancesV3GetRaw(requestParameters: ApiDatabaseInstancesV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockDatabaseInstanceV3>>> {
+    async apiDatabaseInstancesV3GetRequestOpts(requestParameters: ApiDatabaseInstancesV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['chartRelease'] != null) {
@@ -122,12 +124,21 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
 
         let urlPath = `/api/database-instances/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List DatabaseInstances matching a filter.
+     * List DatabaseInstances matching a filter
+     */
+    async apiDatabaseInstancesV3GetRaw(requestParameters: ApiDatabaseInstancesV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockDatabaseInstanceV3>>> {
+        const requestOptions = await this.apiDatabaseInstancesV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockDatabaseInstanceV3FromJSON));
     }
@@ -142,10 +153,9 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a DatabaseInstance.
-     * Create a DatabaseInstance
+     * Creates request options for apiDatabaseInstancesV3Post without sending the request
      */
-    async apiDatabaseInstancesV3PostRaw(requestParameters: ApiDatabaseInstancesV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
+    async apiDatabaseInstancesV3PostRequestOpts(requestParameters: ApiDatabaseInstancesV3PostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['databaseInstance'] == null) {
             throw new runtime.RequiredError(
                 'databaseInstance',
@@ -162,13 +172,22 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
 
         let urlPath = `/api/database-instances/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockDatabaseInstanceV3CreateToJSON(requestParameters['databaseInstance']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create a DatabaseInstance.
+     * Create a DatabaseInstance
+     */
+    async apiDatabaseInstancesV3PostRaw(requestParameters: ApiDatabaseInstancesV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
+        const requestOptions = await this.apiDatabaseInstancesV3PostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockDatabaseInstanceV3FromJSON(jsonValue));
     }
@@ -183,10 +202,9 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create or edit a DatabaseInstance, depending on whether one already exists for the chart release
-     * Create or edit a DatabaseInstance
+     * Creates request options for apiDatabaseInstancesV3Put without sending the request
      */
-    async apiDatabaseInstancesV3PutRaw(requestParameters: ApiDatabaseInstancesV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
+    async apiDatabaseInstancesV3PutRequestOpts(requestParameters: ApiDatabaseInstancesV3PutRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['databaseInstance'] == null) {
             throw new runtime.RequiredError(
                 'databaseInstance',
@@ -203,13 +221,22 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
 
         let urlPath = `/api/database-instances/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockDatabaseInstanceV3CreateToJSON(requestParameters['databaseInstance']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create or edit a DatabaseInstance, depending on whether one already exists for the chart release
+     * Create or edit a DatabaseInstance
+     */
+    async apiDatabaseInstancesV3PutRaw(requestParameters: ApiDatabaseInstancesV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
+        const requestOptions = await this.apiDatabaseInstancesV3PutRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockDatabaseInstanceV3FromJSON(jsonValue));
     }
@@ -224,10 +251,9 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete an individual DatabaseInstance by its selector.
-     * Delete an individual DatabaseInstance
+     * Creates request options for apiDatabaseInstancesV3SelectorDelete without sending the request
      */
-    async apiDatabaseInstancesV3SelectorDeleteRaw(requestParameters: ApiDatabaseInstancesV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
+    async apiDatabaseInstancesV3SelectorDeleteRequestOpts(requestParameters: ApiDatabaseInstancesV3SelectorDeleteRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -241,14 +267,23 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/database-instances/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Delete an individual DatabaseInstance by its selector.
+     * Delete an individual DatabaseInstance
+     */
+    async apiDatabaseInstancesV3SelectorDeleteRaw(requestParameters: ApiDatabaseInstancesV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
+        const requestOptions = await this.apiDatabaseInstancesV3SelectorDeleteRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockDatabaseInstanceV3FromJSON(jsonValue));
     }
@@ -263,10 +298,9 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an individual DatabaseInstance by its selector.
-     * Get an individual DatabaseInstance
+     * Creates request options for apiDatabaseInstancesV3SelectorGet without sending the request
      */
-    async apiDatabaseInstancesV3SelectorGetRaw(requestParameters: ApiDatabaseInstancesV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
+    async apiDatabaseInstancesV3SelectorGetRequestOpts(requestParameters: ApiDatabaseInstancesV3SelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -280,14 +314,23 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/database-instances/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get an individual DatabaseInstance by its selector.
+     * Get an individual DatabaseInstance
+     */
+    async apiDatabaseInstancesV3SelectorGetRaw(requestParameters: ApiDatabaseInstancesV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
+        const requestOptions = await this.apiDatabaseInstancesV3SelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockDatabaseInstanceV3FromJSON(jsonValue));
     }
@@ -302,10 +345,9 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit an individual DatabaseInstance by its selector.
-     * Edit an individual DatabaseInstance
+     * Creates request options for apiDatabaseInstancesV3SelectorPatch without sending the request
      */
-    async apiDatabaseInstancesV3SelectorPatchRaw(requestParameters: ApiDatabaseInstancesV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
+    async apiDatabaseInstancesV3SelectorPatchRequestOpts(requestParameters: ApiDatabaseInstancesV3SelectorPatchRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -328,15 +370,24 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/database-instances/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockDatabaseInstanceV3EditToJSON(requestParameters['databaseInstance']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Edit an individual DatabaseInstance by its selector.
+     * Edit an individual DatabaseInstance
+     */
+    async apiDatabaseInstancesV3SelectorPatchRaw(requestParameters: ApiDatabaseInstancesV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
+        const requestOptions = await this.apiDatabaseInstancesV3SelectorPatchRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockDatabaseInstanceV3FromJSON(jsonValue));
     }

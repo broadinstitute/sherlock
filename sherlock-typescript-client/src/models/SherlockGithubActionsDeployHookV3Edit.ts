@@ -33,7 +33,7 @@ export interface SherlockGithubActionsDeployHookV3Edit {
     githubActionsOwner?: string;
     /**
      * This field determines what git ref the workflow will be run on. The default of always-use-default-ref always uses the default ref; use-app-version-as-ref will use the app version (when available) as the ref, useful when versions are always commit hashes or tags; use-app-version-commit-as-ref will use the app version's commit (when available) as the ref, useful when the repo is configured to fully report app versions to Sherlock.
-     * @type {string}
+     * @type {SherlockGithubActionsDeployHookV3EditGithubActionsRefBehaviorEnum}
      * @memberof SherlockGithubActionsDeployHookV3Edit
      */
     githubActionsRefBehavior?: SherlockGithubActionsDeployHookV3EditGithubActionsRefBehaviorEnum;

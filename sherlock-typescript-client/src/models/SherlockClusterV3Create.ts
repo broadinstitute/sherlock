@@ -63,7 +63,7 @@ export interface SherlockClusterV3Create {
     name?: string;
     /**
      * 
-     * @type {string}
+     * @type {SherlockClusterV3CreateProviderEnum}
      * @memberof SherlockClusterV3Create
      */
     provider?: SherlockClusterV3CreateProviderEnum;

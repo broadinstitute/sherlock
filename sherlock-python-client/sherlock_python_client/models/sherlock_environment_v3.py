@@ -28,6 +28,7 @@ from sherlock_python_client.models.sherlock_role_v3 import SherlockRoleV3
 from sherlock_python_client.models.sherlock_user_v3 import SherlockUserV3
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class SherlockEnvironmentV3(BaseModel):
     """
@@ -74,7 +75,8 @@ class SherlockEnvironmentV3(BaseModel):
     __properties: ClassVar[List[str]] = ["autoPopulateChartReleases", "base", "baseDomain", "ciIdentifier", "createdAt", "defaultCluster", "defaultClusterInfo", "defaultNamespace", "deleteAfter", "description", "enableJanitor", "helmfileRef", "id", "lifecycle", "name", "namePrefixesDomain", "offline", "offlineScheduleBeginEnabled", "offlineScheduleBeginTime", "offlineScheduleEndEnabled", "offlineScheduleEndTime", "offlineScheduleEndWeekends", "owner", "ownerInfo", "pactIdentifier", "pagerdutyIntegration", "pagerdutyIntegrationInfo", "preventDeletion", "requiredRole", "requiredRoleInfo", "requiresSuitability", "serviceBannerBucket", "templateEnvironment", "templateEnvironmentInfo", "uniqueResourcePrefix", "updatedAt", "valuesName"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -86,8 +88,7 @@ class SherlockEnvironmentV3(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:

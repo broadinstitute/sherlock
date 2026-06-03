@@ -12,24 +12,27 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockClusterV3,
-  SherlockClusterV3Create,
-  SherlockClusterV3Edit,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockClusterV3,
     SherlockClusterV3FromJSON,
     SherlockClusterV3ToJSON,
+} from '../models/SherlockClusterV3';
+import {
+    type SherlockClusterV3Create,
     SherlockClusterV3CreateFromJSON,
     SherlockClusterV3CreateToJSON,
+} from '../models/SherlockClusterV3Create';
+import {
+    type SherlockClusterV3Edit,
     SherlockClusterV3EditFromJSON,
     SherlockClusterV3EditToJSON,
-} from '../models/index';
+} from '../models/SherlockClusterV3Edit';
 
 export interface ApiClustersV3GetRequest {
     address?: string;
@@ -72,10 +75,9 @@ export interface ApiClustersV3SelectorPatchRequest {
 export class ClustersApi extends runtime.BaseAPI {
 
     /**
-     * List Clusters matching a filter.
-     * List Clusters matching a filter
+     * Creates request options for apiClustersV3Get without sending the request
      */
-    async apiClustersV3GetRaw(requestParameters: ApiClustersV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockClusterV3>>> {
+    async apiClustersV3GetRequestOpts(requestParameters: ApiClustersV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['address'] != null) {
@@ -143,12 +145,21 @@ export class ClustersApi extends runtime.BaseAPI {
 
         let urlPath = `/api/clusters/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List Clusters matching a filter.
+     * List Clusters matching a filter
+     */
+    async apiClustersV3GetRaw(requestParameters: ApiClustersV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockClusterV3>>> {
+        const requestOptions = await this.apiClustersV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockClusterV3FromJSON));
     }
@@ -163,10 +174,9 @@ export class ClustersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a Cluster.
-     * Create a Cluster
+     * Creates request options for apiClustersV3Post without sending the request
      */
-    async apiClustersV3PostRaw(requestParameters: ApiClustersV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
+    async apiClustersV3PostRequestOpts(requestParameters: ApiClustersV3PostRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['cluster'] == null) {
             throw new runtime.RequiredError(
                 'cluster',
@@ -183,13 +193,22 @@ export class ClustersApi extends runtime.BaseAPI {
 
         let urlPath = `/api/clusters/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockClusterV3CreateToJSON(requestParameters['cluster']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Create a Cluster.
+     * Create a Cluster
+     */
+    async apiClustersV3PostRaw(requestParameters: ApiClustersV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
+        const requestOptions = await this.apiClustersV3PostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockClusterV3FromJSON(jsonValue));
     }
@@ -204,10 +223,9 @@ export class ClustersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete an individual Cluster by its ID.
-     * Delete an individual Cluster
+     * Creates request options for apiClustersV3SelectorDelete without sending the request
      */
-    async apiClustersV3SelectorDeleteRaw(requestParameters: ApiClustersV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
+    async apiClustersV3SelectorDeleteRequestOpts(requestParameters: ApiClustersV3SelectorDeleteRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -221,14 +239,23 @@ export class ClustersApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/clusters/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Delete an individual Cluster by its ID.
+     * Delete an individual Cluster
+     */
+    async apiClustersV3SelectorDeleteRaw(requestParameters: ApiClustersV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
+        const requestOptions = await this.apiClustersV3SelectorDeleteRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockClusterV3FromJSON(jsonValue));
     }
@@ -243,10 +270,9 @@ export class ClustersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an individual Cluster.
-     * Get an individual Cluster
+     * Creates request options for apiClustersV3SelectorGet without sending the request
      */
-    async apiClustersV3SelectorGetRaw(requestParameters: ApiClustersV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
+    async apiClustersV3SelectorGetRequestOpts(requestParameters: ApiClustersV3SelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -260,14 +286,23 @@ export class ClustersApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/clusters/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get an individual Cluster.
+     * Get an individual Cluster
+     */
+    async apiClustersV3SelectorGetRaw(requestParameters: ApiClustersV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
+        const requestOptions = await this.apiClustersV3SelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockClusterV3FromJSON(jsonValue));
     }
@@ -282,10 +317,9 @@ export class ClustersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit an individual Cluster.
-     * Edit an individual Cluster
+     * Creates request options for apiClustersV3SelectorPatch without sending the request
      */
-    async apiClustersV3SelectorPatchRaw(requestParameters: ApiClustersV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
+    async apiClustersV3SelectorPatchRequestOpts(requestParameters: ApiClustersV3SelectorPatchRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -308,15 +342,24 @@ export class ClustersApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/clusters/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockClusterV3EditToJSON(requestParameters['cluster']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Edit an individual Cluster.
+     * Edit an individual Cluster
+     */
+    async apiClustersV3SelectorPatchRaw(requestParameters: ApiClustersV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
+        const requestOptions = await this.apiClustersV3SelectorPatchRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockClusterV3FromJSON(jsonValue));
     }

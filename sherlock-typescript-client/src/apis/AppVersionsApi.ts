@@ -12,27 +12,32 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockAppVersionV3,
-  SherlockAppVersionV3ChangelogResponse,
-  SherlockAppVersionV3Create,
-  SherlockAppVersionV3Edit,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockAppVersionV3,
     SherlockAppVersionV3FromJSON,
     SherlockAppVersionV3ToJSON,
+} from '../models/SherlockAppVersionV3';
+import {
+    type SherlockAppVersionV3ChangelogResponse,
     SherlockAppVersionV3ChangelogResponseFromJSON,
     SherlockAppVersionV3ChangelogResponseToJSON,
+} from '../models/SherlockAppVersionV3ChangelogResponse';
+import {
+    type SherlockAppVersionV3Create,
     SherlockAppVersionV3CreateFromJSON,
     SherlockAppVersionV3CreateToJSON,
+} from '../models/SherlockAppVersionV3Create';
+import {
+    type SherlockAppVersionV3Edit,
     SherlockAppVersionV3EditFromJSON,
     SherlockAppVersionV3EditToJSON,
-} from '../models/index';
+} from '../models/SherlockAppVersionV3Edit';
 
 export interface ApiAppVersionsProceduresV3ChangelogGetRequest {
     child: string;
@@ -73,10 +78,9 @@ export interface ApiAppVersionsV3SelectorPatchRequest {
 export class AppVersionsApi extends runtime.BaseAPI {
 
     /**
-     * Get the path through parent references from a child AppVersion (inclusive) to a parent AppVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer AppVersion should be the child. The result will always exclude the parent.
-     * Get a changelog between two AppVersions
+     * Creates request options for apiAppVersionsProceduresV3ChangelogGet without sending the request
      */
-    async apiAppVersionsProceduresV3ChangelogGetRaw(requestParameters: ApiAppVersionsProceduresV3ChangelogGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3ChangelogResponse>> {
+    async apiAppVersionsProceduresV3ChangelogGetRequestOpts(requestParameters: ApiAppVersionsProceduresV3ChangelogGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['child'] == null) {
             throw new runtime.RequiredError(
                 'child',
@@ -106,12 +110,21 @@ export class AppVersionsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/app-versions/procedures/v3/changelog`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get the path through parent references from a child AppVersion (inclusive) to a parent AppVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer AppVersion should be the child. The result will always exclude the parent.
+     * Get a changelog between two AppVersions
+     */
+    async apiAppVersionsProceduresV3ChangelogGetRaw(requestParameters: ApiAppVersionsProceduresV3ChangelogGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3ChangelogResponse>> {
+        const requestOptions = await this.apiAppVersionsProceduresV3ChangelogGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockAppVersionV3ChangelogResponseFromJSON(jsonValue));
     }
@@ -126,10 +139,9 @@ export class AppVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * List AppVersions matching a filter.
-     * List AppVersions matching a filter
+     * Creates request options for apiAppVersionsV3Get without sending the request
      */
-    async apiAppVersionsV3GetRaw(requestParameters: ApiAppVersionsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockAppVersionV3>>> {
+    async apiAppVersionsV3GetRequestOpts(requestParameters: ApiAppVersionsV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['appVersion'] != null) {
@@ -185,12 +197,21 @@ export class AppVersionsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/app-versions/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List AppVersions matching a filter.
+     * List AppVersions matching a filter
+     */
+    async apiAppVersionsV3GetRaw(requestParameters: ApiAppVersionsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockAppVersionV3>>> {
+        const requestOptions = await this.apiAppVersionsV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockAppVersionV3FromJSON));
     }
@@ -205,10 +226,9 @@ export class AppVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Upsert a AppVersion.
-     * Upsert a AppVersion
+     * Creates request options for apiAppVersionsV3Put without sending the request
      */
-    async apiAppVersionsV3PutRaw(requestParameters: ApiAppVersionsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
+    async apiAppVersionsV3PutRequestOpts(requestParameters: ApiAppVersionsV3PutRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['appVersion'] == null) {
             throw new runtime.RequiredError(
                 'appVersion',
@@ -225,13 +245,22 @@ export class AppVersionsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/app-versions/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockAppVersionV3CreateToJSON(requestParameters['appVersion']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Upsert a AppVersion.
+     * Upsert a AppVersion
+     */
+    async apiAppVersionsV3PutRaw(requestParameters: ApiAppVersionsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
+        const requestOptions = await this.apiAppVersionsV3PutRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockAppVersionV3FromJSON(jsonValue));
     }
@@ -246,10 +275,9 @@ export class AppVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an individual AppVersion.
-     * Get an individual AppVersion
+     * Creates request options for apiAppVersionsV3SelectorGet without sending the request
      */
-    async apiAppVersionsV3SelectorGetRaw(requestParameters: ApiAppVersionsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
+    async apiAppVersionsV3SelectorGetRequestOpts(requestParameters: ApiAppVersionsV3SelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -263,14 +291,23 @@ export class AppVersionsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/app-versions/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get an individual AppVersion.
+     * Get an individual AppVersion
+     */
+    async apiAppVersionsV3SelectorGetRaw(requestParameters: ApiAppVersionsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
+        const requestOptions = await this.apiAppVersionsV3SelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockAppVersionV3FromJSON(jsonValue));
     }
@@ -285,10 +322,9 @@ export class AppVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit an individual AppVersion.
-     * Edit an individual AppVersion
+     * Creates request options for apiAppVersionsV3SelectorPatch without sending the request
      */
-    async apiAppVersionsV3SelectorPatchRaw(requestParameters: ApiAppVersionsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
+    async apiAppVersionsV3SelectorPatchRequestOpts(requestParameters: ApiAppVersionsV3SelectorPatchRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -311,15 +347,24 @@ export class AppVersionsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/app-versions/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockAppVersionV3EditToJSON(requestParameters['appVersion']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Edit an individual AppVersion.
+     * Edit an individual AppVersion
+     */
+    async apiAppVersionsV3SelectorPatchRaw(requestParameters: ApiAppVersionsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
+        const requestOptions = await this.apiAppVersionsV3SelectorPatchRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockAppVersionV3FromJSON(jsonValue));
     }

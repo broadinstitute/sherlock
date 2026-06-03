@@ -1,9 +1,10 @@
 package bits_data_warehouse
 
 import (
+	"context"
+
 	"cloud.google.com/go/bigquery"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"context"
 )
 
 var client *bigquery.Client

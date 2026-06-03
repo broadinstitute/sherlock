@@ -12,21 +12,22 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  ErrorsErrorResponse,
-  SherlockGithubActionsJobV3,
-  SherlockGithubActionsJobV3Create,
-} from '../models/index';
 import {
+    type ErrorsErrorResponse,
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+} from '../models/ErrorsErrorResponse';
+import {
+    type SherlockGithubActionsJobV3,
     SherlockGithubActionsJobV3FromJSON,
     SherlockGithubActionsJobV3ToJSON,
+} from '../models/SherlockGithubActionsJobV3';
+import {
+    type SherlockGithubActionsJobV3Create,
     SherlockGithubActionsJobV3CreateFromJSON,
     SherlockGithubActionsJobV3CreateToJSON,
-} from '../models/index';
+} from '../models/SherlockGithubActionsJobV3Create';
 
 export interface ApiGithubActionsJobsV3GetRequest {
     createdAt?: Date;
@@ -59,10 +60,9 @@ export interface ApiGithubActionsJobsV3SelectorGetRequest {
 export class GithubActionsJobsApi extends runtime.BaseAPI {
 
     /**
-     * List GithubActionsJobs matching a filter. Results are ordered by start time, starting at most recent.
-     * List GithubActionsJobs matching a filter
+     * Creates request options for apiGithubActionsJobsV3Get without sending the request
      */
-    async apiGithubActionsJobsV3GetRaw(requestParameters: ApiGithubActionsJobsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockGithubActionsJobV3>>> {
+    async apiGithubActionsJobsV3GetRequestOpts(requestParameters: ApiGithubActionsJobsV3GetRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         if (requestParameters['createdAt'] != null) {
@@ -126,12 +126,21 @@ export class GithubActionsJobsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/github-actions-jobs/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * List GithubActionsJobs matching a filter. Results are ordered by start time, starting at most recent.
+     * List GithubActionsJobs matching a filter
+     */
+    async apiGithubActionsJobsV3GetRaw(requestParameters: ApiGithubActionsJobsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockGithubActionsJobV3>>> {
+        const requestOptions = await this.apiGithubActionsJobsV3GetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockGithubActionsJobV3FromJSON));
     }
@@ -146,10 +155,9 @@ export class GithubActionsJobsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Upsert GithubActionsJob.
-     * Upsert GithubActionsJob
+     * Creates request options for apiGithubActionsJobsV3Put without sending the request
      */
-    async apiGithubActionsJobsV3PutRaw(requestParameters: ApiGithubActionsJobsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsJobV3>> {
+    async apiGithubActionsJobsV3PutRequestOpts(requestParameters: ApiGithubActionsJobsV3PutRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['githubActionsJob'] == null) {
             throw new runtime.RequiredError(
                 'githubActionsJob',
@@ -166,13 +174,22 @@ export class GithubActionsJobsApi extends runtime.BaseAPI {
 
         let urlPath = `/api/github-actions-jobs/v3`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockGithubActionsJobV3CreateToJSON(requestParameters['githubActionsJob']),
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Upsert GithubActionsJob.
+     * Upsert GithubActionsJob
+     */
+    async apiGithubActionsJobsV3PutRaw(requestParameters: ApiGithubActionsJobsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsJobV3>> {
+        const requestOptions = await this.apiGithubActionsJobsV3PutRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockGithubActionsJobV3FromJSON(jsonValue));
     }
@@ -187,10 +204,9 @@ export class GithubActionsJobsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an individual GithubActionsJob.
-     * Get an individual GithubActionsJob
+     * Creates request options for apiGithubActionsJobsV3SelectorGet without sending the request
      */
-    async apiGithubActionsJobsV3SelectorGetRaw(requestParameters: ApiGithubActionsJobsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsJobV3>> {
+    async apiGithubActionsJobsV3SelectorGetRequestOpts(requestParameters: ApiGithubActionsJobsV3SelectorGetRequest): Promise<runtime.RequestOpts> {
         if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
@@ -204,14 +220,23 @@ export class GithubActionsJobsApi extends runtime.BaseAPI {
 
 
         let urlPath = `/api/github-actions-jobs/v3/{selector}`;
-        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+        urlPath = urlPath.replace('{selector}', encodeURIComponent(String(requestParameters['selector'])));
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get an individual GithubActionsJob.
+     * Get an individual GithubActionsJob
+     */
+    async apiGithubActionsJobsV3SelectorGetRaw(requestParameters: ApiGithubActionsJobsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsJobV3>> {
+        const requestOptions = await this.apiGithubActionsJobsV3SelectorGetRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockGithubActionsJobV3FromJSON(jsonValue));
     }

@@ -39,7 +39,7 @@ export interface SherlockServiceAlertV3Create {
     onEnvironment?: string;
     /**
      * 
-     * @type {string}
+     * @type {SherlockServiceAlertV3CreateSeverityEnum}
      * @memberof SherlockServiceAlertV3Create
      */
     severity?: SherlockServiceAlertV3CreateSeverityEnum;

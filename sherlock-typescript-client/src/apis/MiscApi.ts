@@ -12,21 +12,22 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  MiscConnectionCheckResponse,
-  MiscStatusResponse,
-  MiscVersionResponse,
-} from '../models/index';
 import {
+    type MiscConnectionCheckResponse,
     MiscConnectionCheckResponseFromJSON,
     MiscConnectionCheckResponseToJSON,
+} from '../models/MiscConnectionCheckResponse';
+import {
+    type MiscStatusResponse,
     MiscStatusResponseFromJSON,
     MiscStatusResponseToJSON,
+} from '../models/MiscStatusResponse';
+import {
+    type MiscVersionResponse,
     MiscVersionResponseFromJSON,
     MiscVersionResponseToJSON,
-} from '../models/index';
+} from '../models/MiscVersionResponse';
 
 /**
  * 
@@ -34,10 +35,9 @@ import {
 export class MiscApi extends runtime.BaseAPI {
 
     /**
-     * Get a static response from Sherlock to verify connection through proxies like IAP.
-     * Test the client\'s connection to Sherlock
+     * Creates request options for connectionCheckGet without sending the request
      */
-    async connectionCheckGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MiscConnectionCheckResponse>> {
+    async connectionCheckGetRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -45,12 +45,21 @@ export class MiscApi extends runtime.BaseAPI {
 
         let urlPath = `/connection-check`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get a static response from Sherlock to verify connection through proxies like IAP.
+     * Test the client\'s connection to Sherlock
+     */
+    async connectionCheckGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MiscConnectionCheckResponse>> {
+        const requestOptions = await this.connectionCheckGetRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MiscConnectionCheckResponseFromJSON(jsonValue));
     }
@@ -65,10 +74,9 @@ export class MiscApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get Sherlock\'s current status. Right now, this endpoint always returned OK (if the server is online). This endpoint is acceptable to use for a readiness check.
-     * Get Sherlock\'s current status
+     * Creates request options for statusGet without sending the request
      */
-    async statusGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MiscStatusResponse>> {
+    async statusGetRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -76,12 +84,21 @@ export class MiscApi extends runtime.BaseAPI {
 
         let urlPath = `/status`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get Sherlock\'s current status. Right now, this endpoint always returned OK (if the server is online). This endpoint is acceptable to use for a readiness check.
+     * Get Sherlock\'s current status
+     */
+    async statusGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MiscStatusResponse>> {
+        const requestOptions = await this.statusGetRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MiscStatusResponseFromJSON(jsonValue));
     }
@@ -96,10 +113,9 @@ export class MiscApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get the build version of this Sherlock instance.
-     * Get Sherlock\'s own current version
+     * Creates request options for versionGet without sending the request
      */
-    async versionGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MiscVersionResponse>> {
+    async versionGetRequestOpts(): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -107,12 +123,21 @@ export class MiscApi extends runtime.BaseAPI {
 
         let urlPath = `/version`;
 
-        const response = await this.request({
+        return {
             path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-        }, initOverrides);
+        };
+    }
+
+    /**
+     * Get the build version of this Sherlock instance.
+     * Get Sherlock\'s own current version
+     */
+    async versionGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MiscVersionResponse>> {
+        const requestOptions = await this.versionGetRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => MiscVersionResponseFromJSON(jsonValue));
     }
