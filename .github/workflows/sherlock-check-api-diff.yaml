@@ -44,12 +44,16 @@ jobs:
         working-directory: head
         run: make generate-swagger
 
-        # This runs online, but if we hit issues with it, we can run it offline
-        # swaggerexpert/swagger-editor-validate
+      - name: Start Swagger Editor
+        run: |
+          docker run -d -p 8080:8080 --name swagger-editor swaggerapi/swagger-editor
+          until curl -sf http://localhost:8080 > /dev/null; do sleep 1; done
+
       - name: Validate Swagger source
         uses: swaggerexpert/swagger-editor-validate@v1
         with:
           definition-file: head/sherlock/docs/swagger.yaml
+          swagger-editor-url: http://localhost:8080
 
       - name: Create output directory
         if: ${{ github.actor != 'dependabot[bot]' }}
