@@ -47,7 +47,7 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
     id = 56 # int |  (optional)
     location = 'us-central1-a' # str |  (optional) (default to 'us-central1-a')
     name = 'name_example' # str | Required when creating (optional)
-    provider = google # str |  (optional) (default to google)
+    provider = 'google' # str |  (optional) (default to 'google')
     required_role = 'required_role_example' # str | If present, requires membership in the given role for mutations. Set to an empty string to clear. (optional)
     requires_suitability = True # bool |  (optional)
     updated_at = '2013-10-20T19:20:30+01:00' # datetime |  (optional)
@@ -79,7 +79,7 @@ Name | Type | Description  | Notes
  **id** | **int**|  | [optional] 
  **location** | **str**|  | [optional] [default to &#39;us-central1-a&#39;]
  **name** | **str**| Required when creating | [optional] 
- **provider** | **str**|  | [optional] [default to google]
+ **provider** | **str**|  | [optional] [default to &#39;google&#39;]
  **required_role** | **str**| If present, requires membership in the given role for mutations. Set to an empty string to clear. | [optional] 
  **requires_suitability** | **bool**|  | [optional] 
  **updated_at** | **datetime**|  | [optional] 

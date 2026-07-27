@@ -125,7 +125,7 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
     created_at = '2013-10-20T19:20:30+01:00' # datetime |  (optional)
     github_actions_default_ref = 'github_actions_default_ref_example' # str |  (optional)
     github_actions_owner = 'github_actions_owner_example' # str |  (optional)
-    github_actions_ref_behavior = always-use-default-ref # str | This field determines what git ref the workflow will be run on. The default of always-use-default-ref always uses the default ref; use-app-version-as-ref will use the app version (when available) as the ref, useful when versions are always commit hashes or tags; use-app-version-commit-as-ref will use the app version's commit (when available) as the ref, useful when the repo is configured to fully report app versions to Sherlock. (optional) (default to always-use-default-ref)
+    github_actions_ref_behavior = 'always-use-default-ref' # str | This field determines what git ref the workflow will be run on. The default of always-use-default-ref always uses the default ref; use-app-version-as-ref will use the app version (when available) as the ref, useful when versions are always commit hashes or tags; use-app-version-commit-as-ref will use the app version's commit (when available) as the ref, useful when the repo is configured to fully report app versions to Sherlock. (optional) (default to 'always-use-default-ref')
     github_actions_repo = 'github_actions_repo_example' # str |  (optional)
     github_actions_workflow_path = 'github_actions_workflow_path_example' # str |  (optional)
     id = 56 # int |  (optional)
@@ -156,7 +156,7 @@ Name | Type | Description  | Notes
  **created_at** | **datetime**|  | [optional] 
  **github_actions_default_ref** | **str**|  | [optional] 
  **github_actions_owner** | **str**|  | [optional] 
- **github_actions_ref_behavior** | **str**| This field determines what git ref the workflow will be run on. The default of always-use-default-ref always uses the default ref; use-app-version-as-ref will use the app version (when available) as the ref, useful when versions are always commit hashes or tags; use-app-version-commit-as-ref will use the app version&#39;s commit (when available) as the ref, useful when the repo is configured to fully report app versions to Sherlock. | [optional] [default to always-use-default-ref]
+ **github_actions_ref_behavior** | **str**| This field determines what git ref the workflow will be run on. The default of always-use-default-ref always uses the default ref; use-app-version-as-ref will use the app version (when available) as the ref, useful when versions are always commit hashes or tags; use-app-version-commit-as-ref will use the app version&#39;s commit (when available) as the ref, useful when the repo is configured to fully report app versions to Sherlock. | [optional] [default to &#39;always-use-default-ref&#39;]
  **github_actions_repo** | **str**|  | [optional] 
  **github_actions_workflow_path** | **str**|  | [optional] 
  **id** | **int**|  | [optional] 
