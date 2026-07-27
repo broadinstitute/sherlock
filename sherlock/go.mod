@@ -44,7 +44,7 @@ require (
 	go.opencensus.io v0.24.0
 	golang.org/x/crypto v0.52.0
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
-	golang.org/x/net v0.54.0
+	golang.org/x/net v0.55.0
 	golang.org/x/oauth2 v0.34.0
 	golang.org/x/text v0.37.0
 	google.golang.org/api v0.254.0
