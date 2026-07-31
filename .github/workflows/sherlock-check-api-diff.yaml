@@ -75,7 +75,7 @@ jobs:
 
       - name: Comment diff
         if: ${{ github.actor != 'dependabot[bot]' }}
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: api-diff
           path: ${{ (steps.check-diff.outputs.present == 'true' && 'output/diff.md') || '' }}
