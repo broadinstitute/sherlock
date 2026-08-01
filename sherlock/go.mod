@@ -3,7 +3,7 @@ module github.com/broadinstitute/sherlock/sherlock
 go 1.25.0
 
 require (
-	cloud.google.com/go/bigquery v1.70.0
+	cloud.google.com/go/bigquery v1.72.0
 	cloud.google.com/go/cloudsqlconn v1.19.0
 	cloud.google.com/go/iam v1.5.3
 	cloud.google.com/go/kms v1.23.2
