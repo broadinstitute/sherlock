@@ -37,7 +37,6 @@ require (
 	github.com/sethvargo/go-password v0.3.1
 	github.com/slack-go/slack v0.17.3
 	github.com/stretchr/testify v1.11.1
-	github.com/swaggo/files/v2 v2.0.2
 	github.com/swaggo/gin-swagger v1.6.1
 	github.com/swaggo/swag v1.16.6
 	github.com/zitadel/oidc/v3 v3.39.0
