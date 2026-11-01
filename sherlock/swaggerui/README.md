@@ -7,6 +7,10 @@ newer release.
 - Version: **5.34.1** (bundles DOMPurify 3.4.17)
 - Source: `https://registry.npmjs.org/swagger-ui-dist/-/swagger-ui-dist-5.34.1.tgz`
 - npm integrity: `sha512-VSr8fXfI93obYaQicLJbLUKGRxDojj/SfRJDDLCioGTUBj4BK/Nj4eE9jCeCAnJxVLi7iS+08PbiZLyrQKBkJQ==`
+- Provenance: verified with `npm audit signatures` (registry signatures and the SLSA provenance attestation). The
+  attestation's signed sha512 digest matches this tarball, and it records the build as a GitHub-hosted Actions run
+  of `.github/workflows/release-swagger-ui-dist.yml` in `swagger-api/swagger-ui` at commit
+  `d3296954a6b813898d298815ac3e68daa1cf7408`. The files were not rebuilt from source.
 
 Only the files that Sherlock serves are vendored. `swaggo/gin-swagger` generates `index.html`, `index.css`,
 `swagger-initializer.js` and `doc.json` itself, so those are not here. The source maps and the ES bundles are
