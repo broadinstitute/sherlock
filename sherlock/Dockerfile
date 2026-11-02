@@ -11,7 +11,6 @@ ARG GO_VERSION='1.25'
 # We do this swap because there aren't ARM-based blessed images (so for native local
 # dev, we need to use a non-blessed image). The key is that whatever image is set
 # here needs to be non-root and CBL-Mariner 2.0 with OpenSSL available.
-# 2026-11-02: this comment forces a full rebuild on the latest blessed base image (CTM-739).
 ARG RUNTIME_BASE_IMAGE='mcr.microsoft.com/cbl-mariner/distroless/base:2.0-nonroot'
 
 # https://github.com/microsoft/go-images/tree/microsoft/main
