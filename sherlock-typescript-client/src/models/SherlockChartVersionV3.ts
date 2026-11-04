@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 import type { SherlockUserV3 } from './SherlockUserV3';
 import {
     SherlockUserV3FromJSON,
@@ -43,74 +43,50 @@ import {
 export interface SherlockChartVersionV3 {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartVersionV3
      */
     authoredBy?: string;
     /**
      * 
-     * @type {SherlockUserV3}
-     * @memberof SherlockChartVersionV3
      */
     authoredByInfo?: SherlockUserV3;
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockChartVersionV3
      */
     chart?: string;
     /**
      * 
-     * @type {SherlockChartV3}
-     * @memberof SherlockChartVersionV3
      */
     chartInfo?: SherlockChartV3;
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockChartVersionV3
      */
     chartVersion?: string;
     /**
      * 
-     * @type {SherlockCiIdentifierV3}
-     * @memberof SherlockChartVersionV3
      */
     ciIdentifier?: SherlockCiIdentifierV3;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockChartVersionV3
      */
     createdAt?: Date;
     /**
      * Generally the Git commit message
-     * @type {string}
-     * @memberof SherlockChartVersionV3
      */
     description?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockChartVersionV3
      */
     id?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartVersionV3
      */
     parentChartVersion?: string;
     /**
      * 
-     * @type {object}
-     * @memberof SherlockChartVersionV3
      */
     parentChartVersionInfo?: object;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockChartVersionV3
      */
     updatedAt?: Date;
 }
@@ -138,12 +114,12 @@ export function SherlockChartVersionV3FromJSONTyped(json: any, ignoreDiscriminat
         'chartInfo': json['chartInfo'] == null ? undefined : SherlockChartV3FromJSON(json['chartInfo']),
         'chartVersion': json['chartVersion'] == null ? undefined : json['chartVersion'],
         'ciIdentifier': json['ciIdentifier'] == null ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'description': json['description'] == null ? undefined : json['description'],
         'id': json['id'] == null ? undefined : json['id'],
         'parentChartVersion': json['parentChartVersion'] == null ? undefined : json['parentChartVersion'],
         'parentChartVersionInfo': json['parentChartVersionInfo'] == null ? undefined : json['parentChartVersionInfo'],
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -164,12 +140,12 @@ export function SherlockChartVersionV3ToJSONTyped(value?: SherlockChartVersionV3
         'chartInfo': SherlockChartV3ToJSON(value['chartInfo']),
         'chartVersion': value['chartVersion'],
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'description': value['description'],
         'id': value['id'],
         'parentChartVersion': value['parentChartVersion'],
         'parentChartVersionInfo': value['parentChartVersionInfo'],
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

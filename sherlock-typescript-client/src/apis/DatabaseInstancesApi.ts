@@ -35,36 +35,84 @@ import {
 } from '../models/SherlockDatabaseInstanceV3Edit';
 
 export interface ApiDatabaseInstancesV3GetRequest {
+    /**
+     * Required when creating
+     */
     chartRelease?: string;
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * When creating, defaults to the chart name
+     */
     defaultDatabase?: string;
+    /**
+     * Required if platform is 'google'
+     */
     googleProject?: string;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * Required if platform is 'google' or 'azure'
+     */
     instanceName?: string;
+    /**
+     * 'google', 'azure', or default 'kubernetes'
+     */
     platform?: string;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * Control how many DatabaseInstances are returned (default 0, meaning all)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned DatabaseInstances (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiDatabaseInstancesV3PostRequest {
+    /**
+     * The DatabaseInstance to create
+     */
     databaseInstance: SherlockDatabaseInstanceV3Create;
 }
 
 export interface ApiDatabaseInstancesV3PutRequest {
+    /**
+     * The DatabaseInstance to create or edit. Defaults will only be set if creating.
+     */
     databaseInstance: SherlockDatabaseInstanceV3Create;
 }
 
 export interface ApiDatabaseInstancesV3SelectorDeleteRequest {
+    /**
+     * The selector of the DatabaseInstance, which can be either a numeric ID or 'chart-release/' followed by a chart release selector.
+     */
     selector: string;
 }
 
 export interface ApiDatabaseInstancesV3SelectorGetRequest {
+    /**
+     * The selector of the DatabaseInstance, which can be either a numeric ID or 'chart-release/' followed by a chart release selector.
+     */
     selector: string;
 }
 
 export interface ApiDatabaseInstancesV3SelectorPatchRequest {
+    /**
+     * The selector of the DatabaseInstance, which can be either a numeric ID or 'chart-release/' followed by a chart release selector.
+     */
     selector: string;
+    /**
+     * The edits to make to the DatabaseInstance
+     */
     databaseInstance: SherlockDatabaseInstanceV3Edit;
 }
 
@@ -84,7 +132,7 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['defaultDatabase'] != null) {
@@ -108,7 +156,7 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['limit'] != null) {

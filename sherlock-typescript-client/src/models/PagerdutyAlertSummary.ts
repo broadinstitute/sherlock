@@ -21,14 +21,10 @@ import { mapValues } from '../runtime';
 export interface PagerdutyAlertSummary {
     /**
      * 
-     * @type {string}
-     * @memberof PagerdutyAlertSummary
      */
     sourceLink?: string;
     /**
      * 
-     * @type {string}
-     * @memberof PagerdutyAlertSummary
      */
     summary?: string;
 }

@@ -30,36 +30,112 @@ import {
 } from '../models/SherlockCiRunV3Upsert';
 
 export interface ApiCiRunsV3GetRequest {
+    /**
+     * 
+     */
     argoWorkflowsName?: string;
+    /**
+     * 
+     */
     argoWorkflowsNamespace?: string;
+    /**
+     * 
+     */
     argoWorkflowsTemplate?: string;
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * 
+     */
     githubActionsAttemptNumber?: number;
+    /**
+     * 
+     */
     githubActionsOwner?: string;
+    /**
+     * 
+     */
     githubActionsRepo?: string;
+    /**
+     * 
+     */
     githubActionsRunID?: number;
+    /**
+     * 
+     */
     githubActionsWorkflowPath?: string;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * Slack channels to notify if this CiRun fails. This field is always appended to when mutated.
+     */
     notifySlackChannelsUponFailure?: Array<string>;
+    /**
+     * Slack channels to notify if this CiRun is retried. This field is always appended to when mutated. It will de-dupe with the other notify fields.
+     */
     notifySlackChannelsUponRetry?: Array<string>;
+    /**
+     * Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.
+     */
     notifySlackChannelsUponSuccess?: Array<string>;
+    /**
+     * Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).
+     * An empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).
+     */
     notifySlackCustomIcon?: string;
+    /**
+     * 
+     */
     platform?: string;
+    /**
+     * Available only when querying a CiRun via a CiIdentifier, indicates the status of the run for that resource
+     */
     resourceStatus?: string;
+    /**
+     * 
+     */
     startedAt?: string;
+    /**
+     * 
+     */
     status?: string;
+    /**
+     * 
+     */
     terminalAt?: string;
+    /**
+     * 
+     */
     terminationHooksDispatchedAt?: Date;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * Control how many CiRuns are returned (default 100)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned CiRuns (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiCiRunsV3PutRequest {
+    /**
+     * The CiRun to upsert
+     */
     ciRun: SherlockCiRunV3Upsert;
 }
 
 export interface ApiCiRunsV3SelectorGetRequest {
+    /**
+     * The selector of the CiRun, which can be either its numeric ID, 'github-actions/{owner}/{repo}/{run ID}/{attempt}', or 'argo-workflows/{namespace}/{name}'
+     */
     selector: string;
 }
 
@@ -126,7 +202,7 @@ export class CiRunsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['githubActionsAttemptNumber'] != null) {
@@ -190,11 +266,11 @@ export class CiRunsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['terminationHooksDispatchedAt'] != null) {
-            queryParameters['terminationHooksDispatchedAt'] = (requestParameters['terminationHooksDispatchedAt'] as any).toISOString();
+            queryParameters['terminationHooksDispatchedAt'] = runtime.serializeDateTime(requestParameters['terminationHooksDispatchedAt'] as any);
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['limit'] != null) {

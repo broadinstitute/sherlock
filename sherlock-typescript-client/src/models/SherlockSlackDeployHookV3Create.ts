@@ -21,38 +21,26 @@ import { mapValues } from '../runtime';
 export interface SherlockSlackDeployHookV3Create {
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockSlackDeployHookV3Create
      */
     mentionPeople?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockSlackDeployHookV3Create
      */
     onChartRelease?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockSlackDeployHookV3Create
      */
     onEnvironment?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockSlackDeployHookV3Create
      */
     onFailure?: boolean;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockSlackDeployHookV3Create
      */
     onSuccess?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockSlackDeployHookV3Create
      */
     slackChannel?: string;
 }

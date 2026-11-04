@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface SherlockSlackDeployHookTestRunResponse {
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockSlackDeployHookTestRunResponse
      */
     ok?: boolean;
 }

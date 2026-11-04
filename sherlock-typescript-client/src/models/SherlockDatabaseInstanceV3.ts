@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 import type { SherlockChartReleaseV3 } from './SherlockChartReleaseV3';
 import {
     SherlockChartReleaseV3FromJSON,
@@ -29,56 +29,38 @@ import {
 export interface SherlockDatabaseInstanceV3 {
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockDatabaseInstanceV3
      */
     chartRelease?: string;
     /**
      * 
-     * @type {SherlockChartReleaseV3}
-     * @memberof SherlockDatabaseInstanceV3
      */
     chartReleaseInfo?: SherlockChartReleaseV3;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockDatabaseInstanceV3
      */
     createdAt?: Date;
     /**
      * When creating, defaults to the chart name
-     * @type {string}
-     * @memberof SherlockDatabaseInstanceV3
      */
     defaultDatabase?: string;
     /**
      * Required if platform is 'google'
-     * @type {string}
-     * @memberof SherlockDatabaseInstanceV3
      */
     googleProject?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockDatabaseInstanceV3
      */
     id?: number;
     /**
      * Required if platform is 'google' or 'azure'
-     * @type {string}
-     * @memberof SherlockDatabaseInstanceV3
      */
     instanceName?: string;
     /**
      * 'google', 'azure', or default 'kubernetes'
-     * @type {string}
-     * @memberof SherlockDatabaseInstanceV3
      */
     platform?: string;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockDatabaseInstanceV3
      */
     updatedAt?: Date;
 }
@@ -102,13 +84,13 @@ export function SherlockDatabaseInstanceV3FromJSONTyped(json: any, ignoreDiscrim
         
         'chartRelease': json['chartRelease'] == null ? undefined : json['chartRelease'],
         'chartReleaseInfo': json['chartReleaseInfo'] == null ? undefined : SherlockChartReleaseV3FromJSON(json['chartReleaseInfo']),
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'defaultDatabase': json['defaultDatabase'] == null ? undefined : json['defaultDatabase'],
         'googleProject': json['googleProject'] == null ? undefined : json['googleProject'],
         'id': json['id'] == null ? undefined : json['id'],
         'instanceName': json['instanceName'] == null ? undefined : json['instanceName'],
         'platform': json['platform'] == null ? undefined : json['platform'],
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -125,13 +107,13 @@ export function SherlockDatabaseInstanceV3ToJSONTyped(value?: SherlockDatabaseIn
         
         'chartRelease': value['chartRelease'],
         'chartReleaseInfo': SherlockChartReleaseV3ToJSON(value['chartReleaseInfo']),
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'defaultDatabase': value['defaultDatabase'],
         'googleProject': value['googleProject'],
         'id': value['id'],
         'instanceName': value['instanceName'],
         'platform': value['platform'],
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

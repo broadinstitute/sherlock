@@ -21,62 +21,42 @@ import { mapValues } from '../runtime';
 export interface SherlockClusterV3Create {
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockClusterV3Create
      */
     address?: string;
     /**
      * Required when creating if provider is 'azure'
-     * @type {string}
-     * @memberof SherlockClusterV3Create
      */
     azureSubscription?: string;
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockClusterV3Create
      */
     base?: string;
     /**
      * Required when creating if provider is 'google'
-     * @type {string}
-     * @memberof SherlockClusterV3Create
      */
     googleProject?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockClusterV3Create
      */
     helmfileRef?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockClusterV3Create
      */
     location?: string;
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockClusterV3Create
      */
     name?: string;
     /**
      * 
-     * @type {SherlockClusterV3CreateProviderEnum}
-     * @memberof SherlockClusterV3Create
      */
     provider?: SherlockClusterV3CreateProviderEnum;
     /**
      * If present, requires membership in the given role for mutations. Set to an empty string to clear.
-     * @type {string}
-     * @memberof SherlockClusterV3Create
      */
     requiredRole?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockClusterV3Create
      */
     requiresSuitability?: boolean;
 }
@@ -87,7 +67,7 @@ export interface SherlockClusterV3Create {
  */
 export const SherlockClusterV3CreateProviderEnum = {
     Google: 'google',
-    Azure: 'azure'
+    Azure: 'azure',
 } as const;
 export type SherlockClusterV3CreateProviderEnum = typeof SherlockClusterV3CreateProviderEnum[keyof typeof SherlockClusterV3CreateProviderEnum];
 

@@ -21,32 +21,22 @@ import { mapValues } from '../runtime';
 export interface SherlockServiceAlertV3Create {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3Create
      */
     link?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3Create
      */
     message?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3Create
      */
     onEnvironment?: string;
     /**
      * 
-     * @type {SherlockServiceAlertV3CreateSeverityEnum}
-     * @memberof SherlockServiceAlertV3Create
      */
     severity?: SherlockServiceAlertV3CreateSeverityEnum;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3Create
      */
     title?: string;
 }
@@ -58,7 +48,7 @@ export interface SherlockServiceAlertV3Create {
 export const SherlockServiceAlertV3CreateSeverityEnum = {
     Blocker: 'blocker',
     Critical: ' critical',
-    Minor: ' minor'
+    Minor: ' minor',
 } as const;
 export type SherlockServiceAlertV3CreateSeverityEnum = typeof SherlockServiceAlertV3CreateSeverityEnum[keyof typeof SherlockServiceAlertV3CreateSeverityEnum];
 

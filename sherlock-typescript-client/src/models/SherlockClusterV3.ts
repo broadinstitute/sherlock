@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 import type { SherlockRoleV3 } from './SherlockRoleV3';
 import {
     SherlockRoleV3FromJSON,
@@ -36,92 +36,62 @@ import {
 export interface SherlockClusterV3 {
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockClusterV3
      */
     address?: string;
     /**
      * Required when creating if provider is 'azure'
-     * @type {string}
-     * @memberof SherlockClusterV3
      */
     azureSubscription?: string;
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockClusterV3
      */
     base?: string;
     /**
      * 
-     * @type {SherlockCiIdentifierV3}
-     * @memberof SherlockClusterV3
      */
     ciIdentifier?: SherlockCiIdentifierV3;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockClusterV3
      */
     createdAt?: Date;
     /**
      * Required when creating if provider is 'google'
-     * @type {string}
-     * @memberof SherlockClusterV3
      */
     googleProject?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockClusterV3
      */
     helmfileRef?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockClusterV3
      */
     id?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockClusterV3
      */
     location?: string;
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockClusterV3
      */
     name?: string;
     /**
      * 
-     * @type {SherlockClusterV3ProviderEnum}
-     * @memberof SherlockClusterV3
      */
     provider?: SherlockClusterV3ProviderEnum;
     /**
      * If present, requires membership in the given role for mutations. Set to an empty string to clear.
-     * @type {string}
-     * @memberof SherlockClusterV3
      */
     requiredRole?: string;
     /**
      * 
-     * @type {SherlockRoleV3}
-     * @memberof SherlockClusterV3
      */
     requiredRoleInfo?: SherlockRoleV3;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockClusterV3
      */
     requiresSuitability?: boolean;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockClusterV3
      */
     updatedAt?: Date;
 }
@@ -132,7 +102,7 @@ export interface SherlockClusterV3 {
  */
 export const SherlockClusterV3ProviderEnum = {
     Google: 'google',
-    Azure: 'azure'
+    Azure: 'azure',
 } as const;
 export type SherlockClusterV3ProviderEnum = typeof SherlockClusterV3ProviderEnum[keyof typeof SherlockClusterV3ProviderEnum];
 
@@ -158,7 +128,7 @@ export function SherlockClusterV3FromJSONTyped(json: any, ignoreDiscriminator: b
         'azureSubscription': json['azureSubscription'] == null ? undefined : json['azureSubscription'],
         'base': json['base'] == null ? undefined : json['base'],
         'ciIdentifier': json['ciIdentifier'] == null ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'googleProject': json['googleProject'] == null ? undefined : json['googleProject'],
         'helmfileRef': json['helmfileRef'] == null ? undefined : json['helmfileRef'],
         'id': json['id'] == null ? undefined : json['id'],
@@ -168,7 +138,7 @@ export function SherlockClusterV3FromJSONTyped(json: any, ignoreDiscriminator: b
         'requiredRole': json['requiredRole'] == null ? undefined : json['requiredRole'],
         'requiredRoleInfo': json['requiredRoleInfo'] == null ? undefined : SherlockRoleV3FromJSON(json['requiredRoleInfo']),
         'requiresSuitability': json['requiresSuitability'] == null ? undefined : json['requiresSuitability'],
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -187,7 +157,7 @@ export function SherlockClusterV3ToJSONTyped(value?: SherlockClusterV3 | null, i
         'azureSubscription': value['azureSubscription'],
         'base': value['base'],
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'googleProject': value['googleProject'],
         'helmfileRef': value['helmfileRef'],
         'id': value['id'],
@@ -197,7 +167,7 @@ export function SherlockClusterV3ToJSONTyped(value?: SherlockClusterV3 | null, i
         'requiredRole': value['requiredRole'],
         'requiredRoleInfo': SherlockRoleV3ToJSON(value['requiredRoleInfo']),
         'requiresSuitability': value['requiresSuitability'],
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

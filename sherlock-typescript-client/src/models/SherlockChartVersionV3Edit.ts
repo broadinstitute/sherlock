@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface SherlockChartVersionV3Edit {
     /**
      * Generally the Git commit message
-     * @type {string}
-     * @memberof SherlockChartVersionV3Edit
      */
     description?: string;
 }

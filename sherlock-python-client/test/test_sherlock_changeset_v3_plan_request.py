@@ -37,7 +37,7 @@ class TestSherlockChangesetV3PlanRequest(unittest.TestCase):
         if include_optional:
             return SherlockChangesetV3PlanRequest(
                 chart_releases = [
-                    sherlock_python_client.models.sherlock/changeset_v3_plan_request_chart_release_entry.sherlock.ChangesetV3PlanRequestChartReleaseEntry(
+                    sherlock_python_client.models.sherlock_changeset_v3_plan_request_chart_release_entry.SherlockChangesetV3PlanRequestChartReleaseEntry(
                         chart_release = '', 
                         follow_versions_from_other_chart_release = '', 
                         to_app_version_branch = '', 
@@ -53,7 +53,7 @@ class TestSherlockChangesetV3PlanRequest(unittest.TestCase):
                         use_exact_versions_from_other_chart_release = '', )
                     ],
                 environments = [
-                    sherlock_python_client.models.sherlock/changeset_v3_plan_request_environment_entry.sherlock.ChangesetV3PlanRequestEnvironmentEntry(
+                    sherlock_python_client.models.sherlock_changeset_v3_plan_request_environment_entry.SherlockChangesetV3PlanRequestEnvironmentEntry(
                         environment = '', 
                         exclude_charts = [
                             ''

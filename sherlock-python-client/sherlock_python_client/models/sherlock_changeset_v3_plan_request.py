@@ -81,15 +81,13 @@ class SherlockChangesetV3PlanRequest(BaseModel):
         _items = []
         if self.chart_releases:
             for _item_chart_releases in self.chart_releases:
-                if _item_chart_releases:
-                    _items.append(_item_chart_releases.to_dict())
+                _items.append(_item_chart_releases.to_dict() if _item_chart_releases is not None else None)
             _dict['chartReleases'] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in environments (list)
         _items = []
         if self.environments:
             for _item_environments in self.environments:
-                if _item_environments:
-                    _items.append(_item_environments.to_dict())
+                _items.append(_item_environments.to_dict() if _item_environments is not None else None)
             _dict['environments'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:

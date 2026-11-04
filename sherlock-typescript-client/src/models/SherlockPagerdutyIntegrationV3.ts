@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 /**
  * 
  * @export
@@ -21,38 +21,26 @@ import { mapValues } from '../runtime';
 export interface SherlockPagerdutyIntegrationV3 {
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockPagerdutyIntegrationV3
      */
     createdAt?: Date;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockPagerdutyIntegrationV3
      */
     id?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockPagerdutyIntegrationV3
      */
     name?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockPagerdutyIntegrationV3
      */
     pagerdutyID?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockPagerdutyIntegrationV3
      */
     type?: string;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockPagerdutyIntegrationV3
      */
     updatedAt?: Date;
 }
@@ -74,12 +62,12 @@ export function SherlockPagerdutyIntegrationV3FromJSONTyped(json: any, ignoreDis
     }
     return {
         
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'id': json['id'] == null ? undefined : json['id'],
         'name': json['name'] == null ? undefined : json['name'],
         'pagerdutyID': json['pagerdutyID'] == null ? undefined : json['pagerdutyID'],
         'type': json['type'] == null ? undefined : json['type'],
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -94,12 +82,12 @@ export function SherlockPagerdutyIntegrationV3ToJSONTyped(value?: SherlockPagerd
 
     return {
         
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'id': value['id'],
         'name': value['name'],
         'pagerdutyID': value['pagerdutyID'],
         'type': value['type'],
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

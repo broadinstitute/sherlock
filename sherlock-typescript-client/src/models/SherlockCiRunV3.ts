@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 import type { SherlockCiIdentifierV3 } from './SherlockCiIdentifierV3';
 import {
     SherlockCiIdentifierV3FromJSON,
@@ -29,135 +29,91 @@ import {
 export interface SherlockCiRunV3 {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3
      */
     argoWorkflowsName?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3
      */
     argoWorkflowsNamespace?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3
      */
     argoWorkflowsTemplate?: string;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockCiRunV3
      */
     createdAt?: Date;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockCiRunV3
      */
     githubActionsAttemptNumber?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3
      */
     githubActionsOwner?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3
      */
     githubActionsRepo?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockCiRunV3
      */
     githubActionsRunID?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3
      */
     githubActionsWorkflowPath?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockCiRunV3
      */
     id?: number;
     /**
      * Slack channels to notify if this CiRun fails. This field is always appended to when mutated.
-     * @type {Array<string>}
-     * @memberof SherlockCiRunV3
      */
     notifySlackChannelsUponFailure?: Array<string>;
     /**
      * Slack channels to notify if this CiRun is retried. This field is always appended to when mutated. It will de-dupe with the other notify fields.
-     * @type {Array<string>}
-     * @memberof SherlockCiRunV3
      */
     notifySlackChannelsUponRetry?: Array<string>;
     /**
      * Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.
-     * @type {Array<string>}
-     * @memberof SherlockCiRunV3
      */
     notifySlackChannelsUponSuccess?: Array<string>;
     /**
      * Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).
      * An empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).
-     * @type {string}
-     * @memberof SherlockCiRunV3
      */
     notifySlackCustomIcon?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3
      */
     platform?: string;
     /**
      * 
-     * @type {Array<SherlockCiIdentifierV3>}
-     * @memberof SherlockCiRunV3
      */
     relatedResources?: Array<SherlockCiIdentifierV3>;
     /**
      * Available only when querying a CiRun via a CiIdentifier, indicates the status of the run for that resource
-     * @type {string}
-     * @memberof SherlockCiRunV3
      */
     resourceStatus?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3
      */
     startedAt?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3
      */
     status?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3
      */
     terminalAt?: string;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockCiRunV3
      */
     terminationHooksDispatchedAt?: Date;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockCiRunV3
      */
     updatedAt?: Date;
 }
@@ -182,7 +138,7 @@ export function SherlockCiRunV3FromJSONTyped(json: any, ignoreDiscriminator: boo
         'argoWorkflowsName': json['argoWorkflowsName'] == null ? undefined : json['argoWorkflowsName'],
         'argoWorkflowsNamespace': json['argoWorkflowsNamespace'] == null ? undefined : json['argoWorkflowsNamespace'],
         'argoWorkflowsTemplate': json['argoWorkflowsTemplate'] == null ? undefined : json['argoWorkflowsTemplate'],
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'githubActionsAttemptNumber': json['githubActionsAttemptNumber'] == null ? undefined : json['githubActionsAttemptNumber'],
         'githubActionsOwner': json['githubActionsOwner'] == null ? undefined : json['githubActionsOwner'],
         'githubActionsRepo': json['githubActionsRepo'] == null ? undefined : json['githubActionsRepo'],
@@ -199,8 +155,8 @@ export function SherlockCiRunV3FromJSONTyped(json: any, ignoreDiscriminator: boo
         'startedAt': json['startedAt'] == null ? undefined : json['startedAt'],
         'status': json['status'] == null ? undefined : json['status'],
         'terminalAt': json['terminalAt'] == null ? undefined : json['terminalAt'],
-        'terminationHooksDispatchedAt': json['terminationHooksDispatchedAt'] == null ? undefined : (new Date(json['terminationHooksDispatchedAt'])),
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'terminationHooksDispatchedAt': json['terminationHooksDispatchedAt'] == null ? undefined : (parseDateTime(json['terminationHooksDispatchedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -218,7 +174,7 @@ export function SherlockCiRunV3ToJSONTyped(value?: SherlockCiRunV3 | null, ignor
         'argoWorkflowsName': value['argoWorkflowsName'],
         'argoWorkflowsNamespace': value['argoWorkflowsNamespace'],
         'argoWorkflowsTemplate': value['argoWorkflowsTemplate'],
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'githubActionsAttemptNumber': value['githubActionsAttemptNumber'],
         'githubActionsOwner': value['githubActionsOwner'],
         'githubActionsRepo': value['githubActionsRepo'],
@@ -235,8 +191,8 @@ export function SherlockCiRunV3ToJSONTyped(value?: SherlockCiRunV3 | null, ignor
         'startedAt': value['startedAt'],
         'status': value['status'],
         'terminalAt': value['terminalAt'],
-        'terminationHooksDispatchedAt': value['terminationHooksDispatchedAt'] == null ? value['terminationHooksDispatchedAt'] : value['terminationHooksDispatchedAt'].toISOString(),
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'terminationHooksDispatchedAt': value['terminationHooksDispatchedAt'] == null ? value['terminationHooksDispatchedAt'] : serializeDateTime(value['terminationHooksDispatchedAt']),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

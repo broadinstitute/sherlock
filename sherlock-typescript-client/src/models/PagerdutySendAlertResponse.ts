@@ -21,14 +21,10 @@ import { mapValues } from '../runtime';
 export interface PagerdutySendAlertResponse {
     /**
      * 
-     * @type {string}
-     * @memberof PagerdutySendAlertResponse
      */
     message?: string;
     /**
      * 
-     * @type {string}
-     * @memberof PagerdutySendAlertResponse
      */
     status?: string;
 }

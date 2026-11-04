@@ -35,38 +35,101 @@ import {
 } from '../models/SherlockChartV3Edit';
 
 export interface ApiChartsV3GetRequest {
+    /**
+     * 
+     */
     appImageGitMainBranch?: string;
+    /**
+     * 
+     */
     appImageGitRepo?: string;
+    /**
+     * Indicates if the default subdomain, protocol, and port fields are relevant for this chart
+     */
     chartExposesEndpoint?: boolean;
+    /**
+     * 
+     */
     chartRepo?: string;
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * 
+     */
     defaultPort?: number;
+    /**
+     * 
+     */
     defaultProtocol?: string;
+    /**
+     * When creating, will default to the name of the chart
+     */
     defaultSubdomain?: string;
+    /**
+     * 
+     */
     description?: string;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * Required when creating
+     */
     name?: string;
+    /**
+     * 
+     */
     pactParticipant?: boolean;
+    /**
+     * 
+     */
     playbookURL?: string;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * Control how many Charts are returned (default 0, meaning all)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned Charts (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiChartsV3PostRequest {
+    /**
+     * The Chart to create
+     */
     chart: SherlockChartV3Create;
 }
 
 export interface ApiChartsV3SelectorDeleteRequest {
+    /**
+     * The selector of the Chart, which can be either a numeric ID or the name.
+     */
     selector: string;
 }
 
 export interface ApiChartsV3SelectorGetRequest {
+    /**
+     * The selector of the Chart, which can be either a numeric ID or the name.
+     */
     selector: string;
 }
 
 export interface ApiChartsV3SelectorPatchRequest {
+    /**
+     * The selector of the Chart, which can be either a numeric ID or the name.
+     */
     selector: string;
+    /**
+     * The edits to make to the Chart
+     */
     chart: SherlockChartV3Edit;
 }
 
@@ -98,7 +161,7 @@ export class ChartsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['defaultPort'] != null) {
@@ -134,7 +197,7 @@ export class ChartsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['limit'] != null) {

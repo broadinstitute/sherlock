@@ -25,20 +25,56 @@ import {
 } from '../models/SherlockCiIdentifierV3';
 
 export interface ApiCiIdentifiersV3GetRequest {
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * 
+     */
     resourceID?: number;
+    /**
+     * Available only when querying a CiIdentifier via a CiRun, indicates the status of the run for that resource
+     */
     resourceStatus?: string;
+    /**
+     * 
+     */
     resourceType?: string;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * Control how many CiIdentifiers are returned (default 100)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned CiIdentifiers (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiCiIdentifiersV3SelectorGetRequest {
+    /**
+     * The selector of CiIdentifier, which can be referenced either by numeric ID or indirectly by '{type}/{selector...}'
+     */
     selector: string;
+    /**
+     * Control how many CiRuns are returned (default 10)
+     */
     limitCiRuns?: number;
+    /**
+     * Control the offset for the returned CiRuns (default 0)
+     */
     offsetCiRuns?: number;
+    /**
+     * Allow stub CiRuns potentially lacking fields like status or startedAt to be returned (default false)
+     */
     allowStubCiRuns?: boolean;
 }
 
@@ -54,7 +90,7 @@ export class CiIdentifiersApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['id'] != null) {
@@ -74,7 +110,7 @@ export class CiIdentifiersApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['limit'] != null) {

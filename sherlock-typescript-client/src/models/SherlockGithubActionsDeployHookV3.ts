@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 /**
  * 
  * @export
@@ -21,80 +21,54 @@ import { mapValues } from '../runtime';
 export interface SherlockGithubActionsDeployHookV3 {
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockGithubActionsDeployHookV3
      */
     createdAt?: Date;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3
      */
     githubActionsDefaultRef?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3
      */
     githubActionsOwner?: string;
     /**
      * This field determines what git ref the workflow will be run on. The default of always-use-default-ref always uses the default ref; use-app-version-as-ref will use the app version (when available) as the ref, useful when versions are always commit hashes or tags; use-app-version-commit-as-ref will use the app version's commit (when available) as the ref, useful when the repo is configured to fully report app versions to Sherlock.
-     * @type {SherlockGithubActionsDeployHookV3GithubActionsRefBehaviorEnum}
-     * @memberof SherlockGithubActionsDeployHookV3
      */
     githubActionsRefBehavior?: SherlockGithubActionsDeployHookV3GithubActionsRefBehaviorEnum;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3
      */
     githubActionsRepo?: string;
     /**
      * These workflow inputs will be passed statically as-is to GitHub's workflow dispatch API (https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event) as the `inputs` parameter object.
-     * @type {object}
-     * @memberof SherlockGithubActionsDeployHookV3
      */
     githubActionsWorkflowInputs?: object;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3
      */
     githubActionsWorkflowPath?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockGithubActionsDeployHookV3
      */
     id?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3
      */
     onChartRelease?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3
      */
     onEnvironment?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockGithubActionsDeployHookV3
      */
     onFailure?: boolean;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockGithubActionsDeployHookV3
      */
     onSuccess?: boolean;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockGithubActionsDeployHookV3
      */
     updatedAt?: Date;
 }
@@ -106,7 +80,7 @@ export interface SherlockGithubActionsDeployHookV3 {
 export const SherlockGithubActionsDeployHookV3GithubActionsRefBehaviorEnum = {
     AlwaysUseDefaultRef: 'always-use-default-ref',
     UseAppVersionAsRef: 'use-app-version-as-ref',
-    UseAppVersionCommitAsRef: 'use-app-version-commit-as-ref'
+    UseAppVersionCommitAsRef: 'use-app-version-commit-as-ref',
 } as const;
 export type SherlockGithubActionsDeployHookV3GithubActionsRefBehaviorEnum = typeof SherlockGithubActionsDeployHookV3GithubActionsRefBehaviorEnum[keyof typeof SherlockGithubActionsDeployHookV3GithubActionsRefBehaviorEnum];
 
@@ -128,7 +102,7 @@ export function SherlockGithubActionsDeployHookV3FromJSONTyped(json: any, ignore
     }
     return {
         
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'githubActionsDefaultRef': json['githubActionsDefaultRef'] == null ? undefined : json['githubActionsDefaultRef'],
         'githubActionsOwner': json['githubActionsOwner'] == null ? undefined : json['githubActionsOwner'],
         'githubActionsRefBehavior': json['githubActionsRefBehavior'] == null ? undefined : json['githubActionsRefBehavior'],
@@ -140,7 +114,7 @@ export function SherlockGithubActionsDeployHookV3FromJSONTyped(json: any, ignore
         'onEnvironment': json['onEnvironment'] == null ? undefined : json['onEnvironment'],
         'onFailure': json['onFailure'] == null ? undefined : json['onFailure'],
         'onSuccess': json['onSuccess'] == null ? undefined : json['onSuccess'],
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -155,7 +129,7 @@ export function SherlockGithubActionsDeployHookV3ToJSONTyped(value?: SherlockGit
 
     return {
         
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'githubActionsDefaultRef': value['githubActionsDefaultRef'],
         'githubActionsOwner': value['githubActionsOwner'],
         'githubActionsRefBehavior': value['githubActionsRefBehavior'],
@@ -167,7 +141,7 @@ export function SherlockGithubActionsDeployHookV3ToJSONTyped(value?: SherlockGit
         'onEnvironment': value['onEnvironment'],
         'onFailure': value['onFailure'],
         'onSuccess': value['onSuccess'],
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

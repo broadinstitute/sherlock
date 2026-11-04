@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface SherlockSlackDeployHookTestRunRequest {
     /**
      * Required, whether to actually send the Slack message
-     * @type {boolean}
-     * @memberof SherlockSlackDeployHookTestRunRequest
      */
     execute?: boolean;
 }

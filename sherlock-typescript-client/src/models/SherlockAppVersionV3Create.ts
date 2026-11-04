@@ -21,38 +21,26 @@ import { mapValues } from '../runtime';
 export interface SherlockAppVersionV3Create {
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockAppVersionV3Create
      */
     appVersion?: string;
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockAppVersionV3Create
      */
     chart?: string;
     /**
      * Generally the Git commit message
-     * @type {string}
-     * @memberof SherlockAppVersionV3Create
      */
     description?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockAppVersionV3Create
      */
     gitBranch?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockAppVersionV3Create
      */
     gitCommit?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockAppVersionV3Create
      */
     parentAppVersion?: string;
 }

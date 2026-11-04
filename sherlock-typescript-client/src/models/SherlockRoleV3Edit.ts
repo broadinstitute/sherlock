@@ -21,116 +21,78 @@ import { mapValues } from '../runtime';
 export interface SherlockRoleV3Edit {
     /**
      * When true, Sherlock will automatically assign all users to this role who do not already have a role assignment
-     * @type {boolean}
-     * @memberof SherlockRoleV3Edit
      */
     autoAssignAllUsers?: boolean;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockRoleV3Edit
      */
     canBeGlassBrokenByRole?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockRoleV3Edit
      */
     defaultGlassBreakDuration?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockRoleV3Edit
      */
     grantsBroadInstituteGroup?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockRoleV3Edit
      */
     grantsDevAzureAccount?: boolean;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockRoleV3Edit
      */
     grantsDevAzureDirectoryRoles?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockRoleV3Edit
      */
     grantsDevAzureGroup?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockRoleV3Edit
      */
     grantsDevFirecloudFolderOwner?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockRoleV3Edit
      */
     grantsDevFirecloudGroup?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockRoleV3Edit
      */
     grantsProdAzureAccount?: boolean;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockRoleV3Edit
      */
     grantsProdAzureDirectoryRoles?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockRoleV3Edit
      */
     grantsProdAzureGroup?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockRoleV3Edit
      */
     grantsProdFirecloudFolderOwner?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockRoleV3Edit
      */
     grantsProdFirecloudGroup?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockRoleV3Edit
      */
     grantsQaFirecloudFolderOwner?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockRoleV3Edit
      */
     grantsQaFirecloudGroup?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockRoleV3Edit
      */
     grantsSherlockSuperAdmin?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockRoleV3Edit
      */
     name?: string;
     /**
      * When true, the "suspended" field on role assignments will be computed by Sherlock based on suitability instead of being a mutable API field
-     * @type {boolean}
-     * @memberof SherlockRoleV3Edit
      */
     suspendNonSuitableUsers?: boolean;
 }

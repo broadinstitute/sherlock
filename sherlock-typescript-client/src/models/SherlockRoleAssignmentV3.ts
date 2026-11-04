@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 /**
  * 
  * @export
@@ -21,32 +21,22 @@ import { mapValues } from '../runtime';
 export interface SherlockRoleAssignmentV3 {
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockRoleAssignmentV3
      */
     expiresAt?: Date;
     /**
      * A Go time.Duration string that will be added to the current time to attempt to set expiresAt (this may be more convenient than setting expiresAt directly)
-     * @type {string}
-     * @memberof SherlockRoleAssignmentV3
      */
     expiresIn?: string;
     /**
      * 
-     * @type {object}
-     * @memberof SherlockRoleAssignmentV3
      */
     roleInfo?: object;
     /**
      * If the assignment should be active. This field is only mutable through the API if the role doesn't automatically suspend non-suitable users
-     * @type {boolean}
-     * @memberof SherlockRoleAssignmentV3
      */
     suspended?: boolean;
     /**
      * 
-     * @type {object}
-     * @memberof SherlockRoleAssignmentV3
      */
     userInfo?: object;
 }
@@ -68,7 +58,7 @@ export function SherlockRoleAssignmentV3FromJSONTyped(json: any, ignoreDiscrimin
     }
     return {
         
-        'expiresAt': json['expiresAt'] == null ? undefined : (new Date(json['expiresAt'])),
+        'expiresAt': json['expiresAt'] == null ? undefined : (parseDateTime(json['expiresAt'])),
         'expiresIn': json['expiresIn'] == null ? undefined : json['expiresIn'],
         'roleInfo': json['roleInfo'] == null ? undefined : json['roleInfo'],
         'suspended': json['suspended'] == null ? undefined : json['suspended'],
@@ -87,7 +77,7 @@ export function SherlockRoleAssignmentV3ToJSONTyped(value?: SherlockRoleAssignme
 
     return {
         
-        'expiresAt': value['expiresAt'] == null ? value['expiresAt'] : value['expiresAt'].toISOString(),
+        'expiresAt': value['expiresAt'] == null ? value['expiresAt'] : serializeDateTime(value['expiresAt']),
         'expiresIn': value['expiresIn'],
         'roleInfo': value['roleInfo'],
         'suspended': value['suspended'],

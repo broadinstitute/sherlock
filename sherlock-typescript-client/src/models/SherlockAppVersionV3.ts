@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 import type { SherlockUserV3 } from './SherlockUserV3';
 import {
     SherlockUserV3FromJSON,
@@ -43,86 +43,58 @@ import {
 export interface SherlockAppVersionV3 {
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockAppVersionV3
      */
     appVersion?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockAppVersionV3
      */
     authoredBy?: string;
     /**
      * 
-     * @type {SherlockUserV3}
-     * @memberof SherlockAppVersionV3
      */
     authoredByInfo?: SherlockUserV3;
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockAppVersionV3
      */
     chart?: string;
     /**
      * 
-     * @type {SherlockChartV3}
-     * @memberof SherlockAppVersionV3
      */
     chartInfo?: SherlockChartV3;
     /**
      * 
-     * @type {SherlockCiIdentifierV3}
-     * @memberof SherlockAppVersionV3
      */
     ciIdentifier?: SherlockCiIdentifierV3;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockAppVersionV3
      */
     createdAt?: Date;
     /**
      * Generally the Git commit message
-     * @type {string}
-     * @memberof SherlockAppVersionV3
      */
     description?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockAppVersionV3
      */
     gitBranch?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockAppVersionV3
      */
     gitCommit?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockAppVersionV3
      */
     id?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockAppVersionV3
      */
     parentAppVersion?: string;
     /**
      * 
-     * @type {object}
-     * @memberof SherlockAppVersionV3
      */
     parentAppVersionInfo?: object;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockAppVersionV3
      */
     updatedAt?: Date;
 }
@@ -150,14 +122,14 @@ export function SherlockAppVersionV3FromJSONTyped(json: any, ignoreDiscriminator
         'chart': json['chart'] == null ? undefined : json['chart'],
         'chartInfo': json['chartInfo'] == null ? undefined : SherlockChartV3FromJSON(json['chartInfo']),
         'ciIdentifier': json['ciIdentifier'] == null ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'description': json['description'] == null ? undefined : json['description'],
         'gitBranch': json['gitBranch'] == null ? undefined : json['gitBranch'],
         'gitCommit': json['gitCommit'] == null ? undefined : json['gitCommit'],
         'id': json['id'] == null ? undefined : json['id'],
         'parentAppVersion': json['parentAppVersion'] == null ? undefined : json['parentAppVersion'],
         'parentAppVersionInfo': json['parentAppVersionInfo'] == null ? undefined : json['parentAppVersionInfo'],
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -178,14 +150,14 @@ export function SherlockAppVersionV3ToJSONTyped(value?: SherlockAppVersionV3 | n
         'chart': value['chart'],
         'chartInfo': SherlockChartV3ToJSON(value['chartInfo']),
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'description': value['description'],
         'gitBranch': value['gitBranch'],
         'gitCommit': value['gitCommit'],
         'id': value['id'],
         'parentAppVersion': value['parentAppVersion'],
         'parentAppVersionInfo': value['parentAppVersionInfo'],
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

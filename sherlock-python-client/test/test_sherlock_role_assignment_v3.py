@@ -38,9 +38,9 @@ class TestSherlockRoleAssignmentV3(unittest.TestCase):
             return SherlockRoleAssignmentV3(
                 expires_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'),
                 expires_in = '',
-                role_info = sherlock_python_client.models.role_info.roleInfo(),
+                role_info = { },
                 suspended = True,
-                user_info = sherlock_python_client.models.user_info.userInfo()
+                user_info = { }
             )
         else:
             return SherlockRoleAssignmentV3(

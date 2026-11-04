@@ -21,26 +21,18 @@ import { mapValues } from '../runtime';
 export interface SherlockPagerdutyIntegrationV3Create {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockPagerdutyIntegrationV3Create
      */
     key?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockPagerdutyIntegrationV3Create
      */
     name?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockPagerdutyIntegrationV3Create
      */
     pagerdutyID?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockPagerdutyIntegrationV3Create
      */
     type?: string;
 }

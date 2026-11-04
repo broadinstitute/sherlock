@@ -70,77 +70,194 @@ import {
 } from '../models/SherlockSlackDeployHookV3Edit';
 
 export interface ApiDeployHooksGithubActionsProceduresV3TestSelectorPostRequest {
+    /**
+     * The ID of the GithubActionsDeployHook
+     */
     selector: string;
+    /**
+     * Whether to fully execute the hook (JSON body helps with CSRF protection)
+     */
     request: SherlockGithubActionsDeployHookTestRunRequest;
 }
 
 export interface ApiDeployHooksGithubActionsV3GetRequest {
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * 
+     */
     githubActionsDefaultRef?: string;
+    /**
+     * 
+     */
     githubActionsOwner?: string;
+    /**
+     * This field determines what git ref the workflow will be run on. The default of always-use-default-ref always uses the default ref; use-app-version-as-ref will use the app version (when available) as the ref, useful when versions are always commit hashes or tags; use-app-version-commit-as-ref will use the app version's commit (when available) as the ref, useful when the repo is configured to fully report app versions to Sherlock.
+     */
     githubActionsRefBehavior?: ApiDeployHooksGithubActionsV3GetGithubActionsRefBehaviorEnum;
+    /**
+     * 
+     */
     githubActionsRepo?: string;
+    /**
+     * 
+     */
     githubActionsWorkflowPath?: string;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * 
+     */
     onChartRelease?: string;
+    /**
+     * 
+     */
     onEnvironment?: string;
+    /**
+     * 
+     */
     onFailure?: boolean;
+    /**
+     * 
+     */
     onSuccess?: boolean;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * Control how many GithubActionsDeployHooks are returned (default 100)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned GithubActionsDeployHooks (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiDeployHooksGithubActionsV3PostRequest {
+    /**
+     * The GithubActionsDeployHook to create
+     */
     githubActionsDeployHook: SherlockGithubActionsDeployHookV3Create;
 }
 
 export interface ApiDeployHooksGithubActionsV3SelectorDeleteRequest {
+    /**
+     * The ID of the GithubActionsDeployHook
+     */
     selector: string;
 }
 
 export interface ApiDeployHooksGithubActionsV3SelectorGetRequest {
+    /**
+     * The ID of the GithubActionsDeployHook
+     */
     selector: string;
 }
 
 export interface ApiDeployHooksGithubActionsV3SelectorPatchRequest {
+    /**
+     * The ID of the GithubActionsDeployHook to edit
+     */
     selector: string;
+    /**
+     * The edits to make to the GithubActionsDeployHook
+     */
     githubActionsDeployHook: SherlockGithubActionsDeployHookV3Edit;
 }
 
 export interface ApiDeployHooksSlackProceduresV3TestSelectorPostRequest {
+    /**
+     * The ID of the SlackDeployHook to test
+     */
     selector: string;
+    /**
+     * Whether to fully execute the hook (JSON body helps with CSRF protection)
+     */
     request: SherlockSlackDeployHookTestRunRequest;
 }
 
 export interface ApiDeployHooksSlackV3GetRequest {
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * 
+     */
     mentionPeople?: boolean;
+    /**
+     * 
+     */
     onChartRelease?: string;
+    /**
+     * 
+     */
     onEnvironment?: string;
+    /**
+     * 
+     */
     onFailure?: boolean;
+    /**
+     * 
+     */
     onSuccess?: boolean;
+    /**
+     * 
+     */
     slackChannel?: string;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * Control how many SlackDeployHooks are returned (default 100)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned SlackDeployHooks (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiDeployHooksSlackV3PostRequest {
+    /**
+     * The SlackDeployHook to create
+     */
     slackDeployHook: SherlockSlackDeployHookV3Create;
 }
 
 export interface ApiDeployHooksSlackV3SelectorDeleteRequest {
+    /**
+     * The ID of the SlackDeployHook
+     */
     selector: string;
 }
 
 export interface ApiDeployHooksSlackV3SelectorGetRequest {
+    /**
+     * The ID of the SlackDeployHook
+     */
     selector: string;
 }
 
 export interface ApiDeployHooksSlackV3SelectorPatchRequest {
+    /**
+     * The ID of the SlackDeployHook to edit
+     */
     selector: string;
+    /**
+     * The edits to make to the SlackDeployHook
+     */
     slackDeployHook: SherlockSlackDeployHookV3Edit;
 }
 
@@ -213,7 +330,7 @@ export class DeployHooksApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['githubActionsDefaultRef'] != null) {
@@ -257,7 +374,7 @@ export class DeployHooksApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['limit'] != null) {
@@ -565,7 +682,7 @@ export class DeployHooksApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['id'] != null) {
@@ -597,7 +714,7 @@ export class DeployHooksApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['limit'] != null) {
@@ -849,6 +966,6 @@ export class DeployHooksApi extends runtime.BaseAPI {
 export const ApiDeployHooksGithubActionsV3GetGithubActionsRefBehaviorEnum = {
     AlwaysUseDefaultRef: 'always-use-default-ref',
     UseAppVersionAsRef: 'use-app-version-as-ref',
-    UseAppVersionCommitAsRef: 'use-app-version-commit-as-ref'
+    UseAppVersionCommitAsRef: 'use-app-version-commit-as-ref',
 } as const;
 export type ApiDeployHooksGithubActionsV3GetGithubActionsRefBehaviorEnum = typeof ApiDeployHooksGithubActionsV3GetGithubActionsRefBehaviorEnum[keyof typeof ApiDeployHooksGithubActionsV3GetGithubActionsRefBehaviorEnum];

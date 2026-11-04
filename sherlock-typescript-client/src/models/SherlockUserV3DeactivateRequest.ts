@@ -21,20 +21,14 @@ import { mapValues } from '../runtime';
 export interface SherlockUserV3DeactivateRequest {
     /**
      * 
-     * @type {Array<string>}
-     * @memberof SherlockUserV3DeactivateRequest
      */
     suspendEmailHandlesAcrossGoogleWorkspaceDomains?: Array<string>;
     /**
      * Domain of UserEmails that can be swapped out for the domains in SuspendEmailHandlesAcrossGoogleWorkspaceDomains
-     * @type {string}
-     * @memberof SherlockUserV3DeactivateRequest
      */
     userEmailHomeDomain?: string;
     /**
      * 
-     * @type {Array<string>}
-     * @memberof SherlockUserV3DeactivateRequest
      */
     userEmails?: Array<string>;
 }

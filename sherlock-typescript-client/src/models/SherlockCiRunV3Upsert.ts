@@ -21,159 +21,107 @@ import { mapValues } from '../runtime';
 export interface SherlockCiRunV3Upsert {
     /**
      * Always appends; will eliminate duplicates.
-     * @type {Array<string>}
-     * @memberof SherlockCiRunV3Upsert
      */
     appVersions?: Array<string>;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3Upsert
      */
     argoWorkflowsName?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3Upsert
      */
     argoWorkflowsNamespace?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3Upsert
      */
     argoWorkflowsTemplate?: string;
     /**
      * Always appends; will eliminate duplicates. Spreads to associated chart releases, environments, and clusters.
-     * @type {Array<string>}
-     * @memberof SherlockCiRunV3Upsert
      */
     changesets?: Array<string>;
     /**
      * Keys treated like chartReleases. Values set resource-specific statuses for chart releases and associated changesets, new app versions, and new chart versions.
-     * @type {{ [key: string]: string; }}
-     * @memberof SherlockCiRunV3Upsert
      */
     chartReleaseStatuses?: { [key: string]: string; };
     /**
      * Always appends; will eliminate duplicates. Spreads to associated environments and clusters.
-     * @type {Array<string>}
-     * @memberof SherlockCiRunV3Upsert
      */
     chartReleases?: Array<string>;
     /**
      * Always appends; will eliminate duplicates.
-     * @type {Array<string>}
-     * @memberof SherlockCiRunV3Upsert
      */
     chartVersions?: Array<string>;
     /**
      * Always appends; will eliminate duplicates.
-     * @type {Array<string>}
-     * @memberof SherlockCiRunV3Upsert
      */
     charts?: Array<string>;
     /**
      * Always appends; will eliminate duplicates. Spreads to contained chart releases and their environments.
-     * @type {Array<string>}
-     * @memberof SherlockCiRunV3Upsert
      */
     clusters?: Array<string>;
     /**
      * Always appends; will eliminate duplicates. Spreads to contained chart releases and their clusters.
-     * @type {Array<string>}
-     * @memberof SherlockCiRunV3Upsert
      */
     environments?: Array<string>;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockCiRunV3Upsert
      */
     githubActionsAttemptNumber?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3Upsert
      */
     githubActionsOwner?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3Upsert
      */
     githubActionsRepo?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockCiRunV3Upsert
      */
     githubActionsRunID?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3Upsert
      */
     githubActionsWorkflowPath?: string;
     /**
      * If set to true, errors handling selectors for relations should be ignored. Normally, passing an unknown chart, cluster, etc. will abort the request, but they won't if this is true.
-     * @type {boolean}
-     * @memberof SherlockCiRunV3Upsert
      */
     ignoreBadSelectors?: boolean;
     /**
      * Slack channels to notify if this CiRun fails. This field is always appended to when mutated.
-     * @type {Array<string>}
-     * @memberof SherlockCiRunV3Upsert
      */
     notifySlackChannelsUponFailure?: Array<string>;
     /**
      * Slack channels to notify if this CiRun is retried. This field is always appended to when mutated. It will de-dupe with the other notify fields.
-     * @type {Array<string>}
-     * @memberof SherlockCiRunV3Upsert
      */
     notifySlackChannelsUponRetry?: Array<string>;
     /**
      * Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.
-     * @type {Array<string>}
-     * @memberof SherlockCiRunV3Upsert
      */
     notifySlackChannelsUponSuccess?: Array<string>;
     /**
      * Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).
      * An empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).
-     * @type {string}
-     * @memberof SherlockCiRunV3Upsert
      */
     notifySlackCustomIcon?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3Upsert
      */
     platform?: string;
     /**
      * Makes entries in the changesets field also spread to new app versions and chart versions deployed by the changeset. 'when-static' is the default and does this spreading only when the chart release is in a static environment.
-     * @type {SherlockCiRunV3UpsertRelateToChangesetNewVersionsEnum}
-     * @memberof SherlockCiRunV3Upsert
      */
     relateToChangesetNewVersions?: SherlockCiRunV3UpsertRelateToChangesetNewVersionsEnum;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3Upsert
      */
     startedAt?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3Upsert
      */
     status?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockCiRunV3Upsert
      */
     terminalAt?: string;
 }
@@ -185,7 +133,7 @@ export interface SherlockCiRunV3Upsert {
 export const SherlockCiRunV3UpsertRelateToChangesetNewVersionsEnum = {
     Always: 'always',
     WhenStatic: 'when-static',
-    Never: 'never'
+    Never: 'never',
 } as const;
 export type SherlockCiRunV3UpsertRelateToChangesetNewVersionsEnum = typeof SherlockCiRunV3UpsertRelateToChangesetNewVersionsEnum[keyof typeof SherlockCiRunV3UpsertRelateToChangesetNewVersionsEnum];
 

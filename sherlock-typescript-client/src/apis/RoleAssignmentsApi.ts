@@ -30,32 +30,77 @@ import {
 } from '../models/SherlockRoleAssignmentV3Edit';
 
 export interface ApiRoleAssignmentsV3GetRequest {
+    /**
+     * 
+     */
     expiresAt?: Date;
+    /**
+     * A Go time.Duration string that will be added to the current time to attempt to set expiresAt (this may be more convenient than setting expiresAt directly)
+     */
     expiresIn?: string;
+    /**
+     * If the assignment should be active. This field is only mutable through the API if the role doesn't automatically suspend non-suitable users
+     */
     suspended?: boolean;
+    /**
+     * Control how many RoleAssignments are returned (default 0, no limit)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned RoleAssignments (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRequest {
+    /**
+     * The selector of the Role, which can be either the numeric ID or the name
+     */
     roleSelector: string;
+    /**
+     * The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'.
+     */
     userSelector: string;
 }
 
 export interface ApiRoleAssignmentsV3RoleSelectorUserSelectorGetRequest {
+    /**
+     * The selector of the Role, which can be either the numeric ID or the name
+     */
     roleSelector: string;
+    /**
+     * The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'.
+     */
     userSelector: string;
 }
 
 export interface ApiRoleAssignmentsV3RoleSelectorUserSelectorPatchRequest {
+    /**
+     * The selector of the Role, which can be either the numeric ID or the name
+     */
     roleSelector: string;
+    /**
+     * The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'.
+     */
     userSelector: string;
+    /**
+     * The edits to make to the RoleAssignment
+     */
     roleAssignment: SherlockRoleAssignmentV3Edit;
 }
 
 export interface ApiRoleAssignmentsV3RoleSelectorUserSelectorPostRequest {
+    /**
+     * The selector of the Role, which can be either the numeric ID or the name
+     */
     roleSelector: string;
+    /**
+     * The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'.
+     */
     userSelector: string;
+    /**
+     * The initial fields to set for the new RoleAssignment
+     */
     roleAssignment: SherlockRoleAssignmentV3Edit;
 }
 
@@ -71,7 +116,7 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         if (requestParameters['expiresAt'] != null) {
-            queryParameters['expiresAt'] = (requestParameters['expiresAt'] as any).toISOString();
+            queryParameters['expiresAt'] = runtime.serializeDateTime(requestParameters['expiresAt'] as any);
         }
 
         if (requestParameters['expiresIn'] != null) {

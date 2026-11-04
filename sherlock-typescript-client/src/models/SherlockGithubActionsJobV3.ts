@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 /**
  * 
  * @export
@@ -21,74 +21,50 @@ import { mapValues } from '../runtime';
 export interface SherlockGithubActionsJobV3 {
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockGithubActionsJobV3
      */
     createdAt?: Date;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockGithubActionsJobV3
      */
     githubActionsAttemptNumber?: number;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockGithubActionsJobV3
      */
     githubActionsJobID?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsJobV3
      */
     githubActionsOwner?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsJobV3
      */
     githubActionsRepo?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockGithubActionsJobV3
      */
     githubActionsRunID?: number;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockGithubActionsJobV3
      */
     id?: number;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockGithubActionsJobV3
      */
     jobCreatedAt?: Date;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockGithubActionsJobV3
      */
     jobStartedAt?: Date;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockGithubActionsJobV3
      */
     jobTerminalAt?: Date;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsJobV3
      */
     status?: string;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockGithubActionsJobV3
      */
     updatedAt?: Date;
 }
@@ -110,18 +86,18 @@ export function SherlockGithubActionsJobV3FromJSONTyped(json: any, ignoreDiscrim
     }
     return {
         
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'githubActionsAttemptNumber': json['githubActionsAttemptNumber'] == null ? undefined : json['githubActionsAttemptNumber'],
         'githubActionsJobID': json['githubActionsJobID'] == null ? undefined : json['githubActionsJobID'],
         'githubActionsOwner': json['githubActionsOwner'] == null ? undefined : json['githubActionsOwner'],
         'githubActionsRepo': json['githubActionsRepo'] == null ? undefined : json['githubActionsRepo'],
         'githubActionsRunID': json['githubActionsRunID'] == null ? undefined : json['githubActionsRunID'],
         'id': json['id'] == null ? undefined : json['id'],
-        'jobCreatedAt': json['jobCreatedAt'] == null ? undefined : (new Date(json['jobCreatedAt'])),
-        'jobStartedAt': json['jobStartedAt'] == null ? undefined : (new Date(json['jobStartedAt'])),
-        'jobTerminalAt': json['jobTerminalAt'] == null ? undefined : (new Date(json['jobTerminalAt'])),
+        'jobCreatedAt': json['jobCreatedAt'] == null ? undefined : (parseDateTime(json['jobCreatedAt'])),
+        'jobStartedAt': json['jobStartedAt'] == null ? undefined : (parseDateTime(json['jobStartedAt'])),
+        'jobTerminalAt': json['jobTerminalAt'] == null ? undefined : (parseDateTime(json['jobTerminalAt'])),
         'status': json['status'] == null ? undefined : json['status'],
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -136,18 +112,18 @@ export function SherlockGithubActionsJobV3ToJSONTyped(value?: SherlockGithubActi
 
     return {
         
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'githubActionsAttemptNumber': value['githubActionsAttemptNumber'],
         'githubActionsJobID': value['githubActionsJobID'],
         'githubActionsOwner': value['githubActionsOwner'],
         'githubActionsRepo': value['githubActionsRepo'],
         'githubActionsRunID': value['githubActionsRunID'],
         'id': value['id'],
-        'jobCreatedAt': value['jobCreatedAt'] == null ? value['jobCreatedAt'] : value['jobCreatedAt'].toISOString(),
-        'jobStartedAt': value['jobStartedAt'] == null ? value['jobStartedAt'] : value['jobStartedAt'].toISOString(),
-        'jobTerminalAt': value['jobTerminalAt'] == null ? value['jobTerminalAt'] : value['jobTerminalAt'].toISOString(),
+        'jobCreatedAt': value['jobCreatedAt'] == null ? value['jobCreatedAt'] : serializeDateTime(value['jobCreatedAt']),
+        'jobStartedAt': value['jobStartedAt'] == null ? value['jobStartedAt'] : serializeDateTime(value['jobStartedAt']),
+        'jobTerminalAt': value['jobTerminalAt'] == null ? value['jobTerminalAt'] : serializeDateTime(value['jobTerminalAt']),
         'status': value['status'],
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

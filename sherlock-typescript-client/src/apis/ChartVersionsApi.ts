@@ -40,33 +40,81 @@ import {
 } from '../models/SherlockChartVersionV3Edit';
 
 export interface ApiChartVersionsProceduresV3ChangelogGetRequest {
+    /**
+     * The selector of the newer ChartVersion for the changelog
+     */
     child: string;
+    /**
+     * The selector of the older ChartVersion for the changelog
+     */
     parent: string;
 }
 
 export interface ApiChartVersionsV3GetRequest {
+    /**
+     * 
+     */
     authoredBy?: string;
+    /**
+     * Required when creating
+     */
     chart?: string;
+    /**
+     * Required when creating
+     */
     chartVersion?: string;
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * Generally the Git commit message
+     */
     description?: string;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * 
+     */
     parentChartVersion?: string;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * Control how many ChartVersions are returned (default 100)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned ChartVersions (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiChartVersionsV3PutRequest {
+    /**
+     * The ChartVersion to upsert
+     */
     chartVersion: SherlockChartVersionV3Create;
 }
 
 export interface ApiChartVersionsV3SelectorGetRequest {
+    /**
+     * The selector of the ChartVersion, which can be either a numeric ID or chart/version.
+     */
     selector: string;
 }
 
 export interface ApiChartVersionsV3SelectorPatchRequest {
+    /**
+     * The selector of the ChartVersion, which can be either a numeric ID or chart/version.
+     */
     selector: string;
+    /**
+     * The edits to make to the ChartVersion
+     */
     chartVersion: SherlockChartVersionV3Edit;
 }
 
@@ -155,7 +203,7 @@ export class ChartVersionsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['description'] != null) {
@@ -171,7 +219,7 @@ export class ChartVersionsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['limit'] != null) {

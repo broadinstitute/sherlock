@@ -40,35 +40,89 @@ import {
 } from '../models/SherlockAppVersionV3Edit';
 
 export interface ApiAppVersionsProceduresV3ChangelogGetRequest {
+    /**
+     * The selector of the newer AppVersion for the changelog
+     */
     child: string;
+    /**
+     * The selector of the older AppVersion for the changelog
+     */
     parent: string;
 }
 
 export interface ApiAppVersionsV3GetRequest {
+    /**
+     * Required when creating
+     */
     appVersion?: string;
+    /**
+     * 
+     */
     authoredBy?: string;
+    /**
+     * Required when creating
+     */
     chart?: string;
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * Generally the Git commit message
+     */
     description?: string;
+    /**
+     * 
+     */
     gitBranch?: string;
+    /**
+     * 
+     */
     gitCommit?: string;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * 
+     */
     parentAppVersion?: string;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * Control how many AppVersions are returned (default 100)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned AppVersions (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiAppVersionsV3PutRequest {
+    /**
+     * The AppVersion to upsert
+     */
     appVersion: SherlockAppVersionV3Create;
 }
 
 export interface ApiAppVersionsV3SelectorGetRequest {
+    /**
+     * The selector of the AppVersion, which can be either a numeric ID or chart/version.
+     */
     selector: string;
 }
 
 export interface ApiAppVersionsV3SelectorPatchRequest {
+    /**
+     * The selector of the AppVersion, which can be either a numeric ID or chart/version.
+     */
     selector: string;
+    /**
+     * The edits to make to the AppVersion
+     */
     appVersion: SherlockAppVersionV3Edit;
 }
 
@@ -157,7 +211,7 @@ export class AppVersionsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['description'] != null) {
@@ -181,7 +235,7 @@ export class AppVersionsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['limit'] != null) {

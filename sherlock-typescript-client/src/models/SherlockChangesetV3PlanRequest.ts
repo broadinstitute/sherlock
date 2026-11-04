@@ -36,20 +36,14 @@ import {
 export interface SherlockChangesetV3PlanRequest {
     /**
      * 
-     * @type {Array<SherlockChangesetV3PlanRequestChartReleaseEntry>}
-     * @memberof SherlockChangesetV3PlanRequest
      */
     chartReleases?: Array<SherlockChangesetV3PlanRequestChartReleaseEntry>;
     /**
      * 
-     * @type {Array<SherlockChangesetV3PlanRequestEnvironmentEntry>}
-     * @memberof SherlockChangesetV3PlanRequest
      */
     environments?: Array<SherlockChangesetV3PlanRequestEnvironmentEntry>;
     /**
      * 
-     * @type {Array<number>}
-     * @memberof SherlockChangesetV3PlanRequest
      */
     recreateChangesets?: Array<number>;
 }

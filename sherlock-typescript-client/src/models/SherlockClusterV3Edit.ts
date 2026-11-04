@@ -21,32 +21,22 @@ import { mapValues } from '../runtime';
 export interface SherlockClusterV3Edit {
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockClusterV3Edit
      */
     address?: string;
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockClusterV3Edit
      */
     base?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockClusterV3Edit
      */
     helmfileRef?: string;
     /**
      * If present, requires membership in the given role for mutations. Set to an empty string to clear.
-     * @type {string}
-     * @memberof SherlockClusterV3Edit
      */
     requiredRole?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockClusterV3Edit
      */
     requiresSuitability?: boolean;
 }

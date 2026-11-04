@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 /**
  * 
  * @export
@@ -21,122 +21,82 @@ import { mapValues } from '../runtime';
 export interface SherlockEnvironmentV3Edit {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockEnvironmentV3Edit
      */
     baseDomain?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockEnvironmentV3Edit
      */
     defaultCluster?: string;
     /**
      * If set, the BEE will be automatically deleted after this time. Can be set to "" or Go's zero time value to clear the field.
-     * @type {Date}
-     * @memberof SherlockEnvironmentV3Edit
      */
     deleteAfter?: Date;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockEnvironmentV3Edit
      */
     description?: string;
     /**
      * If true, janitor resource cleanup will be enabled for this environment. BEEs default to template's value, templates default to true, and static/live environments default to false.
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3Edit
      */
     enableJanitor?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockEnvironmentV3Edit
      */
     helmfileRef?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3Edit
      */
     namePrefixesDomain?: boolean;
     /**
      * Applicable for BEEs only, whether Thelma should render the BEE as "offline" zero replicas (this field is a target state, not a status)
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3Edit
      */
     offline?: boolean;
     /**
      * When enabled, the BEE will be slated to go offline around the begin time each day
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3Edit
      */
     offlineScheduleBeginEnabled?: boolean;
     /**
      * Stored with timezone to determine day of the week
-     * @type {Date}
-     * @memberof SherlockEnvironmentV3Edit
      */
     offlineScheduleBeginTime?: Date;
     /**
      * When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3Edit
      */
     offlineScheduleEndEnabled?: boolean;
     /**
      * Stored with timezone to determine day of the week
-     * @type {Date}
-     * @memberof SherlockEnvironmentV3Edit
      */
     offlineScheduleEndTime?: Date;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3Edit
      */
     offlineScheduleEndWeekends?: boolean;
     /**
      * When creating, will default to you
-     * @type {string}
-     * @memberof SherlockEnvironmentV3Edit
      */
     owner?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockEnvironmentV3Edit
      */
     pactIdentifier?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockEnvironmentV3Edit
      */
     pagerdutyIntegration?: string;
     /**
      * Used to protect specific BEEs from deletion (thelma checks this field)
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3Edit
      */
     preventDeletion?: boolean;
     /**
      * If present, requires membership in the given role for mutations. Set to an empty string to clear.
-     * @type {string}
-     * @memberof SherlockEnvironmentV3Edit
      */
     requiredRole?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3Edit
      */
     requiresSuitability?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockEnvironmentV3Edit
      */
     serviceBannerBucket?: string;
 }
@@ -160,16 +120,16 @@ export function SherlockEnvironmentV3EditFromJSONTyped(json: any, ignoreDiscrimi
         
         'baseDomain': json['baseDomain'] == null ? undefined : json['baseDomain'],
         'defaultCluster': json['defaultCluster'] == null ? undefined : json['defaultCluster'],
-        'deleteAfter': json['deleteAfter'] == null ? undefined : (new Date(json['deleteAfter'])),
+        'deleteAfter': json['deleteAfter'] == null ? undefined : (parseDateTime(json['deleteAfter'])),
         'description': json['description'] == null ? undefined : json['description'],
         'enableJanitor': json['enableJanitor'] == null ? undefined : json['enableJanitor'],
         'helmfileRef': json['helmfileRef'] == null ? undefined : json['helmfileRef'],
         'namePrefixesDomain': json['namePrefixesDomain'] == null ? undefined : json['namePrefixesDomain'],
         'offline': json['offline'] == null ? undefined : json['offline'],
         'offlineScheduleBeginEnabled': json['offlineScheduleBeginEnabled'] == null ? undefined : json['offlineScheduleBeginEnabled'],
-        'offlineScheduleBeginTime': json['offlineScheduleBeginTime'] == null ? undefined : (new Date(json['offlineScheduleBeginTime'])),
+        'offlineScheduleBeginTime': json['offlineScheduleBeginTime'] == null ? undefined : (parseDateTime(json['offlineScheduleBeginTime'])),
         'offlineScheduleEndEnabled': json['offlineScheduleEndEnabled'] == null ? undefined : json['offlineScheduleEndEnabled'],
-        'offlineScheduleEndTime': json['offlineScheduleEndTime'] == null ? undefined : (new Date(json['offlineScheduleEndTime'])),
+        'offlineScheduleEndTime': json['offlineScheduleEndTime'] == null ? undefined : (parseDateTime(json['offlineScheduleEndTime'])),
         'offlineScheduleEndWeekends': json['offlineScheduleEndWeekends'] == null ? undefined : json['offlineScheduleEndWeekends'],
         'owner': json['owner'] == null ? undefined : json['owner'],
         'pactIdentifier': json['pactIdentifier'] == null ? undefined : json['pactIdentifier'],
@@ -194,16 +154,16 @@ export function SherlockEnvironmentV3EditToJSONTyped(value?: SherlockEnvironment
         
         'baseDomain': value['baseDomain'],
         'defaultCluster': value['defaultCluster'],
-        'deleteAfter': value['deleteAfter'] == null ? value['deleteAfter'] : value['deleteAfter'].toISOString(),
+        'deleteAfter': value['deleteAfter'] == null ? value['deleteAfter'] : serializeDateTime(value['deleteAfter']),
         'description': value['description'],
         'enableJanitor': value['enableJanitor'],
         'helmfileRef': value['helmfileRef'],
         'namePrefixesDomain': value['namePrefixesDomain'],
         'offline': value['offline'],
         'offlineScheduleBeginEnabled': value['offlineScheduleBeginEnabled'],
-        'offlineScheduleBeginTime': value['offlineScheduleBeginTime'] == null ? value['offlineScheduleBeginTime'] : value['offlineScheduleBeginTime'].toISOString(),
+        'offlineScheduleBeginTime': value['offlineScheduleBeginTime'] == null ? value['offlineScheduleBeginTime'] : serializeDateTime(value['offlineScheduleBeginTime']),
         'offlineScheduleEndEnabled': value['offlineScheduleEndEnabled'],
-        'offlineScheduleEndTime': value['offlineScheduleEndTime'] == null ? value['offlineScheduleEndTime'] : value['offlineScheduleEndTime'].toISOString(),
+        'offlineScheduleEndTime': value['offlineScheduleEndTime'] == null ? value['offlineScheduleEndTime'] : serializeDateTime(value['offlineScheduleEndTime']),
         'offlineScheduleEndWeekends': value['offlineScheduleEndWeekends'],
         'owner': value['owner'],
         'pactIdentifier': value['pactIdentifier'],

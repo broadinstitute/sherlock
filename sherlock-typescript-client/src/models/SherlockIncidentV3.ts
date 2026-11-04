@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 /**
  * 
  * @export
@@ -21,50 +21,34 @@ import { mapValues } from '../runtime';
 export interface SherlockIncidentV3 {
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockIncidentV3
      */
     createdAt?: Date;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockIncidentV3
      */
     description?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockIncidentV3
      */
     id?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockIncidentV3
      */
     remediatedAt?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockIncidentV3
      */
     reviewCompletedAt?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockIncidentV3
      */
     startedAt?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockIncidentV3
      */
     ticket?: string;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockIncidentV3
      */
     updatedAt?: Date;
 }
@@ -86,14 +70,14 @@ export function SherlockIncidentV3FromJSONTyped(json: any, ignoreDiscriminator: 
     }
     return {
         
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'description': json['description'] == null ? undefined : json['description'],
         'id': json['id'] == null ? undefined : json['id'],
         'remediatedAt': json['remediatedAt'] == null ? undefined : json['remediatedAt'],
         'reviewCompletedAt': json['reviewCompletedAt'] == null ? undefined : json['reviewCompletedAt'],
         'startedAt': json['startedAt'] == null ? undefined : json['startedAt'],
         'ticket': json['ticket'] == null ? undefined : json['ticket'],
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -108,14 +92,14 @@ export function SherlockIncidentV3ToJSONTyped(value?: SherlockIncidentV3 | null,
 
     return {
         
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'description': value['description'],
         'id': value['id'],
         'remediatedAt': value['remediatedAt'],
         'reviewCompletedAt': value['reviewCompletedAt'],
         'startedAt': value['startedAt'],
         'ticket': value['ticket'],
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

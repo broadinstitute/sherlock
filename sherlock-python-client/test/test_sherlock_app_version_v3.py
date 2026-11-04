@@ -38,14 +38,14 @@ class TestSherlockAppVersionV3(unittest.TestCase):
             return SherlockAppVersionV3(
                 app_version = '',
                 authored_by = '',
-                authored_by_info = sherlock_python_client.models.sherlock/user_v3.sherlock.UserV3(
+                authored_by_info = sherlock_python_client.models.sherlock_user_v3.SherlockUserV3(
                     assignments = [
-                        sherlock_python_client.models.sherlock/role_assignment_v3.sherlock.RoleAssignmentV3(
+                        sherlock_python_client.models.sherlock_role_assignment_v3.SherlockRoleAssignmentV3(
                             expires_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                             expires_in = '', 
-                            role_info = sherlock_python_client.models.role_info.roleInfo(), 
+                            role_info = { }, 
                             suspended = True, 
-                            user_info = sherlock_python_client.models.user_info.userInfo(), )
+                            user_info = { }, )
                         ], 
                     created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                     deactivated_at = '', 
@@ -62,14 +62,14 @@ class TestSherlockAppVersionV3(unittest.TestCase):
                     suitable = True, 
                     updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ),
                 chart = '',
-                chart_info = sherlock_python_client.models.sherlock/chart_v3.sherlock.ChartV3(
+                chart_info = sherlock_python_client.models.sherlock_chart_v3.SherlockChartV3(
                     app_image_git_main_branch = '', 
                     app_image_git_repo = '', 
                     chart_exposes_endpoint = True, 
                     chart_repo = 'terra-helm', 
-                    ci_identifier = sherlock_python_client.models.sherlock/ci_identifier_v3.sherlock.CiIdentifierV3(
+                    ci_identifier = sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
                         ci_runs = [
-                            sherlock_python_client.models.sherlock/ci_run_v3.sherlock.CiRunV3(
+                            sherlock_python_client.models.sherlock_ci_run_v3.SherlockCiRunV3(
                                 argo_workflows_name = '', 
                                 argo_workflows_namespace = '', 
                                 argo_workflows_template = '', 
@@ -92,7 +92,7 @@ class TestSherlockAppVersionV3(unittest.TestCase):
                                 notify_slack_custom_icon = '', 
                                 platform = '', 
                                 related_resources = [
-                                    sherlock_python_client.models.sherlock/ci_identifier_v3.sherlock.CiIdentifierV3(
+                                    sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
                                         created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                                         id = 56, 
                                         resource_id = 56, 
@@ -123,9 +123,9 @@ class TestSherlockAppVersionV3(unittest.TestCase):
                     pact_participant = True, 
                     playbook_url = '', 
                     updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ),
-                ci_identifier = sherlock_python_client.models.sherlock/ci_identifier_v3.sherlock.CiIdentifierV3(
+                ci_identifier = sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
                     ci_runs = [
-                        sherlock_python_client.models.sherlock/ci_run_v3.sherlock.CiRunV3(
+                        sherlock_python_client.models.sherlock_ci_run_v3.SherlockCiRunV3(
                             argo_workflows_name = '', 
                             argo_workflows_namespace = '', 
                             argo_workflows_template = '', 
@@ -148,7 +148,7 @@ class TestSherlockAppVersionV3(unittest.TestCase):
                             notify_slack_custom_icon = '', 
                             platform = '', 
                             related_resources = [
-                                sherlock_python_client.models.sherlock/ci_identifier_v3.sherlock.CiIdentifierV3(
+                                sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
                                     created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                                     id = 56, 
                                     resource_id = 56, 
@@ -175,7 +175,7 @@ class TestSherlockAppVersionV3(unittest.TestCase):
                 git_commit = '',
                 id = 56,
                 parent_app_version = '',
-                parent_app_version_info = None,
+                parent_app_version_info = { },
                 updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f')
             )
         else:

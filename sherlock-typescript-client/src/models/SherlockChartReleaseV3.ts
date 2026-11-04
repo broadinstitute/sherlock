@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 import type { SherlockClusterV3 } from './SherlockClusterV3';
 import {
     SherlockClusterV3FromJSON,
@@ -71,206 +71,138 @@ import {
 export interface SherlockChartReleaseV3 {
     /**
      * When creating, will default to the app's mainline branch if no other app version info is present
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     appVersionBranch?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     appVersionCommit?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     appVersionExact?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     appVersionFollowChartRelease?: string;
     /**
      * 
-     * @type {SherlockAppVersionV3}
-     * @memberof SherlockChartReleaseV3
      */
     appVersionInfo?: SherlockAppVersionV3;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     appVersionReference?: string;
     /**
      * // When creating, will default to automatically reference any provided app version fields
-     * @type {SherlockChartReleaseV3AppVersionResolverEnum}
-     * @memberof SherlockChartReleaseV3
      */
     appVersionResolver?: SherlockChartReleaseV3AppVersionResolverEnum;
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     chart?: string;
     /**
      * 
-     * @type {SherlockChartV3}
-     * @memberof SherlockChartReleaseV3
      */
     chartInfo?: SherlockChartV3;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     chartVersionExact?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     chartVersionFollowChartRelease?: string;
     /**
      * 
-     * @type {SherlockChartVersionV3}
-     * @memberof SherlockChartReleaseV3
      */
     chartVersionInfo?: SherlockChartVersionV3;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     chartVersionReference?: string;
     /**
      * When creating, will default to automatically reference any provided chart version
-     * @type {SherlockChartReleaseV3ChartVersionResolverEnum}
-     * @memberof SherlockChartReleaseV3
      */
     chartVersionResolver?: SherlockChartReleaseV3ChartVersionResolverEnum;
     /**
      * 
-     * @type {SherlockCiIdentifierV3}
-     * @memberof SherlockChartReleaseV3
      */
     ciIdentifier?: SherlockCiIdentifierV3;
     /**
      * When creating, will default the environment's default cluster, if provided. Either this or environment must be provided.
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     cluster?: string;
     /**
      * 
-     * @type {SherlockClusterV3}
-     * @memberof SherlockChartReleaseV3
      */
     clusterInfo?: SherlockClusterV3;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockChartReleaseV3
      */
     createdAt?: Date;
     /**
      * Calculated field
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     destinationType?: string;
     /**
      * Either this or cluster must be provided.
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     environment?: string;
     /**
      * 
-     * @type {SherlockEnvironmentV3}
-     * @memberof SherlockChartReleaseV3
      */
     environmentInfo?: SherlockEnvironmentV3;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     helmfileRef?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockChartReleaseV3
      */
     helmfileRefEnabled?: boolean;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockChartReleaseV3
      */
     id?: number;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockChartReleaseV3
      */
     includedInBulkChangesets?: boolean;
     /**
      * When creating, will be calculated if left empty
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     name?: string;
     /**
      * When creating, will default to the environment's default namespace, if provided
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     namespace?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     pagerdutyIntegration?: string;
     /**
      * 
-     * @type {SherlockPagerdutyIntegrationV3}
-     * @memberof SherlockChartReleaseV3
      */
     pagerdutyIntegrationInfo?: SherlockPagerdutyIntegrationV3;
     /**
      * When creating, will use the chart's default if left empty
-     * @type {number}
-     * @memberof SherlockChartReleaseV3
      */
     port?: number;
     /**
      * When creating, will use the chart's default if left empty
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     protocol?: string;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockChartReleaseV3
      */
     resolvedAt?: Date;
     /**
      * When creating, will use the chart's default if left empty
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
      */
     subdomain?: string;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockChartReleaseV3
      */
     updatedAt?: Date;
 }
@@ -284,7 +216,7 @@ export const SherlockChartReleaseV3AppVersionResolverEnum = {
     Commit: 'commit',
     Exact: 'exact',
     Follow: 'follow',
-    None: 'none'
+    None: 'none',
 } as const;
 export type SherlockChartReleaseV3AppVersionResolverEnum = typeof SherlockChartReleaseV3AppVersionResolverEnum[keyof typeof SherlockChartReleaseV3AppVersionResolverEnum];
 
@@ -294,7 +226,7 @@ export type SherlockChartReleaseV3AppVersionResolverEnum = typeof SherlockChartR
 export const SherlockChartReleaseV3ChartVersionResolverEnum = {
     Latest: 'latest',
     Exact: 'exact',
-    Follow: 'follow'
+    Follow: 'follow',
 } as const;
 export type SherlockChartReleaseV3ChartVersionResolverEnum = typeof SherlockChartReleaseV3ChartVersionResolverEnum[keyof typeof SherlockChartReleaseV3ChartVersionResolverEnum];
 
@@ -333,7 +265,7 @@ export function SherlockChartReleaseV3FromJSONTyped(json: any, ignoreDiscriminat
         'ciIdentifier': json['ciIdentifier'] == null ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
         'cluster': json['cluster'] == null ? undefined : json['cluster'],
         'clusterInfo': json['clusterInfo'] == null ? undefined : SherlockClusterV3FromJSON(json['clusterInfo']),
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'destinationType': json['destinationType'] == null ? undefined : json['destinationType'],
         'environment': json['environment'] == null ? undefined : json['environment'],
         'environmentInfo': json['environmentInfo'] == null ? undefined : SherlockEnvironmentV3FromJSON(json['environmentInfo']),
@@ -347,9 +279,9 @@ export function SherlockChartReleaseV3FromJSONTyped(json: any, ignoreDiscriminat
         'pagerdutyIntegrationInfo': json['pagerdutyIntegrationInfo'] == null ? undefined : SherlockPagerdutyIntegrationV3FromJSON(json['pagerdutyIntegrationInfo']),
         'port': json['port'] == null ? undefined : json['port'],
         'protocol': json['protocol'] == null ? undefined : json['protocol'],
-        'resolvedAt': json['resolvedAt'] == null ? undefined : (new Date(json['resolvedAt'])),
+        'resolvedAt': json['resolvedAt'] == null ? undefined : (parseDateTime(json['resolvedAt'])),
         'subdomain': json['subdomain'] == null ? undefined : json['subdomain'],
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -381,7 +313,7 @@ export function SherlockChartReleaseV3ToJSONTyped(value?: SherlockChartReleaseV3
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
         'cluster': value['cluster'],
         'clusterInfo': SherlockClusterV3ToJSON(value['clusterInfo']),
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'destinationType': value['destinationType'],
         'environment': value['environment'],
         'environmentInfo': SherlockEnvironmentV3ToJSON(value['environmentInfo']),
@@ -395,9 +327,9 @@ export function SherlockChartReleaseV3ToJSONTyped(value?: SherlockChartReleaseV3
         'pagerdutyIntegrationInfo': SherlockPagerdutyIntegrationV3ToJSON(value['pagerdutyIntegrationInfo']),
         'port': value['port'],
         'protocol': value['protocol'],
-        'resolvedAt': value['resolvedAt'] == null ? value['resolvedAt'] : value['resolvedAt'].toISOString(),
+        'resolvedAt': value['resolvedAt'] == null ? value['resolvedAt'] : serializeDateTime(value['resolvedAt']),
         'subdomain': value['subdomain'],
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

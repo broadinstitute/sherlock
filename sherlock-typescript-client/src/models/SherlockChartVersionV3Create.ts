@@ -21,26 +21,18 @@ import { mapValues } from '../runtime';
 export interface SherlockChartVersionV3Create {
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockChartVersionV3Create
      */
     chart?: string;
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockChartVersionV3Create
      */
     chartVersion?: string;
     /**
      * Generally the Git commit message
-     * @type {string}
-     * @memberof SherlockChartVersionV3Create
      */
     description?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartVersionV3Create
      */
     parentChartVersion?: string;
 }

@@ -35,32 +35,77 @@ import {
 } from '../models/SherlockIncidentV3Edit';
 
 export interface ApiIncidentsV3GetRequest {
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * 
+     */
     description?: string;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * 
+     */
     remediatedAt?: string;
+    /**
+     * 
+     */
     reviewCompletedAt?: string;
+    /**
+     * 
+     */
     startedAt?: string;
+    /**
+     * 
+     */
     ticket?: string;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * Control how many Incidents are returned (default 0, meaning all)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned Incidents (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiIncidentsV3PostRequest {
+    /**
+     * The Incident to create
+     */
     incident: SherlockIncidentV3Create;
 }
 
 export interface ApiIncidentsV3SelectorDeleteRequest {
+    /**
+     * The ID of the Incident
+     */
     selector: string;
 }
 
 export interface ApiIncidentsV3SelectorGetRequest {
+    /**
+     * The ID of the Incident
+     */
     selector: string;
 }
 
 export interface ApiIncidentsV3SelectorPatchRequest {
+    /**
+     * The ID of the Incident
+     */
     selector: string;
+    /**
+     * The edits to make to the Incident
+     */
     incident: SherlockIncidentV3Edit;
 }
 
@@ -76,7 +121,7 @@ export class IncidentsApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['description'] != null) {
@@ -104,7 +149,7 @@ export class IncidentsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['limit'] != null) {

@@ -35,37 +35,97 @@ import {
 } from '../models/SherlockClusterV3Edit';
 
 export interface ApiClustersV3GetRequest {
+    /**
+     * Required when creating
+     */
     address?: string;
+    /**
+     * Required when creating if provider is 'azure'
+     */
     azureSubscription?: string;
+    /**
+     * Required when creating
+     */
     base?: string;
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * Required when creating if provider is 'google'
+     */
     googleProject?: string;
+    /**
+     * 
+     */
     helmfileRef?: string;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * 
+     */
     location?: string;
+    /**
+     * Required when creating
+     */
     name?: string;
+    /**
+     * 
+     */
     provider?: ApiClustersV3GetProviderEnum;
+    /**
+     * If present, requires membership in the given role for mutations. Set to an empty string to clear.
+     */
     requiredRole?: string;
+    /**
+     * 
+     */
     requiresSuitability?: boolean;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * Control how many Clusters are returned (default 0, meaning all)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned Clusters (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiClustersV3PostRequest {
+    /**
+     * The Cluster to create
+     */
     cluster: SherlockClusterV3Create;
 }
 
 export interface ApiClustersV3SelectorDeleteRequest {
+    /**
+     * The selector of the Cluster, which can be either a numeric ID or the name.
+     */
     selector: string;
 }
 
 export interface ApiClustersV3SelectorGetRequest {
+    /**
+     * The selector of the Cluster, which can be either a numeric ID or the name.
+     */
     selector: string;
 }
 
 export interface ApiClustersV3SelectorPatchRequest {
+    /**
+     * The selector of the Cluster, which can be either a numeric ID or the name.
+     */
     selector: string;
+    /**
+     * The edits to make to the Cluster
+     */
     cluster: SherlockClusterV3Edit;
 }
 
@@ -93,7 +153,7 @@ export class ClustersApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['googleProject'] != null) {
@@ -129,7 +189,7 @@ export class ClustersApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['limit'] != null) {
@@ -380,6 +440,6 @@ export class ClustersApi extends runtime.BaseAPI {
  */
 export const ApiClustersV3GetProviderEnum = {
     Google: 'google',
-    Azure: 'azure'
+    Azure: 'azure',
 } as const;
 export type ApiClustersV3GetProviderEnum = typeof ApiClustersV3GetProviderEnum[keyof typeof ApiClustersV3GetProviderEnum];

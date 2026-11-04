@@ -40,34 +40,94 @@ import {
 } from '../models/SherlockUserV3Upsert';
 
 export interface ApiUsersProceduresV3DeactivatePostRequest {
+    /**
+     * Information on the users to deactivate
+     */
     users: SherlockUserV3DeactivateRequest;
 }
 
 export interface ApiUsersV3GetRequest {
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * If set, indicates that the user is currently deactivated
+     */
     deactivatedAt?: string;
+    /**
+     * 
+     */
     email?: string;
+    /**
+     * 
+     */
     githubID?: string;
+    /**
+     * 
+     */
     githubUsername?: string;
+    /**
+     * 
+     */
     googleID?: string;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * 
+     */
     name?: string;
+    /**
+     * 
+     */
     nameFrom?: ApiUsersV3GetNameFromEnum;
+    /**
+     * 
+     */
     slackID?: string;
+    /**
+     * 
+     */
     slackUsername?: string;
+    /**
+     * Available only in responses; describes the user's production-suitability
+     */
     suitabilityDescription?: string;
+    /**
+     * Available only in responses; indicates whether the user is production-suitable
+     */
     suitable?: boolean;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * Control how many Users are returned (default 0, no limit)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned Users (default 0)
+     */
     offset?: number;
+    /**
+     * Include deactivated users in the results (default false)
+     */
     includeDeactivated?: boolean;
 }
 
 export interface ApiUsersV3PutRequest {
+    /**
+     * The User data to update
+     */
     user?: SherlockUserV3Upsert;
 }
 
 export interface ApiUsersV3SelectorGetRequest {
+    /**
+     * The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'. As a special case, 'me' or 'self' can be passed to get the calling user.
+     */
     selector: string;
 }
 
@@ -132,7 +192,7 @@ export class UsersApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['deactivatedAt'] != null) {
@@ -184,7 +244,7 @@ export class UsersApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['limit'] != null) {
@@ -329,6 +389,6 @@ export class UsersApi extends runtime.BaseAPI {
 export const ApiUsersV3GetNameFromEnum = {
     Sherlock: 'sherlock',
     Github: 'github',
-    Slack: 'slack'
+    Slack: 'slack',
 } as const;
 export type ApiUsersV3GetNameFromEnum = typeof ApiUsersV3GetNameFromEnum[keyof typeof ApiUsersV3GetNameFromEnum];

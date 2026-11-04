@@ -84,8 +84,7 @@ class SherlockCiIdentifierV3(BaseModel):
         _items = []
         if self.ci_runs:
             for _item_ci_runs in self.ci_runs:
-                if _item_ci_runs:
-                    _items.append(_item_ci_runs.to_dict())
+                _items.append(_item_ci_runs.to_dict() if _item_ci_runs is not None else None)
             _dict['ciRuns'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:

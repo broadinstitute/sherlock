@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 import type { SherlockCiIdentifierV3 } from './SherlockCiIdentifierV3';
 import {
     SherlockCiIdentifierV3FromJSON,
@@ -29,92 +29,62 @@ import {
 export interface SherlockChartV3 {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartV3
      */
     appImageGitMainBranch?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartV3
      */
     appImageGitRepo?: string;
     /**
      * Indicates if the default subdomain, protocol, and port fields are relevant for this chart
-     * @type {boolean}
-     * @memberof SherlockChartV3
      */
     chartExposesEndpoint?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartV3
      */
     chartRepo?: string;
     /**
      * 
-     * @type {SherlockCiIdentifierV3}
-     * @memberof SherlockChartV3
      */
     ciIdentifier?: SherlockCiIdentifierV3;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockChartV3
      */
     createdAt?: Date;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockChartV3
      */
     defaultPort?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartV3
      */
     defaultProtocol?: string;
     /**
      * When creating, will default to the name of the chart
-     * @type {string}
-     * @memberof SherlockChartV3
      */
     defaultSubdomain?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartV3
      */
     description?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockChartV3
      */
     id?: number;
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockChartV3
      */
     name?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockChartV3
      */
     pactParticipant?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartV3
      */
     playbookURL?: string;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockChartV3
      */
     updatedAt?: Date;
 }
@@ -141,7 +111,7 @@ export function SherlockChartV3FromJSONTyped(json: any, ignoreDiscriminator: boo
         'chartExposesEndpoint': json['chartExposesEndpoint'] == null ? undefined : json['chartExposesEndpoint'],
         'chartRepo': json['chartRepo'] == null ? undefined : json['chartRepo'],
         'ciIdentifier': json['ciIdentifier'] == null ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'defaultPort': json['defaultPort'] == null ? undefined : json['defaultPort'],
         'defaultProtocol': json['defaultProtocol'] == null ? undefined : json['defaultProtocol'],
         'defaultSubdomain': json['defaultSubdomain'] == null ? undefined : json['defaultSubdomain'],
@@ -150,7 +120,7 @@ export function SherlockChartV3FromJSONTyped(json: any, ignoreDiscriminator: boo
         'name': json['name'] == null ? undefined : json['name'],
         'pactParticipant': json['pactParticipant'] == null ? undefined : json['pactParticipant'],
         'playbookURL': json['playbookURL'] == null ? undefined : json['playbookURL'],
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -170,7 +140,7 @@ export function SherlockChartV3ToJSONTyped(value?: SherlockChartV3 | null, ignor
         'chartExposesEndpoint': value['chartExposesEndpoint'],
         'chartRepo': value['chartRepo'],
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'defaultPort': value['defaultPort'],
         'defaultProtocol': value['defaultProtocol'],
         'defaultSubdomain': value['defaultSubdomain'],
@@ -179,7 +149,7 @@ export function SherlockChartV3ToJSONTyped(value?: SherlockChartV3 | null, ignor
         'name': value['name'],
         'pactParticipant': value['pactParticipant'],
         'playbookURL': value['playbookURL'],
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

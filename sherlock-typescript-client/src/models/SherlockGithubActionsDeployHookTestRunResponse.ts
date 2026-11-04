@@ -21,14 +21,10 @@ import { mapValues } from '../runtime';
 export interface SherlockGithubActionsDeployHookTestRunResponse {
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockGithubActionsDeployHookTestRunResponse
      */
     ok?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookTestRunResponse
      */
     url?: string;
 }

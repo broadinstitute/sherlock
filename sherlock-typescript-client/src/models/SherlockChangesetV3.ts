@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 import type { SherlockUserV3 } from './SherlockUserV3';
 import {
     SherlockUserV3FromJSON,
@@ -57,242 +57,162 @@ import {
 export interface SherlockChangesetV3 {
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockChangesetV3
      */
     appliedAt?: Date;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     appliedBy?: string;
     /**
      * 
-     * @type {SherlockUserV3}
-     * @memberof SherlockChangesetV3
      */
     appliedByInfo?: SherlockUserV3;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     chartRelease?: string;
     /**
      * 
-     * @type {SherlockChartReleaseV3}
-     * @memberof SherlockChangesetV3
      */
     chartReleaseInfo?: SherlockChartReleaseV3;
     /**
      * 
-     * @type {SherlockCiIdentifierV3}
-     * @memberof SherlockChangesetV3
      */
     ciIdentifier?: SherlockCiIdentifierV3;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockChangesetV3
      */
     createdAt?: Date;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     fromAppVersionBranch?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     fromAppVersionCommit?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     fromAppVersionExact?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     fromAppVersionFollowChartRelease?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     fromAppVersionReference?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     fromAppVersionResolver?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     fromChartVersionExact?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     fromChartVersionFollowChartRelease?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     fromChartVersionReference?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     fromChartVersionResolver?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     fromHelmfileRef?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockChangesetV3
      */
     fromHelmfileRefEnabled?: boolean;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockChangesetV3
      */
     fromResolvedAt?: Date;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockChangesetV3
      */
     id?: number;
     /**
      * 
-     * @type {Array<SherlockAppVersionV3>}
-     * @memberof SherlockChangesetV3
      */
     newAppVersions?: Array<SherlockAppVersionV3>;
     /**
      * 
-     * @type {Array<SherlockChartVersionV3>}
-     * @memberof SherlockChangesetV3
      */
     newChartVersions?: Array<SherlockChartVersionV3>;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     plannedBy?: string;
     /**
      * 
-     * @type {SherlockUserV3}
-     * @memberof SherlockChangesetV3
      */
     plannedByInfo?: SherlockUserV3;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockChangesetV3
      */
     supersededAt?: Date;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     toAppVersionBranch?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     toAppVersionCommit?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     toAppVersionExact?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     toAppVersionFollowChartRelease?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     toAppVersionReference?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     toAppVersionResolver?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     toChartVersionExact?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     toChartVersionFollowChartRelease?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     toChartVersionReference?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     toChartVersionResolver?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
      */
     toHelmfileRef?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockChangesetV3
      */
     toHelmfileRefEnabled?: boolean;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockChangesetV3
      */
     toResolvedAt?: Date;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockChangesetV3
      */
     updatedAt?: Date;
 }
@@ -314,13 +234,13 @@ export function SherlockChangesetV3FromJSONTyped(json: any, ignoreDiscriminator:
     }
     return {
         
-        'appliedAt': json['appliedAt'] == null ? undefined : (new Date(json['appliedAt'])),
+        'appliedAt': json['appliedAt'] == null ? undefined : (parseDateTime(json['appliedAt'])),
         'appliedBy': json['appliedBy'] == null ? undefined : json['appliedBy'],
         'appliedByInfo': json['appliedByInfo'] == null ? undefined : SherlockUserV3FromJSON(json['appliedByInfo']),
         'chartRelease': json['chartRelease'] == null ? undefined : json['chartRelease'],
         'chartReleaseInfo': json['chartReleaseInfo'] == null ? undefined : SherlockChartReleaseV3FromJSON(json['chartReleaseInfo']),
         'ciIdentifier': json['ciIdentifier'] == null ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'fromAppVersionBranch': json['fromAppVersionBranch'] == null ? undefined : json['fromAppVersionBranch'],
         'fromAppVersionCommit': json['fromAppVersionCommit'] == null ? undefined : json['fromAppVersionCommit'],
         'fromAppVersionExact': json['fromAppVersionExact'] == null ? undefined : json['fromAppVersionExact'],
@@ -333,13 +253,13 @@ export function SherlockChangesetV3FromJSONTyped(json: any, ignoreDiscriminator:
         'fromChartVersionResolver': json['fromChartVersionResolver'] == null ? undefined : json['fromChartVersionResolver'],
         'fromHelmfileRef': json['fromHelmfileRef'] == null ? undefined : json['fromHelmfileRef'],
         'fromHelmfileRefEnabled': json['fromHelmfileRefEnabled'] == null ? undefined : json['fromHelmfileRefEnabled'],
-        'fromResolvedAt': json['fromResolvedAt'] == null ? undefined : (new Date(json['fromResolvedAt'])),
+        'fromResolvedAt': json['fromResolvedAt'] == null ? undefined : (parseDateTime(json['fromResolvedAt'])),
         'id': json['id'] == null ? undefined : json['id'],
         'newAppVersions': json['newAppVersions'] == null ? undefined : ((json['newAppVersions'] as Array<any>).map(SherlockAppVersionV3FromJSON)),
         'newChartVersions': json['newChartVersions'] == null ? undefined : ((json['newChartVersions'] as Array<any>).map(SherlockChartVersionV3FromJSON)),
         'plannedBy': json['plannedBy'] == null ? undefined : json['plannedBy'],
         'plannedByInfo': json['plannedByInfo'] == null ? undefined : SherlockUserV3FromJSON(json['plannedByInfo']),
-        'supersededAt': json['supersededAt'] == null ? undefined : (new Date(json['supersededAt'])),
+        'supersededAt': json['supersededAt'] == null ? undefined : (parseDateTime(json['supersededAt'])),
         'toAppVersionBranch': json['toAppVersionBranch'] == null ? undefined : json['toAppVersionBranch'],
         'toAppVersionCommit': json['toAppVersionCommit'] == null ? undefined : json['toAppVersionCommit'],
         'toAppVersionExact': json['toAppVersionExact'] == null ? undefined : json['toAppVersionExact'],
@@ -352,8 +272,8 @@ export function SherlockChangesetV3FromJSONTyped(json: any, ignoreDiscriminator:
         'toChartVersionResolver': json['toChartVersionResolver'] == null ? undefined : json['toChartVersionResolver'],
         'toHelmfileRef': json['toHelmfileRef'] == null ? undefined : json['toHelmfileRef'],
         'toHelmfileRefEnabled': json['toHelmfileRefEnabled'] == null ? undefined : json['toHelmfileRefEnabled'],
-        'toResolvedAt': json['toResolvedAt'] == null ? undefined : (new Date(json['toResolvedAt'])),
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'toResolvedAt': json['toResolvedAt'] == null ? undefined : (parseDateTime(json['toResolvedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -368,13 +288,13 @@ export function SherlockChangesetV3ToJSONTyped(value?: SherlockChangesetV3 | nul
 
     return {
         
-        'appliedAt': value['appliedAt'] == null ? value['appliedAt'] : value['appliedAt'].toISOString(),
+        'appliedAt': value['appliedAt'] == null ? value['appliedAt'] : serializeDateTime(value['appliedAt']),
         'appliedBy': value['appliedBy'],
         'appliedByInfo': SherlockUserV3ToJSON(value['appliedByInfo']),
         'chartRelease': value['chartRelease'],
         'chartReleaseInfo': SherlockChartReleaseV3ToJSON(value['chartReleaseInfo']),
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'fromAppVersionBranch': value['fromAppVersionBranch'],
         'fromAppVersionCommit': value['fromAppVersionCommit'],
         'fromAppVersionExact': value['fromAppVersionExact'],
@@ -387,13 +307,13 @@ export function SherlockChangesetV3ToJSONTyped(value?: SherlockChangesetV3 | nul
         'fromChartVersionResolver': value['fromChartVersionResolver'],
         'fromHelmfileRef': value['fromHelmfileRef'],
         'fromHelmfileRefEnabled': value['fromHelmfileRefEnabled'],
-        'fromResolvedAt': value['fromResolvedAt'] == null ? value['fromResolvedAt'] : value['fromResolvedAt'].toISOString(),
+        'fromResolvedAt': value['fromResolvedAt'] == null ? value['fromResolvedAt'] : serializeDateTime(value['fromResolvedAt']),
         'id': value['id'],
         'newAppVersions': value['newAppVersions'] == null ? undefined : ((value['newAppVersions'] as Array<any>).map(SherlockAppVersionV3ToJSON)),
         'newChartVersions': value['newChartVersions'] == null ? undefined : ((value['newChartVersions'] as Array<any>).map(SherlockChartVersionV3ToJSON)),
         'plannedBy': value['plannedBy'],
         'plannedByInfo': SherlockUserV3ToJSON(value['plannedByInfo']),
-        'supersededAt': value['supersededAt'] == null ? value['supersededAt'] : value['supersededAt'].toISOString(),
+        'supersededAt': value['supersededAt'] == null ? value['supersededAt'] : serializeDateTime(value['supersededAt']),
         'toAppVersionBranch': value['toAppVersionBranch'],
         'toAppVersionCommit': value['toAppVersionCommit'],
         'toAppVersionExact': value['toAppVersionExact'],
@@ -406,8 +326,8 @@ export function SherlockChangesetV3ToJSONTyped(value?: SherlockChangesetV3 | nul
         'toChartVersionResolver': value['toChartVersionResolver'],
         'toHelmfileRef': value['toHelmfileRef'],
         'toHelmfileRefEnabled': value['toHelmfileRefEnabled'],
-        'toResolvedAt': value['toResolvedAt'] == null ? value['toResolvedAt'] : value['toResolvedAt'].toISOString(),
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'toResolvedAt': value['toResolvedAt'] == null ? value['toResolvedAt'] : serializeDateTime(value['toResolvedAt']),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 /**
  * 
  * @export
@@ -21,74 +21,50 @@ import { mapValues } from '../runtime';
 export interface SherlockServiceAlertV3 {
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockServiceAlertV3
      */
     createdAt?: Date;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3
      */
     createdBy?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3
      */
     deletedBy?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockServiceAlertV3
      */
     id?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3
      */
     link?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3
      */
     message?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3
      */
     onEnvironment?: string;
     /**
      * 
-     * @type {SherlockServiceAlertV3SeverityEnum}
-     * @memberof SherlockServiceAlertV3
      */
     severity?: SherlockServiceAlertV3SeverityEnum;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3
      */
     title?: string;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockServiceAlertV3
      */
     updatedAt?: Date;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3
      */
     updatedBy?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3
      */
     uuid?: string;
 }
@@ -100,7 +76,7 @@ export interface SherlockServiceAlertV3 {
 export const SherlockServiceAlertV3SeverityEnum = {
     Blocker: 'blocker',
     Critical: ' critical',
-    Minor: ' minor'
+    Minor: ' minor',
 } as const;
 export type SherlockServiceAlertV3SeverityEnum = typeof SherlockServiceAlertV3SeverityEnum[keyof typeof SherlockServiceAlertV3SeverityEnum];
 
@@ -122,7 +98,7 @@ export function SherlockServiceAlertV3FromJSONTyped(json: any, ignoreDiscriminat
     }
     return {
         
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'createdBy': json['createdBy'] == null ? undefined : json['createdBy'],
         'deletedBy': json['deletedBy'] == null ? undefined : json['deletedBy'],
         'id': json['id'] == null ? undefined : json['id'],
@@ -131,7 +107,7 @@ export function SherlockServiceAlertV3FromJSONTyped(json: any, ignoreDiscriminat
         'onEnvironment': json['onEnvironment'] == null ? undefined : json['onEnvironment'],
         'severity': json['severity'] == null ? undefined : json['severity'],
         'title': json['title'] == null ? undefined : json['title'],
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
         'updatedBy': json['updatedBy'] == null ? undefined : json['updatedBy'],
         'uuid': json['uuid'] == null ? undefined : json['uuid'],
     };
@@ -148,7 +124,7 @@ export function SherlockServiceAlertV3ToJSONTyped(value?: SherlockServiceAlertV3
 
     return {
         
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'createdBy': value['createdBy'],
         'deletedBy': value['deletedBy'],
         'id': value['id'],
@@ -157,7 +133,7 @@ export function SherlockServiceAlertV3ToJSONTyped(value?: SherlockServiceAlertV3
         'onEnvironment': value['onEnvironment'],
         'severity': value['severity'],
         'title': value['title'],
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
         'updatedBy': value['updatedBy'],
         'uuid': value['uuid'],
     };

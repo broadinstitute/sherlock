@@ -40,42 +40,108 @@ import {
 } from '../models/SherlockServiceAlertV3SyncRequest';
 
 export interface ApiServiceAlertsProceduresV3SyncPostRequest {
+    /**
+     * Information on Service Alert environment
+     */
     environment: SherlockServiceAlertV3SyncRequest;
 }
 
 export interface ApiServiceAlertsV3GetRequest {
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * 
+     */
     createdBy?: string;
+    /**
+     * 
+     */
     deltedBy?: string;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * 
+     */
     link?: string;
+    /**
+     * 
+     */
     message?: string;
+    /**
+     * 
+     */
     onEnvironment?: string;
+    /**
+     * 
+     */
     severity?: ApiServiceAlertsV3GetSeverityEnum;
+    /**
+     * 
+     */
     title?: string;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * 
+     */
     updatedBy?: string;
+    /**
+     * 
+     */
     uuid?: string;
+    /**
+     * Control how many Service Alerts are returned (default 0, no limit)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned Service Alerts (default 0)
+     */
     offset?: number;
+    /**
+     * Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)
+     */
     includeDeleted?: boolean;
 }
 
 export interface ApiServiceAlertsV3PostRequest {
+    /**
+     * The initial fields the ServiceAlert should have set
+     */
     serviceAlert: SherlockServiceAlertV3Create;
 }
 
 export interface ApiServiceAlertsV3SelectorDeleteRequest {
+    /**
+     * The selector of the ServiceAlert, ServiceAlert, which is the guid for a given alert
+     */
     selector: string;
 }
 
 export interface ApiServiceAlertsV3SelectorGetRequest {
+    /**
+     * The selector of the ServiceAlert, which is the guid for a given alert
+     */
     selector: string;
+    /**
+     * Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)
+     */
     includeDeleted?: boolean;
 }
 
 export interface ApiServiceAlertsV3SelectorPatchRequest {
+    /**
+     * The selector of the ServiceAlert, which is the guid for a given alert
+     */
     selector: string;
+    /**
+     * The edits to make to the ServiceAlert
+     */
     serviceAlert: SherlockServiceAlertV3EditableFields;
 }
 
@@ -140,7 +206,7 @@ export class ServiceAlertApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['createdBy'] != null) {
@@ -176,7 +242,7 @@ export class ServiceAlertApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['updatedBy'] != null) {
@@ -444,6 +510,6 @@ export class ServiceAlertApi extends runtime.BaseAPI {
 export const ApiServiceAlertsV3GetSeverityEnum = {
     Blocker: 'blocker',
     Critical: ' critical',
-    Minor: ' minor'
+    Minor: ' minor',
 } as const;
 export type ApiServiceAlertsV3GetSeverityEnum = typeof ApiServiceAlertsV3GetSeverityEnum[keyof typeof ApiServiceAlertsV3GetSeverityEnum];

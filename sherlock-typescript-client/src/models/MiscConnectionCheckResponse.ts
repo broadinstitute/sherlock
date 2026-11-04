@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface MiscConnectionCheckResponse {
     /**
      * Always true
-     * @type {boolean}
-     * @memberof MiscConnectionCheckResponse
      */
     ok?: boolean;
 }

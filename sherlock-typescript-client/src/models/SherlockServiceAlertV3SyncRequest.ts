@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface SherlockServiceAlertV3SyncRequest {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3SyncRequest
      */
     onEnvironment?: string;
 }

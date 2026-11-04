@@ -23,20 +23,14 @@ export interface SherlockUserV3Upsert {
      * An access token for the GitHub account to associate with the calling user. The access token isn't stored.
      * The design here ensures that an association is only built when someone controls both accounts (Google via
      * IAP and GitHub via this access token).
-     * @type {string}
-     * @memberof SherlockUserV3Upsert
      */
     githubAccessToken?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockUserV3Upsert
      */
     name?: string;
     /**
      * 
-     * @type {SherlockUserV3UpsertNameFromEnum}
-     * @memberof SherlockUserV3Upsert
      */
     nameFrom?: SherlockUserV3UpsertNameFromEnum;
 }
@@ -48,7 +42,7 @@ export interface SherlockUserV3Upsert {
 export const SherlockUserV3UpsertNameFromEnum = {
     Sherlock: 'sherlock',
     Github: 'github',
-    Slack: 'slack'
+    Slack: 'slack',
 } as const;
 export type SherlockUserV3UpsertNameFromEnum = typeof SherlockUserV3UpsertNameFromEnum[keyof typeof SherlockUserV3UpsertNameFromEnum];
 

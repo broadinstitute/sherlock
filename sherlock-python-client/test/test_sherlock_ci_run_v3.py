@@ -58,9 +58,9 @@ class TestSherlockCiRunV3(unittest.TestCase):
                 notify_slack_custom_icon = '',
                 platform = '',
                 related_resources = [
-                    sherlock_python_client.models.sherlock/ci_identifier_v3.sherlock.CiIdentifierV3(
+                    sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
                         ci_runs = [
-                            sherlock_python_client.models.sherlock/ci_run_v3.sherlock.CiRunV3(
+                            sherlock_python_client.models.sherlock_ci_run_v3.SherlockCiRunV3(
                                 argo_workflows_name = '', 
                                 argo_workflows_namespace = '', 
                                 argo_workflows_template = '', 

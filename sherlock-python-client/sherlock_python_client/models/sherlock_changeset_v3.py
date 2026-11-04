@@ -131,15 +131,13 @@ class SherlockChangesetV3(BaseModel):
         _items = []
         if self.new_app_versions:
             for _item_new_app_versions in self.new_app_versions:
-                if _item_new_app_versions:
-                    _items.append(_item_new_app_versions.to_dict())
+                _items.append(_item_new_app_versions.to_dict() if _item_new_app_versions is not None else None)
             _dict['newAppVersions'] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in new_chart_versions (list)
         _items = []
         if self.new_chart_versions:
             for _item_new_chart_versions in self.new_chart_versions:
-                if _item_new_chart_versions:
-                    _items.append(_item_new_chart_versions.to_dict())
+                _items.append(_item_new_chart_versions.to_dict() if _item_new_chart_versions is not None else None)
             _dict['newChartVersions'] = _items
         # override the default output from pydantic by calling `to_dict()` of planned_by_info
         if self.planned_by_info:

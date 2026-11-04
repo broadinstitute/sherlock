@@ -29,14 +29,10 @@ import {
 export interface SherlockChartVersionV3ChangelogResponse {
     /**
      * 
-     * @type {Array<SherlockChartVersionV3>}
-     * @memberof SherlockChartVersionV3ChangelogResponse
      */
     changelog?: Array<SherlockChartVersionV3>;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockChartVersionV3ChangelogResponse
      */
     complete?: boolean;
 }

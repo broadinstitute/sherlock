@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface SherlockGithubActionsDeployHookTestRunRequest {
     /**
      * Required, whether to fully run the GHA
-     * @type {boolean}
-     * @memberof SherlockGithubActionsDeployHookTestRunRequest
      */
     execute?: boolean;
 }

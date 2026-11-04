@@ -21,32 +21,22 @@ import { mapValues } from '../runtime';
 export interface SherlockChartReleaseV3Edit {
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockChartReleaseV3Edit
      */
     includedInBulkChangesets?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Edit
      */
     pagerdutyIntegration?: string;
     /**
      * When creating, will use the chart's default if left empty
-     * @type {number}
-     * @memberof SherlockChartReleaseV3Edit
      */
     port?: number;
     /**
      * When creating, will use the chart's default if left empty
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Edit
      */
     protocol?: string;
     /**
      * When creating, will use the chart's default if left empty
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Edit
      */
     subdomain?: string;
 }

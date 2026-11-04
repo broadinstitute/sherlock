@@ -35,51 +35,153 @@ import {
 } from '../models/SherlockChartReleaseV3Edit';
 
 export interface ApiChartReleasesV3GetRequest {
+    /**
+     * When creating, will default to the app's mainline branch if no other app version info is present
+     */
     appVersionBranch?: string;
+    /**
+     * 
+     */
     appVersionCommit?: string;
+    /**
+     * 
+     */
     appVersionExact?: string;
+    /**
+     * 
+     */
     appVersionFollowChartRelease?: string;
+    /**
+     * 
+     */
     appVersionReference?: string;
+    /**
+     * // When creating, will default to automatically reference any provided app version fields
+     */
     appVersionResolver?: ApiChartReleasesV3GetAppVersionResolverEnum;
+    /**
+     * Required when creating
+     */
     chart?: string;
+    /**
+     * 
+     */
     chartVersionExact?: string;
+    /**
+     * 
+     */
     chartVersionFollowChartRelease?: string;
+    /**
+     * 
+     */
     chartVersionReference?: string;
+    /**
+     * When creating, will default to automatically reference any provided chart version
+     */
     chartVersionResolver?: ApiChartReleasesV3GetChartVersionResolverEnum;
+    /**
+     * When creating, will default the environment's default cluster, if provided. Either this or environment must be provided.
+     */
     cluster?: string;
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * Calculated field
+     */
     destinationType?: string;
+    /**
+     * Either this or cluster must be provided.
+     */
     environment?: string;
+    /**
+     * 
+     */
     helmfileRef?: string;
+    /**
+     * 
+     */
     helmfileRefEnabled?: boolean;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * 
+     */
     includedInBulkChangesets?: boolean;
+    /**
+     * When creating, will be calculated if left empty
+     */
     name?: string;
+    /**
+     * When creating, will default to the environment's default namespace, if provided
+     */
     namespace?: string;
+    /**
+     * 
+     */
     pagerdutyIntegration?: string;
+    /**
+     * When creating, will use the chart's default if left empty
+     */
     port?: number;
+    /**
+     * When creating, will use the chart's default if left empty
+     */
     protocol?: string;
+    /**
+     * 
+     */
     resolvedAt?: Date;
+    /**
+     * When creating, will use the chart's default if left empty
+     */
     subdomain?: string;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * Control how many ChartReleases are returned (default 0, meaning all)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned ChartReleases (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiChartReleasesV3PostRequest {
+    /**
+     * The ChartRelease to create
+     */
     chartRelease: SherlockChartReleaseV3Create;
 }
 
 export interface ApiChartReleasesV3SelectorDeleteRequest {
+    /**
+     * The selector of the ChartRelease, which can be either a numeric ID, the name, environment + '/' + chart, or cluster + '/' + namespace + '/' + chart.
+     */
     selector: string;
 }
 
 export interface ApiChartReleasesV3SelectorGetRequest {
+    /**
+     * The selector of the ChartRelease, which can be either a numeric ID, the name, environment + '/' + chart, or cluster + '/' + namespace + '/' + chart.
+     */
     selector: string;
 }
 
 export interface ApiChartReleasesV3SelectorPatchRequest {
+    /**
+     * The selector of the ChartRelease, which can be either a numeric ID, the name, environment + '/' + chart, or cluster + '/' + namespace + '/' + chart.
+     */
     selector: string;
+    /**
+     * The edits to make to the ChartRelease
+     */
     chartRelease: SherlockChartReleaseV3Edit;
 }
 
@@ -143,7 +245,7 @@ export class ChartReleasesApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['destinationType'] != null) {
@@ -191,7 +293,7 @@ export class ChartReleasesApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['resolvedAt'] != null) {
-            queryParameters['resolvedAt'] = (requestParameters['resolvedAt'] as any).toISOString();
+            queryParameters['resolvedAt'] = runtime.serializeDateTime(requestParameters['resolvedAt'] as any);
         }
 
         if (requestParameters['subdomain'] != null) {
@@ -199,7 +301,7 @@ export class ChartReleasesApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['limit'] != null) {
@@ -453,7 +555,7 @@ export const ApiChartReleasesV3GetAppVersionResolverEnum = {
     Commit: 'commit',
     Exact: 'exact',
     Follow: 'follow',
-    None: 'none'
+    None: 'none',
 } as const;
 export type ApiChartReleasesV3GetAppVersionResolverEnum = typeof ApiChartReleasesV3GetAppVersionResolverEnum[keyof typeof ApiChartReleasesV3GetAppVersionResolverEnum];
 /**
@@ -462,6 +564,6 @@ export type ApiChartReleasesV3GetAppVersionResolverEnum = typeof ApiChartRelease
 export const ApiChartReleasesV3GetChartVersionResolverEnum = {
     Latest: 'latest',
     Exact: 'exact',
-    Follow: 'follow'
+    Follow: 'follow',
 } as const;
 export type ApiChartReleasesV3GetChartVersionResolverEnum = typeof ApiChartReleasesV3GetChartVersionResolverEnum[keyof typeof ApiChartReleasesV3GetChartVersionResolverEnum];

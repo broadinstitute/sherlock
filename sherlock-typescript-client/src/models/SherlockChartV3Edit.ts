@@ -21,62 +21,42 @@ import { mapValues } from '../runtime';
 export interface SherlockChartV3Edit {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartV3Edit
      */
     appImageGitMainBranch?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartV3Edit
      */
     appImageGitRepo?: string;
     /**
      * Indicates if the default subdomain, protocol, and port fields are relevant for this chart
-     * @type {boolean}
-     * @memberof SherlockChartV3Edit
      */
     chartExposesEndpoint?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartV3Edit
      */
     chartRepo?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockChartV3Edit
      */
     defaultPort?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartV3Edit
      */
     defaultProtocol?: string;
     /**
      * When creating, will default to the name of the chart
-     * @type {string}
-     * @memberof SherlockChartV3Edit
      */
     defaultSubdomain?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartV3Edit
      */
     description?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockChartV3Edit
      */
     pactParticipant?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartV3Edit
      */
     playbookURL?: string;
 }

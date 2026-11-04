@@ -30,46 +30,133 @@ import {
 } from '../models/SherlockRoleV3Edit';
 
 export interface ApiRolesV3GetRequest {
+    /**
+     * When true, Sherlock will automatically assign all users to this role who do not already have a role assignment
+     */
     autoAssignAllUsers?: boolean;
+    /**
+     * 
+     */
     canBeGlassBrokenByRole?: number;
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * 
+     */
     defaultGlassBreakDuration?: string;
+    /**
+     * 
+     */
     grantsBroadInstituteGroup?: string;
+    /**
+     * 
+     */
     grantsDevAzureAccount?: boolean;
+    /**
+     * 
+     */
     grantsDevAzureDirectoryRoles?: boolean;
+    /**
+     * 
+     */
     grantsDevAzureGroup?: string;
+    /**
+     * 
+     */
     grantsDevFirecloudFolderOwner?: string;
+    /**
+     * 
+     */
     grantsDevFirecloudGroup?: string;
+    /**
+     * 
+     */
     grantsProdAzureAccount?: boolean;
+    /**
+     * 
+     */
     grantsProdAzureDirectoryRoles?: boolean;
+    /**
+     * 
+     */
     grantsProdAzureGroup?: string;
+    /**
+     * 
+     */
     grantsProdFirecloudFolderOwner?: string;
+    /**
+     * 
+     */
     grantsProdFirecloudGroup?: string;
+    /**
+     * 
+     */
     grantsQaFirecloudFolderOwner?: string;
+    /**
+     * 
+     */
     grantsQaFirecloudGroup?: string;
+    /**
+     * 
+     */
     grantsSherlockSuperAdmin?: boolean;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * 
+     */
     name?: string;
+    /**
+     * When true, the "suspended" field on role assignments will be computed by Sherlock based on suitability instead of being a mutable API field
+     */
     suspendNonSuitableUsers?: boolean;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * Control how many Roles are returned (default 0, no limit)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned Roles (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiRolesV3PostRequest {
+    /**
+     * The initial fields the Role should have set
+     */
     role: SherlockRoleV3Edit;
 }
 
 export interface ApiRolesV3SelectorDeleteRequest {
+    /**
+     * The selector of the Role, which can be either the numeric ID or the name
+     */
     selector: string;
 }
 
 export interface ApiRolesV3SelectorGetRequest {
+    /**
+     * The selector of the Role, which can be either the numeric ID or the name
+     */
     selector: string;
 }
 
 export interface ApiRolesV3SelectorPatchRequest {
+    /**
+     * The selector of the Role, which can be either the numeric ID or the name
+     */
     selector: string;
+    /**
+     * The edits to make to the Role
+     */
     role: SherlockRoleV3Edit;
 }
 
@@ -93,7 +180,7 @@ export class RolesApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['defaultGlassBreakDuration'] != null) {
@@ -169,7 +256,7 @@ export class RolesApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['limit'] != null) {

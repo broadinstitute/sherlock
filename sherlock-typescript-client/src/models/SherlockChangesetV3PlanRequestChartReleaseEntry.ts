@@ -21,80 +21,54 @@ import { mapValues } from '../runtime';
 export interface SherlockChangesetV3PlanRequestChartReleaseEntry {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestChartReleaseEntry
      */
     chartRelease?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestChartReleaseEntry
      */
     followVersionsFromOtherChartRelease?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestChartReleaseEntry
      */
     toAppVersionBranch?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestChartReleaseEntry
      */
     toAppVersionCommit?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestChartReleaseEntry
      */
     toAppVersionExact?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestChartReleaseEntry
      */
     toAppVersionFollowChartRelease?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestChartReleaseEntry
      */
     toAppVersionResolver?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestChartReleaseEntry
      */
     toChartVersionExact?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestChartReleaseEntry
      */
     toChartVersionFollowChartRelease?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestChartReleaseEntry
      */
     toChartVersionResolver?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestChartReleaseEntry
      */
     toHelmfileRef?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockChangesetV3PlanRequestChartReleaseEntry
      */
     toHelmfileRefEnabled?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestChartReleaseEntry
      */
     useExactVersionsFromOtherChartRelease?: string;
 }

@@ -21,26 +21,18 @@ import { mapValues } from '../runtime';
 export interface SherlockServiceAlertV3EditableFields {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3EditableFields
      */
     link?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3EditableFields
      */
     message?: string;
     /**
      * 
-     * @type {SherlockServiceAlertV3EditableFieldsSeverityEnum}
-     * @memberof SherlockServiceAlertV3EditableFields
      */
     severity?: SherlockServiceAlertV3EditableFieldsSeverityEnum;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockServiceAlertV3EditableFields
      */
     title?: string;
 }
@@ -52,7 +44,7 @@ export interface SherlockServiceAlertV3EditableFields {
 export const SherlockServiceAlertV3EditableFieldsSeverityEnum = {
     Blocker: 'blocker',
     Critical: ' critical',
-    Minor: ' minor'
+    Minor: ' minor',
 } as const;
 export type SherlockServiceAlertV3EditableFieldsSeverityEnum = typeof SherlockServiceAlertV3EditableFieldsSeverityEnum[keyof typeof SherlockServiceAlertV3EditableFieldsSeverityEnum];
 

@@ -40,7 +40,7 @@ class TestSherlockGithubActionsDeployHookV3Create(unittest.TestCase):
                 github_actions_owner = '',
                 github_actions_ref_behavior = 'always-use-default-ref',
                 github_actions_repo = '',
-                github_actions_workflow_inputs = None,
+                github_actions_workflow_inputs = { },
                 github_actions_workflow_path = '',
                 on_chart_release = '',
                 on_environment = '',

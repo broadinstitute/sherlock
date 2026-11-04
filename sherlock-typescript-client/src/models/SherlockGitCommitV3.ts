@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 /**
  * 
  * @export
@@ -21,56 +21,38 @@ import { mapValues } from '../runtime';
 export interface SherlockGitCommitV3 {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGitCommitV3
      */
     committedAt?: string;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockGitCommitV3
      */
     createdAt?: Date;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGitCommitV3
      */
     gitBranch?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGitCommitV3
      */
     gitCommit?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGitCommitV3
      */
     gitRepo?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockGitCommitV3
      */
     id?: number;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockGitCommitV3
      */
     isMainBranch?: boolean;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockGitCommitV3
      */
     secSincePrev?: number;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockGitCommitV3
      */
     updatedAt?: Date;
 }
@@ -93,14 +75,14 @@ export function SherlockGitCommitV3FromJSONTyped(json: any, ignoreDiscriminator:
     return {
         
         'committedAt': json['committedAt'] == null ? undefined : json['committedAt'],
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'gitBranch': json['gitBranch'] == null ? undefined : json['gitBranch'],
         'gitCommit': json['gitCommit'] == null ? undefined : json['gitCommit'],
         'gitRepo': json['gitRepo'] == null ? undefined : json['gitRepo'],
         'id': json['id'] == null ? undefined : json['id'],
         'isMainBranch': json['isMainBranch'] == null ? undefined : json['isMainBranch'],
         'secSincePrev': json['secSincePrev'] == null ? undefined : json['secSincePrev'],
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -116,14 +98,14 @@ export function SherlockGitCommitV3ToJSONTyped(value?: SherlockGitCommitV3 | nul
     return {
         
         'committedAt': value['committedAt'],
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'gitBranch': value['gitBranch'],
         'gitCommit': value['gitCommit'],
         'gitRepo': value['gitRepo'],
         'id': value['id'],
         'isMainBranch': value['isMainBranch'],
         'secSincePrev': value['secSincePrev'],
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

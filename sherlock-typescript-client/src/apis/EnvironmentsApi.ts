@@ -35,55 +35,169 @@ import {
 } from '../models/SherlockEnvironmentV3Edit';
 
 export interface ApiEnvironmentsV3GetRequest {
+    /**
+     * If true when creating, dynamic environments copy from template and template environments get the honeycomb chart
+     */
     autoPopulateChartReleases?: boolean;
+    /**
+     * Required when creating
+     */
     base?: string;
+    /**
+     * 
+     */
     baseDomain?: string;
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * 
+     */
     defaultCluster?: string;
+    /**
+     * When creating, will be calculated if left empty
+     */
     defaultNamespace?: string;
+    /**
+     * If set, the BEE will be automatically deleted after this time. Can be set to "" or Go's zero time value to clear the field.
+     */
     deleteAfter?: Date;
+    /**
+     * 
+     */
     description?: string;
+    /**
+     * If true, janitor resource cleanup will be enabled for this environment. BEEs default to template's value, templates default to true, and static/live environments default to false.
+     */
     enableJanitor?: boolean;
+    /**
+     * 
+     */
     helmfileRef?: string;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * 
+     */
     lifecycle?: string;
+    /**
+     * When creating, will be calculated if dynamic, required otherwise
+     */
     name?: string;
+    /**
+     * 
+     */
     namePrefixesDomain?: boolean;
+    /**
+     * Applicable for BEEs only, whether Thelma should render the BEE as "offline" zero replicas (this field is a target state, not a status)
+     */
     offline?: boolean;
+    /**
+     * When enabled, the BEE will be slated to go offline around the begin time each day
+     */
     offlineScheduleBeginEnabled?: boolean;
+    /**
+     * Stored with timezone to determine day of the week
+     */
     offlineScheduleBeginTime?: Date;
+    /**
+     * When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)
+     */
     offlineScheduleEndEnabled?: boolean;
+    /**
+     * Stored with timezone to determine day of the week
+     */
     offlineScheduleEndTime?: Date;
+    /**
+     * 
+     */
     offlineScheduleEndWeekends?: boolean;
+    /**
+     * When creating, will default to you
+     */
     owner?: string;
+    /**
+     * 
+     */
     pactIdentifier?: string;
+    /**
+     * 
+     */
     pagerdutyIntegration?: string;
+    /**
+     * Used to protect specific BEEs from deletion (thelma checks this field)
+     */
     preventDeletion?: boolean;
+    /**
+     * If present, requires membership in the given role for mutations. Set to an empty string to clear.
+     */
     requiredRole?: string;
+    /**
+     * 
+     */
     requiresSuitability?: boolean;
+    /**
+     * 
+     */
     serviceBannerBucket?: string;
+    /**
+     * Required for dynamic environments
+     */
     templateEnvironment?: string;
+    /**
+     * When creating, will be calculated if left empty
+     */
     uniqueResourcePrefix?: string;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * When creating, defaults to template name or environment name
+     */
     valuesName?: string;
+    /**
+     * Control how many Environments are returned (default 0, meaning all)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned Environments (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiEnvironmentsV3PostRequest {
+    /**
+     * The Environment to create
+     */
     environment: SherlockEnvironmentV3Create;
 }
 
 export interface ApiEnvironmentsV3SelectorDeleteRequest {
+    /**
+     * The selector of the Environment, which can be either a numeric ID, the name, or 'resource-prefix' + / + the unique resource prefix.
+     */
     selector: string;
 }
 
 export interface ApiEnvironmentsV3SelectorGetRequest {
+    /**
+     * The selector of the Environment, which can be either a numeric ID, the name, or 'resource-prefix' + / + the unique resource prefix.
+     */
     selector: string;
 }
 
 export interface ApiEnvironmentsV3SelectorPatchRequest {
+    /**
+     * The selector of the Environment, which can be either a numeric ID, the name, or 'resource-prefix' + / + the unique resource prefix.
+     */
     selector: string;
+    /**
+     * The edits to make to the Environment
+     */
     environment: SherlockEnvironmentV3Edit;
 }
 
@@ -111,7 +225,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['defaultCluster'] != null) {
@@ -123,7 +237,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['deleteAfter'] != null) {
-            queryParameters['deleteAfter'] = (requestParameters['deleteAfter'] as any).toISOString();
+            queryParameters['deleteAfter'] = runtime.serializeDateTime(requestParameters['deleteAfter'] as any);
         }
 
         if (requestParameters['description'] != null) {
@@ -163,7 +277,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['offlineScheduleBeginTime'] != null) {
-            queryParameters['offlineScheduleBeginTime'] = (requestParameters['offlineScheduleBeginTime'] as any).toISOString();
+            queryParameters['offlineScheduleBeginTime'] = runtime.serializeDateTime(requestParameters['offlineScheduleBeginTime'] as any);
         }
 
         if (requestParameters['offlineScheduleEndEnabled'] != null) {
@@ -171,7 +285,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['offlineScheduleEndTime'] != null) {
-            queryParameters['offlineScheduleEndTime'] = (requestParameters['offlineScheduleEndTime'] as any).toISOString();
+            queryParameters['offlineScheduleEndTime'] = runtime.serializeDateTime(requestParameters['offlineScheduleEndTime'] as any);
         }
 
         if (requestParameters['offlineScheduleEndWeekends'] != null) {
@@ -215,7 +329,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['valuesName'] != null) {

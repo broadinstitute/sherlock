@@ -21,8 +21,6 @@ import { mapValues } from '../runtime';
 export interface MiscStatusResponse {
     /**
      * 
-     * @type {boolean}
-     * @memberof MiscStatusResponse
      */
     ok?: boolean;
 }

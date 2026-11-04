@@ -21,62 +21,42 @@ import { mapValues } from '../runtime';
 export interface SherlockGithubActionsDeployHookV3Create {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3Create
      */
     githubActionsDefaultRef?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3Create
      */
     githubActionsOwner?: string;
     /**
      * This field determines what git ref the workflow will be run on. The default of always-use-default-ref always uses the default ref; use-app-version-as-ref will use the app version (when available) as the ref, useful when versions are always commit hashes or tags; use-app-version-commit-as-ref will use the app version's commit (when available) as the ref, useful when the repo is configured to fully report app versions to Sherlock.
-     * @type {SherlockGithubActionsDeployHookV3CreateGithubActionsRefBehaviorEnum}
-     * @memberof SherlockGithubActionsDeployHookV3Create
      */
     githubActionsRefBehavior?: SherlockGithubActionsDeployHookV3CreateGithubActionsRefBehaviorEnum;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3Create
      */
     githubActionsRepo?: string;
     /**
      * These workflow inputs will be passed statically as-is to GitHub's workflow dispatch API (https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event) as the `inputs` parameter object.
-     * @type {object}
-     * @memberof SherlockGithubActionsDeployHookV3Create
      */
     githubActionsWorkflowInputs?: object;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3Create
      */
     githubActionsWorkflowPath?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3Create
      */
     onChartRelease?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3Create
      */
     onEnvironment?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockGithubActionsDeployHookV3Create
      */
     onFailure?: boolean;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockGithubActionsDeployHookV3Create
      */
     onSuccess?: boolean;
 }
@@ -88,7 +68,7 @@ export interface SherlockGithubActionsDeployHookV3Create {
 export const SherlockGithubActionsDeployHookV3CreateGithubActionsRefBehaviorEnum = {
     AlwaysUseDefaultRef: 'always-use-default-ref',
     UseAppVersionAsRef: 'use-app-version-as-ref',
-    UseAppVersionCommitAsRef: 'use-app-version-commit-as-ref'
+    UseAppVersionCommitAsRef: 'use-app-version-commit-as-ref',
 } as const;
 export type SherlockGithubActionsDeployHookV3CreateGithubActionsRefBehaviorEnum = typeof SherlockGithubActionsDeployHookV3CreateGithubActionsRefBehaviorEnum[keyof typeof SherlockGithubActionsDeployHookV3CreateGithubActionsRefBehaviorEnum];
 

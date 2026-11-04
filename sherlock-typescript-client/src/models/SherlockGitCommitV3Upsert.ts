@@ -21,32 +21,22 @@ import { mapValues } from '../runtime';
 export interface SherlockGitCommitV3Upsert {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGitCommitV3Upsert
      */
     committedAt?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGitCommitV3Upsert
      */
     gitBranch?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGitCommitV3Upsert
      */
     gitCommit?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGitCommitV3Upsert
      */
     gitRepo?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockGitCommitV3Upsert
      */
     isMainBranch?: boolean;
 }

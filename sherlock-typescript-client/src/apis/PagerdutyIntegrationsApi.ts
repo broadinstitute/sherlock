@@ -45,35 +45,80 @@ import {
 } from '../models/SherlockPagerdutyIntegrationV3Edit';
 
 export interface ApiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPostRequest {
+    /**
+     * The selector of the PagerdutyIntegration, which can be either a numeric ID or pd-id/<pagerduty-id>.
+     */
     selector: string;
+    /**
+     * Summary of the incident
+     */
     summary: PagerdutyAlertSummary;
 }
 
 export interface ApiPagerdutyIntegrationsV3GetRequest {
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * 
+     */
     name?: string;
+    /**
+     * 
+     */
     pagerdutyID?: string;
+    /**
+     * 
+     */
     type?: string;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * Control how many PagerdutyIntegrations are returned (default 0, meaning all)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned PagerdutyIntegrations (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiPagerdutyIntegrationsV3PostRequest {
+    /**
+     * The PagerdutyIntegration to create
+     */
     pagerdutyIntegration: SherlockPagerdutyIntegrationV3Create;
 }
 
 export interface ApiPagerdutyIntegrationsV3SelectorDeleteRequest {
+    /**
+     * The selector of the PagerdutyIntegration, which can be either a numeric ID or pd-id/<pagerduty-id>.
+     */
     selector: string;
 }
 
 export interface ApiPagerdutyIntegrationsV3SelectorGetRequest {
+    /**
+     * The selector of the PagerdutyIntegration, which can be either a numeric ID or pd-id/<pagerduty-id>.
+     */
     selector: string;
 }
 
 export interface ApiPagerdutyIntegrationsV3SelectorPatchRequest {
+    /**
+     * The selector of the PagerdutyIntegration, which can be either a numeric ID or pd-id/<pagerduty-id>.
+     */
     selector: string;
+    /**
+     * The edits to make to the PagerdutyIntegration
+     */
     pagerdutyIntegration: SherlockPagerdutyIntegrationV3Edit;
 }
 
@@ -146,7 +191,7 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['id'] != null) {
@@ -166,7 +211,7 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['limit'] != null) {

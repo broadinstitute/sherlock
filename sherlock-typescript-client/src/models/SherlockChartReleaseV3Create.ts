@@ -21,122 +21,82 @@ import { mapValues } from '../runtime';
 export interface SherlockChartReleaseV3Create {
     /**
      * When creating, will default to the app's mainline branch if no other app version info is present
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
      */
     appVersionBranch?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
      */
     appVersionCommit?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
      */
     appVersionExact?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
      */
     appVersionFollowChartRelease?: string;
     /**
      * // When creating, will default to automatically reference any provided app version fields
-     * @type {SherlockChartReleaseV3CreateAppVersionResolverEnum}
-     * @memberof SherlockChartReleaseV3Create
      */
     appVersionResolver?: SherlockChartReleaseV3CreateAppVersionResolverEnum;
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
      */
     chart?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
      */
     chartVersionExact?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
      */
     chartVersionFollowChartRelease?: string;
     /**
      * When creating, will default to automatically reference any provided chart version
-     * @type {SherlockChartReleaseV3CreateChartVersionResolverEnum}
-     * @memberof SherlockChartReleaseV3Create
      */
     chartVersionResolver?: SherlockChartReleaseV3CreateChartVersionResolverEnum;
     /**
      * When creating, will default the environment's default cluster, if provided. Either this or environment must be provided.
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
      */
     cluster?: string;
     /**
      * Either this or cluster must be provided.
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
      */
     environment?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
      */
     helmfileRef?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockChartReleaseV3Create
      */
     helmfileRefEnabled?: boolean;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockChartReleaseV3Create
      */
     includedInBulkChangesets?: boolean;
     /**
      * When creating, will be calculated if left empty
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
      */
     name?: string;
     /**
      * When creating, will default to the environment's default namespace, if provided
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
      */
     namespace?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
      */
     pagerdutyIntegration?: string;
     /**
      * When creating, will use the chart's default if left empty
-     * @type {number}
-     * @memberof SherlockChartReleaseV3Create
      */
     port?: number;
     /**
      * When creating, will use the chart's default if left empty
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
      */
     protocol?: string;
     /**
      * When creating, will use the chart's default if left empty
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
      */
     subdomain?: string;
 }
@@ -150,7 +110,7 @@ export const SherlockChartReleaseV3CreateAppVersionResolverEnum = {
     Commit: 'commit',
     Exact: 'exact',
     Follow: 'follow',
-    None: 'none'
+    None: 'none',
 } as const;
 export type SherlockChartReleaseV3CreateAppVersionResolverEnum = typeof SherlockChartReleaseV3CreateAppVersionResolverEnum[keyof typeof SherlockChartReleaseV3CreateAppVersionResolverEnum];
 
@@ -160,7 +120,7 @@ export type SherlockChartReleaseV3CreateAppVersionResolverEnum = typeof Sherlock
 export const SherlockChartReleaseV3CreateChartVersionResolverEnum = {
     Latest: 'latest',
     Exact: 'exact',
-    Follow: 'follow'
+    Follow: 'follow',
 } as const;
 export type SherlockChartReleaseV3CreateChartVersionResolverEnum = typeof SherlockChartReleaseV3CreateChartVersionResolverEnum[keyof typeof SherlockChartReleaseV3CreateChartVersionResolverEnum];
 

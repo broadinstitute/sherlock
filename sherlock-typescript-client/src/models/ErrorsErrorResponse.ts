@@ -21,20 +21,14 @@ import { mapValues } from '../runtime';
 export interface ErrorsErrorResponse {
     /**
      * 
-     * @type {string}
-     * @memberof ErrorsErrorResponse
      */
     message?: string;
     /**
      * 
-     * @type {string}
-     * @memberof ErrorsErrorResponse
      */
     toBlame?: string;
     /**
      * 
-     * @type {string}
-     * @memberof ErrorsErrorResponse
      */
     type?: string;
 }

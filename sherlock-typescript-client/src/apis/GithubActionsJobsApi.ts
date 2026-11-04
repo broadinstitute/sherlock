@@ -30,27 +30,75 @@ import {
 } from '../models/SherlockGithubActionsJobV3Create';
 
 export interface ApiGithubActionsJobsV3GetRequest {
+    /**
+     * 
+     */
     createdAt?: Date;
+    /**
+     * 
+     */
     githubActionsAttemptNumber?: number;
+    /**
+     * 
+     */
     githubActionsJobID?: number;
+    /**
+     * 
+     */
     githubActionsOwner?: string;
+    /**
+     * 
+     */
     githubActionsRepo?: string;
+    /**
+     * 
+     */
     githubActionsRunID?: number;
+    /**
+     * 
+     */
     id?: number;
+    /**
+     * 
+     */
     jobCreatedAt?: Date;
+    /**
+     * 
+     */
     jobStartedAt?: Date;
+    /**
+     * 
+     */
     jobTerminalAt?: Date;
+    /**
+     * 
+     */
     status?: string;
+    /**
+     * 
+     */
     updatedAt?: Date;
+    /**
+     * Control how many GithubActionsJobs are returned (default 100)
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned GithubActionsJobs (default 0)
+     */
     offset?: number;
 }
 
 export interface ApiGithubActionsJobsV3PutRequest {
+    /**
+     * The GithubActionsJob to upsert
+     */
     githubActionsJob: SherlockGithubActionsJobV3Create;
 }
 
 export interface ApiGithubActionsJobsV3SelectorGetRequest {
+    /**
+     * The selector of the GithubActionsJob, either Sherlock ID or '{owner}/{repo}/{job ID}'
+     */
     selector: string;
 }
 
@@ -66,7 +114,7 @@ export class GithubActionsJobsApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         if (requestParameters['createdAt'] != null) {
-            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+            queryParameters['createdAt'] = runtime.serializeDateTime(requestParameters['createdAt'] as any);
         }
 
         if (requestParameters['githubActionsAttemptNumber'] != null) {
@@ -94,15 +142,15 @@ export class GithubActionsJobsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['jobCreatedAt'] != null) {
-            queryParameters['jobCreatedAt'] = (requestParameters['jobCreatedAt'] as any).toISOString();
+            queryParameters['jobCreatedAt'] = runtime.serializeDateTime(requestParameters['jobCreatedAt'] as any);
         }
 
         if (requestParameters['jobStartedAt'] != null) {
-            queryParameters['jobStartedAt'] = (requestParameters['jobStartedAt'] as any).toISOString();
+            queryParameters['jobStartedAt'] = runtime.serializeDateTime(requestParameters['jobStartedAt'] as any);
         }
 
         if (requestParameters['jobTerminalAt'] != null) {
-            queryParameters['jobTerminalAt'] = (requestParameters['jobTerminalAt'] as any).toISOString();
+            queryParameters['jobTerminalAt'] = runtime.serializeDateTime(requestParameters['jobTerminalAt'] as any);
         }
 
         if (requestParameters['status'] != null) {
@@ -110,7 +158,7 @@ export class GithubActionsJobsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['updatedAt'] != null) {
-            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
+            queryParameters['updatedAt'] = runtime.serializeDateTime(requestParameters['updatedAt'] as any);
         }
 
         if (requestParameters['limit'] != null) {

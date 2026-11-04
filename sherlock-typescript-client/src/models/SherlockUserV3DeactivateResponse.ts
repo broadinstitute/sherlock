@@ -21,20 +21,14 @@ import { mapValues } from '../runtime';
 export interface SherlockUserV3DeactivateResponse {
     /**
      * 
-     * @type {Array<string>}
-     * @memberof SherlockUserV3DeactivateResponse
      */
     alreadyDeactivatedEmails?: Array<string>;
     /**
      * 
-     * @type {Array<string>}
-     * @memberof SherlockUserV3DeactivateResponse
      */
     newlyDeactivatedEmails?: Array<string>;
     /**
      * 
-     * @type {Array<string>}
-     * @memberof SherlockUserV3DeactivateResponse
      */
     notFoundEmails?: Array<string>;
 }

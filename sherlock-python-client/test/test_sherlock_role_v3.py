@@ -37,16 +37,16 @@ class TestSherlockRoleV3(unittest.TestCase):
         if include_optional:
             return SherlockRoleV3(
                 assignments = [
-                    sherlock_python_client.models.sherlock/role_assignment_v3.sherlock.RoleAssignmentV3(
+                    sherlock_python_client.models.sherlock_role_assignment_v3.SherlockRoleAssignmentV3(
                         expires_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                         expires_in = '', 
-                        role_info = sherlock_python_client.models.role_info.roleInfo(), 
+                        role_info = { }, 
                         suspended = True, 
-                        user_info = sherlock_python_client.models.user_info.userInfo(), )
+                        user_info = { }, )
                     ],
                 auto_assign_all_users = True,
                 can_be_glass_broken_by_role = 56,
-                can_be_glass_broken_by_role_info = sherlock_python_client.models.can_be_glass_broken_by_role_info.canBeGlassBrokenByRoleInfo(),
+                can_be_glass_broken_by_role_info = { },
                 created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'),
                 default_glass_break_duration = '',
                 grants_broad_institute_group = '',

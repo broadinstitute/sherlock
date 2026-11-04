@@ -37,22 +37,22 @@ class TestSherlockDatabaseInstanceV3(unittest.TestCase):
         if include_optional:
             return SherlockDatabaseInstanceV3(
                 chart_release = '',
-                chart_release_info = sherlock_python_client.models.sherlock/chart_release_v3.sherlock.ChartReleaseV3(
+                chart_release_info = sherlock_python_client.models.sherlock_chart_release_v3.SherlockChartReleaseV3(
                     app_version_branch = '', 
                     app_version_commit = '', 
                     app_version_exact = '', 
                     app_version_follow_chart_release = '', 
-                    app_version_info = sherlock_python_client.models.sherlock/app_version_v3.sherlock.AppVersionV3(
+                    app_version_info = sherlock_python_client.models.sherlock_app_version_v3.SherlockAppVersionV3(
                         app_version = '', 
                         authored_by = '', 
-                        authored_by_info = sherlock_python_client.models.sherlock/user_v3.sherlock.UserV3(
+                        authored_by_info = sherlock_python_client.models.sherlock_user_v3.SherlockUserV3(
                             assignments = [
-                                sherlock_python_client.models.sherlock/role_assignment_v3.sherlock.RoleAssignmentV3(
+                                sherlock_python_client.models.sherlock_role_assignment_v3.SherlockRoleAssignmentV3(
                                     expires_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                                     expires_in = '', 
-                                    role_info = sherlock_python_client.models.role_info.roleInfo(), 
+                                    role_info = { }, 
                                     suspended = True, 
-                                    user_info = sherlock_python_client.models.user_info.userInfo(), )
+                                    user_info = { }, )
                                 ], 
                             created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                             deactivated_at = '', 
@@ -69,14 +69,14 @@ class TestSherlockDatabaseInstanceV3(unittest.TestCase):
                             suitable = True, 
                             updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                         chart = '', 
-                        chart_info = sherlock_python_client.models.sherlock/chart_v3.sherlock.ChartV3(
+                        chart_info = sherlock_python_client.models.sherlock_chart_v3.SherlockChartV3(
                             app_image_git_main_branch = '', 
                             app_image_git_repo = '', 
                             chart_exposes_endpoint = True, 
                             chart_repo = 'terra-helm', 
-                            ci_identifier = sherlock_python_client.models.sherlock/ci_identifier_v3.sherlock.CiIdentifierV3(
+                            ci_identifier = sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
                                 ci_runs = [
-                                    sherlock_python_client.models.sherlock/ci_run_v3.sherlock.CiRunV3(
+                                    sherlock_python_client.models.sherlock_ci_run_v3.SherlockCiRunV3(
                                         argo_workflows_name = '', 
                                         argo_workflows_namespace = '', 
                                         argo_workflows_template = '', 
@@ -99,7 +99,7 @@ class TestSherlockDatabaseInstanceV3(unittest.TestCase):
                                         notify_slack_custom_icon = '', 
                                         platform = '', 
                                         related_resources = [
-                                            sherlock_python_client.models.sherlock/ci_identifier_v3.sherlock.CiIdentifierV3(
+                                            sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
                                                 created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                                                 id = 56, 
                                                 resource_id = 56, 
@@ -130,23 +130,114 @@ class TestSherlockDatabaseInstanceV3(unittest.TestCase):
                             pact_participant = True, 
                             playbook_url = '', 
                             updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
-                        ci_identifier = , 
+                        ci_identifier = sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                            ci_runs = [
+                                sherlock_python_client.models.sherlock_ci_run_v3.SherlockCiRunV3(
+                                    argo_workflows_name = '', 
+                                    argo_workflows_namespace = '', 
+                                    argo_workflows_template = '', 
+                                    created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                    github_actions_attempt_number = 56, 
+                                    github_actions_owner = '', 
+                                    github_actions_repo = '', 
+                                    github_actions_run_id = 56, 
+                                    github_actions_workflow_path = '', 
+                                    id = 56, 
+                                    notify_slack_channels_upon_failure = [
+                                        ''
+                                        ], 
+                                    notify_slack_channels_upon_retry = [
+                                        ''
+                                        ], 
+                                    notify_slack_channels_upon_success = [
+                                        ''
+                                        ], 
+                                    notify_slack_custom_icon = '', 
+                                    platform = '', 
+                                    related_resources = [
+                                        sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                                            created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                            id = 56, 
+                                            resource_id = 56, 
+                                            resource_status = '', 
+                                            resource_type = '', 
+                                            updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                                        ], 
+                                    resource_status = '', 
+                                    started_at = '', 
+                                    status = '', 
+                                    terminal_at = '', 
+                                    termination_hooks_dispatched_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                    updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                                ], 
+                            created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                            id = 56, 
+                            resource_id = 56, 
+                            resource_status = '', 
+                            resource_type = '', 
+                            updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                         created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                         description = '', 
                         git_branch = '', 
                         git_commit = '', 
                         id = 56, 
                         parent_app_version = '', 
-                        parent_app_version_info = sherlock_python_client.models.parent_app_version_info.parentAppVersionInfo(), 
+                        parent_app_version_info = { }, 
                         updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                     app_version_reference = '', 
                     app_version_resolver = 'branch', 
                     chart = '', 
-                    chart_info = sherlock_python_client.models.sherlock/chart_v3.sherlock.ChartV3(
+                    chart_info = sherlock_python_client.models.sherlock_chart_v3.SherlockChartV3(
                         app_image_git_main_branch = '', 
                         app_image_git_repo = '', 
                         chart_exposes_endpoint = True, 
                         chart_repo = 'terra-helm', 
+                        ci_identifier = sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                            ci_runs = [
+                                sherlock_python_client.models.sherlock_ci_run_v3.SherlockCiRunV3(
+                                    argo_workflows_name = '', 
+                                    argo_workflows_namespace = '', 
+                                    argo_workflows_template = '', 
+                                    created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                    github_actions_attempt_number = 56, 
+                                    github_actions_owner = '', 
+                                    github_actions_repo = '', 
+                                    github_actions_run_id = 56, 
+                                    github_actions_workflow_path = '', 
+                                    id = 56, 
+                                    notify_slack_channels_upon_failure = [
+                                        ''
+                                        ], 
+                                    notify_slack_channels_upon_retry = [
+                                        ''
+                                        ], 
+                                    notify_slack_channels_upon_success = [
+                                        ''
+                                        ], 
+                                    notify_slack_custom_icon = '', 
+                                    platform = '', 
+                                    related_resources = [
+                                        sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                                            created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                            id = 56, 
+                                            resource_id = 56, 
+                                            resource_status = '', 
+                                            resource_type = '', 
+                                            updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                                        ], 
+                                    resource_status = '', 
+                                    started_at = '', 
+                                    status = '', 
+                                    terminal_at = '', 
+                                    termination_hooks_dispatched_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                    updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                                ], 
+                            created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                            id = 56, 
+                            resource_id = 56, 
+                            resource_status = '', 
+                            resource_type = '', 
+                            updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                         created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                         default_port = 56, 
                         default_protocol = 'https', 
@@ -159,24 +250,245 @@ class TestSherlockDatabaseInstanceV3(unittest.TestCase):
                         updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                     chart_version_exact = '', 
                     chart_version_follow_chart_release = '', 
-                    chart_version_info = sherlock_python_client.models.sherlock/chart_version_v3.sherlock.ChartVersionV3(
+                    chart_version_info = sherlock_python_client.models.sherlock_chart_version_v3.SherlockChartVersionV3(
                         authored_by = '', 
+                        authored_by_info = sherlock_python_client.models.sherlock_user_v3.SherlockUserV3(
+                            assignments = [
+                                sherlock_python_client.models.sherlock_role_assignment_v3.SherlockRoleAssignmentV3(
+                                    expires_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                    expires_in = '', 
+                                    role_info = { }, 
+                                    suspended = True, 
+                                    user_info = { }, )
+                                ], 
+                            created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                            deactivated_at = '', 
+                            email = '', 
+                            github_id = '', 
+                            github_username = '', 
+                            google_id = '', 
+                            id = 56, 
+                            name = '', 
+                            name_from = 'sherlock', 
+                            slack_id = '', 
+                            slack_username = '', 
+                            suitability_description = '', 
+                            suitable = True, 
+                            updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                         chart = '', 
+                        chart_info = sherlock_python_client.models.sherlock_chart_v3.SherlockChartV3(
+                            app_image_git_main_branch = '', 
+                            app_image_git_repo = '', 
+                            chart_exposes_endpoint = True, 
+                            chart_repo = 'terra-helm', 
+                            ci_identifier = sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                                ci_runs = [
+                                    sherlock_python_client.models.sherlock_ci_run_v3.SherlockCiRunV3(
+                                        argo_workflows_name = '', 
+                                        argo_workflows_namespace = '', 
+                                        argo_workflows_template = '', 
+                                        created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                        github_actions_attempt_number = 56, 
+                                        github_actions_owner = '', 
+                                        github_actions_repo = '', 
+                                        github_actions_run_id = 56, 
+                                        github_actions_workflow_path = '', 
+                                        id = 56, 
+                                        notify_slack_channels_upon_failure = [
+                                            ''
+                                            ], 
+                                        notify_slack_channels_upon_retry = [
+                                            ''
+                                            ], 
+                                        notify_slack_channels_upon_success = [
+                                            ''
+                                            ], 
+                                        notify_slack_custom_icon = '', 
+                                        platform = '', 
+                                        related_resources = [
+                                            sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                                                created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                                id = 56, 
+                                                resource_id = 56, 
+                                                resource_status = '', 
+                                                resource_type = '', 
+                                                updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                                            ], 
+                                        resource_status = '', 
+                                        started_at = '', 
+                                        status = '', 
+                                        terminal_at = '', 
+                                        termination_hooks_dispatched_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                        updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                                    ], 
+                                created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                id = 56, 
+                                resource_id = 56, 
+                                resource_status = '', 
+                                resource_type = '', 
+                                updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
+                            created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                            default_port = 56, 
+                            default_protocol = 'https', 
+                            default_subdomain = '', 
+                            description = '', 
+                            id = 56, 
+                            name = '', 
+                            pact_participant = True, 
+                            playbook_url = '', 
+                            updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                         chart_version = '', 
+                        ci_identifier = sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                            ci_runs = [
+                                sherlock_python_client.models.sherlock_ci_run_v3.SherlockCiRunV3(
+                                    argo_workflows_name = '', 
+                                    argo_workflows_namespace = '', 
+                                    argo_workflows_template = '', 
+                                    created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                    github_actions_attempt_number = 56, 
+                                    github_actions_owner = '', 
+                                    github_actions_repo = '', 
+                                    github_actions_run_id = 56, 
+                                    github_actions_workflow_path = '', 
+                                    id = 56, 
+                                    notify_slack_channels_upon_failure = [
+                                        ''
+                                        ], 
+                                    notify_slack_channels_upon_retry = [
+                                        ''
+                                        ], 
+                                    notify_slack_channels_upon_success = [
+                                        ''
+                                        ], 
+                                    notify_slack_custom_icon = '', 
+                                    platform = '', 
+                                    related_resources = [
+                                        sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                                            created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                            id = 56, 
+                                            resource_id = 56, 
+                                            resource_status = '', 
+                                            resource_type = '', 
+                                            updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                                        ], 
+                                    resource_status = '', 
+                                    started_at = '', 
+                                    status = '', 
+                                    terminal_at = '', 
+                                    termination_hooks_dispatched_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                    updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                                ], 
+                            created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                            id = 56, 
+                            resource_id = 56, 
+                            resource_status = '', 
+                            resource_type = '', 
+                            updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                         created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                         description = '', 
                         id = 56, 
                         parent_chart_version = '', 
-                        parent_chart_version_info = sherlock_python_client.models.parent_chart_version_info.parentChartVersionInfo(), 
+                        parent_chart_version_info = { }, 
                         updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                     chart_version_reference = '', 
                     chart_version_resolver = 'latest', 
-                    ci_identifier = , 
+                    ci_identifier = sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                        ci_runs = [
+                            sherlock_python_client.models.sherlock_ci_run_v3.SherlockCiRunV3(
+                                argo_workflows_name = '', 
+                                argo_workflows_namespace = '', 
+                                argo_workflows_template = '', 
+                                created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                github_actions_attempt_number = 56, 
+                                github_actions_owner = '', 
+                                github_actions_repo = '', 
+                                github_actions_run_id = 56, 
+                                github_actions_workflow_path = '', 
+                                id = 56, 
+                                notify_slack_channels_upon_failure = [
+                                    ''
+                                    ], 
+                                notify_slack_channels_upon_retry = [
+                                    ''
+                                    ], 
+                                notify_slack_channels_upon_success = [
+                                    ''
+                                    ], 
+                                notify_slack_custom_icon = '', 
+                                platform = '', 
+                                related_resources = [
+                                    sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                                        created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                        id = 56, 
+                                        resource_id = 56, 
+                                        resource_status = '', 
+                                        resource_type = '', 
+                                        updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                                    ], 
+                                resource_status = '', 
+                                started_at = '', 
+                                status = '', 
+                                terminal_at = '', 
+                                termination_hooks_dispatched_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                            ], 
+                        created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                        id = 56, 
+                        resource_id = 56, 
+                        resource_status = '', 
+                        resource_type = '', 
+                        updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                     cluster = '', 
-                    cluster_info = sherlock_python_client.models.sherlock/cluster_v3.sherlock.ClusterV3(
+                    cluster_info = sherlock_python_client.models.sherlock_cluster_v3.SherlockClusterV3(
                         address = '', 
                         azure_subscription = '', 
                         base = '', 
+                        ci_identifier = sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                            ci_runs = [
+                                sherlock_python_client.models.sherlock_ci_run_v3.SherlockCiRunV3(
+                                    argo_workflows_name = '', 
+                                    argo_workflows_namespace = '', 
+                                    argo_workflows_template = '', 
+                                    created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                    github_actions_attempt_number = 56, 
+                                    github_actions_owner = '', 
+                                    github_actions_repo = '', 
+                                    github_actions_run_id = 56, 
+                                    github_actions_workflow_path = '', 
+                                    id = 56, 
+                                    notify_slack_channels_upon_failure = [
+                                        ''
+                                        ], 
+                                    notify_slack_channels_upon_retry = [
+                                        ''
+                                        ], 
+                                    notify_slack_channels_upon_success = [
+                                        ''
+                                        ], 
+                                    notify_slack_custom_icon = '', 
+                                    platform = '', 
+                                    related_resources = [
+                                        sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                                            created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                            id = 56, 
+                                            resource_id = 56, 
+                                            resource_status = '', 
+                                            resource_type = '', 
+                                            updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                                        ], 
+                                    resource_status = '', 
+                                    started_at = '', 
+                                    status = '', 
+                                    terminal_at = '', 
+                                    termination_hooks_dispatched_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                    updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                                ], 
+                            created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                            id = 56, 
+                            resource_id = 56, 
+                            resource_status = '', 
+                            resource_type = '', 
+                            updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                         created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                         google_project = '', 
                         helmfile_ref = 'HEAD', 
@@ -185,10 +497,18 @@ class TestSherlockDatabaseInstanceV3(unittest.TestCase):
                         name = '', 
                         provider = 'google', 
                         required_role = '', 
-                        required_role_info = sherlock_python_client.models.sherlock/role_v3.sherlock.RoleV3(
+                        required_role_info = sherlock_python_client.models.sherlock_role_v3.SherlockRoleV3(
+                            assignments = [
+                                sherlock_python_client.models.sherlock_role_assignment_v3.SherlockRoleAssignmentV3(
+                                    expires_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                    expires_in = '', 
+                                    role_info = { }, 
+                                    suspended = True, 
+                                    user_info = { }, )
+                                ], 
                             auto_assign_all_users = True, 
                             can_be_glass_broken_by_role = 56, 
-                            can_be_glass_broken_by_role_info = sherlock_python_client.models.can_be_glass_broken_by_role_info.canBeGlassBrokenByRoleInfo(), 
+                            can_be_glass_broken_by_role_info = { }, 
                             created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                             default_glass_break_duration = '', 
                             grants_broad_institute_group = '', 
@@ -214,16 +534,108 @@ class TestSherlockDatabaseInstanceV3(unittest.TestCase):
                     created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                     destination_type = '', 
                     environment = '', 
-                    environment_info = sherlock_python_client.models.sherlock/environment_v3.sherlock.EnvironmentV3(
+                    environment_info = sherlock_python_client.models.sherlock_environment_v3.SherlockEnvironmentV3(
                         auto_populate_chart_releases = True, 
                         base = '', 
                         base_domain = 'bee.envs-terra.bio', 
+                        ci_identifier = sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                            ci_runs = [
+                                sherlock_python_client.models.sherlock_ci_run_v3.SherlockCiRunV3(
+                                    argo_workflows_name = '', 
+                                    argo_workflows_namespace = '', 
+                                    argo_workflows_template = '', 
+                                    created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                    github_actions_attempt_number = 56, 
+                                    github_actions_owner = '', 
+                                    github_actions_repo = '', 
+                                    github_actions_run_id = 56, 
+                                    github_actions_workflow_path = '', 
+                                    id = 56, 
+                                    notify_slack_channels_upon_failure = [
+                                        ''
+                                        ], 
+                                    notify_slack_channels_upon_retry = [
+                                        ''
+                                        ], 
+                                    notify_slack_channels_upon_success = [
+                                        ''
+                                        ], 
+                                    notify_slack_custom_icon = '', 
+                                    platform = '', 
+                                    related_resources = [
+                                        sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                                            created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                            id = 56, 
+                                            resource_id = 56, 
+                                            resource_status = '', 
+                                            resource_type = '', 
+                                            updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                                        ], 
+                                    resource_status = '', 
+                                    started_at = '', 
+                                    status = '', 
+                                    terminal_at = '', 
+                                    termination_hooks_dispatched_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                    updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                                ], 
+                            created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                            id = 56, 
+                            resource_id = 56, 
+                            resource_status = '', 
+                            resource_type = '', 
+                            updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                         created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                         default_cluster = '', 
-                        default_cluster_info = sherlock_python_client.models.sherlock/cluster_v3.sherlock.ClusterV3(
+                        default_cluster_info = sherlock_python_client.models.sherlock_cluster_v3.SherlockClusterV3(
                             address = '', 
                             azure_subscription = '', 
                             base = '', 
+                            ci_identifier = sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                                ci_runs = [
+                                    sherlock_python_client.models.sherlock_ci_run_v3.SherlockCiRunV3(
+                                        argo_workflows_name = '', 
+                                        argo_workflows_namespace = '', 
+                                        argo_workflows_template = '', 
+                                        created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                        github_actions_attempt_number = 56, 
+                                        github_actions_owner = '', 
+                                        github_actions_repo = '', 
+                                        github_actions_run_id = 56, 
+                                        github_actions_workflow_path = '', 
+                                        id = 56, 
+                                        notify_slack_channels_upon_failure = [
+                                            ''
+                                            ], 
+                                        notify_slack_channels_upon_retry = [
+                                            ''
+                                            ], 
+                                        notify_slack_channels_upon_success = [
+                                            ''
+                                            ], 
+                                        notify_slack_custom_icon = '', 
+                                        platform = '', 
+                                        related_resources = [
+                                            sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
+                                                created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                                id = 56, 
+                                                resource_id = 56, 
+                                                resource_status = '', 
+                                                resource_type = '', 
+                                                updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                                            ], 
+                                        resource_status = '', 
+                                        started_at = '', 
+                                        status = '', 
+                                        terminal_at = '', 
+                                        termination_hooks_dispatched_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                        updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
+                                    ], 
+                                created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                id = 56, 
+                                resource_id = 56, 
+                                resource_status = '', 
+                                resource_type = '', 
+                                updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                             created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                             google_project = '', 
                             helmfile_ref = 'HEAD', 
@@ -232,6 +644,38 @@ class TestSherlockDatabaseInstanceV3(unittest.TestCase):
                             name = '', 
                             provider = 'google', 
                             required_role = '', 
+                            required_role_info = sherlock_python_client.models.sherlock_role_v3.SherlockRoleV3(
+                                assignments = [
+                                    sherlock_python_client.models.sherlock_role_assignment_v3.SherlockRoleAssignmentV3(
+                                        expires_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                        expires_in = '', 
+                                        role_info = { }, 
+                                        suspended = True, 
+                                        user_info = { }, )
+                                    ], 
+                                auto_assign_all_users = True, 
+                                can_be_glass_broken_by_role = 56, 
+                                can_be_glass_broken_by_role_info = { }, 
+                                created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                default_glass_break_duration = '', 
+                                grants_broad_institute_group = '', 
+                                grants_dev_azure_account = True, 
+                                grants_dev_azure_directory_roles = True, 
+                                grants_dev_azure_group = '', 
+                                grants_dev_firecloud_folder_owner = '', 
+                                grants_dev_firecloud_group = '', 
+                                grants_prod_azure_account = True, 
+                                grants_prod_azure_directory_roles = True, 
+                                grants_prod_azure_group = '', 
+                                grants_prod_firecloud_folder_owner = '', 
+                                grants_prod_firecloud_group = '', 
+                                grants_qa_firecloud_folder_owner = '', 
+                                grants_qa_firecloud_group = '', 
+                                grants_sherlock_super_admin = True, 
+                                id = 56, 
+                                name = '', 
+                                suspend_non_suitable_users = True, 
+                                updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                             requires_suitability = True, 
                             updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                         default_namespace = '', 
@@ -250,7 +694,15 @@ class TestSherlockDatabaseInstanceV3(unittest.TestCase):
                         offline_schedule_end_time = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                         offline_schedule_end_weekends = True, 
                         owner = '', 
-                        owner_info = sherlock_python_client.models.sherlock/user_v3.sherlock.UserV3(
+                        owner_info = sherlock_python_client.models.sherlock_user_v3.SherlockUserV3(
+                            assignments = [
+                                sherlock_python_client.models.sherlock_role_assignment_v3.SherlockRoleAssignmentV3(
+                                    expires_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                    expires_in = '', 
+                                    role_info = { }, 
+                                    suspended = True, 
+                                    user_info = { }, )
+                                ], 
                             created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                             deactivated_at = '', 
                             email = '', 
@@ -267,7 +719,7 @@ class TestSherlockDatabaseInstanceV3(unittest.TestCase):
                             updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                         pact_identifier = '', 
                         pagerduty_integration = '', 
-                        pagerduty_integration_info = sherlock_python_client.models.sherlock/pagerduty_integration_v3.sherlock.PagerdutyIntegrationV3(
+                        pagerduty_integration_info = sherlock_python_client.models.sherlock_pagerduty_integration_v3.SherlockPagerdutyIntegrationV3(
                             created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                             id = 56, 
                             name = '', 
@@ -276,10 +728,42 @@ class TestSherlockDatabaseInstanceV3(unittest.TestCase):
                             updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                         prevent_deletion = True, 
                         required_role = '', 
+                        required_role_info = sherlock_python_client.models.sherlock_role_v3.SherlockRoleV3(
+                            assignments = [
+                                sherlock_python_client.models.sherlock_role_assignment_v3.SherlockRoleAssignmentV3(
+                                    expires_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                                    expires_in = '', 
+                                    role_info = { }, 
+                                    suspended = True, 
+                                    user_info = { }, )
+                                ], 
+                            auto_assign_all_users = True, 
+                            can_be_glass_broken_by_role = 56, 
+                            can_be_glass_broken_by_role_info = { }, 
+                            created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                            default_glass_break_duration = '', 
+                            grants_broad_institute_group = '', 
+                            grants_dev_azure_account = True, 
+                            grants_dev_azure_directory_roles = True, 
+                            grants_dev_azure_group = '', 
+                            grants_dev_firecloud_folder_owner = '', 
+                            grants_dev_firecloud_group = '', 
+                            grants_prod_azure_account = True, 
+                            grants_prod_azure_directory_roles = True, 
+                            grants_prod_azure_group = '', 
+                            grants_prod_firecloud_folder_owner = '', 
+                            grants_prod_firecloud_group = '', 
+                            grants_qa_firecloud_folder_owner = '', 
+                            grants_qa_firecloud_group = '', 
+                            grants_sherlock_super_admin = True, 
+                            id = 56, 
+                            name = '', 
+                            suspend_non_suitable_users = True, 
+                            updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                         requires_suitability = True, 
                         service_banner_bucket = '', 
                         template_environment = '', 
-                        template_environment_info = sherlock_python_client.models.template_environment_info.templateEnvironmentInfo(), 
+                        template_environment_info = { }, 
                         unique_resource_prefix = '', 
                         updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                         values_name = '', ), 
@@ -290,7 +774,7 @@ class TestSherlockDatabaseInstanceV3(unittest.TestCase):
                     name = '', 
                     namespace = '', 
                     pagerduty_integration = '', 
-                    pagerduty_integration_info = sherlock_python_client.models.sherlock/pagerduty_integration_v3.sherlock.PagerdutyIntegrationV3(
+                    pagerduty_integration_info = sherlock_python_client.models.sherlock_pagerduty_integration_v3.SherlockPagerdutyIntegrationV3(
                         created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                         id = 56, 
                         name = '', 

@@ -30,70 +30,211 @@ import {
 } from '../models/SherlockChangesetV3PlanRequest';
 
 export interface ApiChangesetsProceduresV3ApplyPostRequest {
+    /**
+     * String IDs of the Changesets to apply
+     */
     applyRequest: Array<string>;
+    /**
+     * If full information about the changesets should be returned, defaults to true. If false, only the IDs will be returned.
+     */
     verboseOutput?: boolean;
 }
 
 export interface ApiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGetRequest {
+    /**
+     * Selector of the Chart Release to find applied Changesets for
+     */
     chartRelease: string;
+    /**
+     * An optional offset to skip a number of latest Changesets
+     */
     offset?: number;
+    /**
+     * An optional limit to the number of entries returned
+     */
     limit?: number;
 }
 
 export interface ApiChangesetsProceduresV3PlanAndApplyPostRequest {
+    /**
+     * Info on what version changes or refreshes to apply.
+     */
     changesetPlanRequest: SherlockChangesetV3PlanRequest;
+    /**
+     * If full information about the changesets should be returned, defaults to true. If false, only the IDs will be returned.
+     */
     verboseOutput?: boolean;
 }
 
 export interface ApiChangesetsProceduresV3PlanPostRequest {
+    /**
+     * Info on what version changes or refreshes to plan
+     */
     changesetPlanRequest: SherlockChangesetV3PlanRequest;
+    /**
+     * If full information about the changesets should be returned, defaults to true. If false, only the IDs will be returned.
+     */
     verboseOutput?: boolean;
 }
 
 export interface ApiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetRequest {
+    /**
+     * The type of the version, either 'app' or 'chart'
+     */
     versionType: ApiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetVersionTypeEnum;
+    /**
+     * The chart the version belongs to
+     */
     chart: string;
+    /**
+     * The version to look for
+     */
     version: string;
 }
 
 export interface ApiChangesetsV3GetRequest {
+    /**
+     * 
+     */
     appliedAt?: Date;
+    /**
+     * 
+     */
     appliedBy?: string;
+    /**
+     * 
+     */
     chartRelease?: string;
+    /**
+     * 
+     */
     fromAppVersionBranch?: string;
+    /**
+     * 
+     */
     fromAppVersionCommit?: string;
+    /**
+     * 
+     */
     fromAppVersionExact?: string;
+    /**
+     * 
+     */
     fromAppVersionFollowChartRelease?: string;
+    /**
+     * 
+     */
     fromAppVersionReference?: string;
+    /**
+     * 
+     */
     fromAppVersionResolver?: string;
+    /**
+     * 
+     */
     fromChartVersionExact?: string;
+    /**
+     * 
+     */
     fromChartVersionFollowChartRelease?: string;
+    /**
+     * 
+     */
     fromChartVersionReference?: string;
+    /**
+     * 
+     */
     fromChartVersionResolver?: string;
+    /**
+     * 
+     */
     fromHelmfileRef?: string;
+    /**
+     * 
+     */
     fromHelmfileRefEnabled?: boolean;
+    /**
+     * 
+     */
     fromResolvedAt?: Date;
+    /**
+     * 
+     */
     plannedBy?: string;
+    /**
+     * 
+     */
     supersededAt?: Date;
+    /**
+     * 
+     */
     toAppVersionBranch?: string;
+    /**
+     * 
+     */
     toAppVersionCommit?: string;
+    /**
+     * 
+     */
     toAppVersionExact?: string;
+    /**
+     * 
+     */
     toAppVersionFollowChartRelease?: string;
+    /**
+     * 
+     */
     toAppVersionReference?: string;
+    /**
+     * 
+     */
     toAppVersionResolver?: string;
+    /**
+     * 
+     */
     toChartVersionExact?: string;
+    /**
+     * 
+     */
     toChartVersionFollowChartRelease?: string;
+    /**
+     * 
+     */
     toChartVersionReference?: string;
+    /**
+     * 
+     */
     toChartVersionResolver?: string;
+    /**
+     * 
+     */
     toHelmfileRef?: string;
+    /**
+     * 
+     */
     toHelmfileRefEnabled?: boolean;
+    /**
+     * 
+     */
     toResolvedAt?: Date;
+    /**
+     * Get specific changesets by their IDs, can be passed multiple times and/or be comma-separated
+     */
     id?: Array<number>;
+    /**
+     * Control how many Changesets are returned (default 100), ignored if specific IDs are passed
+     */
     limit?: number;
+    /**
+     * Control the offset for the returned Changesets (default 0), ignored if specific IDs are passed
+     */
     offset?: number;
 }
 
 export interface ApiChangesetsV3IdGetRequest {
+    /**
+     * The numeric ID of the changeset
+     */
     id: number;
 }
 
@@ -386,7 +527,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         if (requestParameters['appliedAt'] != null) {
-            queryParameters['appliedAt'] = (requestParameters['appliedAt'] as any).toISOString();
+            queryParameters['appliedAt'] = runtime.serializeDateTime(requestParameters['appliedAt'] as any);
         }
 
         if (requestParameters['appliedBy'] != null) {
@@ -446,7 +587,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['fromResolvedAt'] != null) {
-            queryParameters['fromResolvedAt'] = (requestParameters['fromResolvedAt'] as any).toISOString();
+            queryParameters['fromResolvedAt'] = runtime.serializeDateTime(requestParameters['fromResolvedAt'] as any);
         }
 
         if (requestParameters['plannedBy'] != null) {
@@ -454,7 +595,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['supersededAt'] != null) {
-            queryParameters['supersededAt'] = (requestParameters['supersededAt'] as any).toISOString();
+            queryParameters['supersededAt'] = runtime.serializeDateTime(requestParameters['supersededAt'] as any);
         }
 
         if (requestParameters['toAppVersionBranch'] != null) {
@@ -506,7 +647,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['toResolvedAt'] != null) {
-            queryParameters['toResolvedAt'] = (requestParameters['toResolvedAt'] as any).toISOString();
+            queryParameters['toResolvedAt'] = runtime.serializeDateTime(requestParameters['toResolvedAt'] as any);
         }
 
         if (requestParameters['id'] != null) {
@@ -608,6 +749,6 @@ export class ChangesetsApi extends runtime.BaseAPI {
  */
 export const ApiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetVersionTypeEnum = {
     App: 'app',
-    Chart: 'chart'
+    Chart: 'chart',
 } as const;
 export type ApiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetVersionTypeEnum = typeof ApiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetVersionTypeEnum[keyof typeof ApiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetVersionTypeEnum];

@@ -21,50 +21,34 @@ import { mapValues } from '../runtime';
 export interface SherlockGithubActionsDeployHookV3Edit {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3Edit
      */
     githubActionsDefaultRef?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3Edit
      */
     githubActionsOwner?: string;
     /**
      * This field determines what git ref the workflow will be run on. The default of always-use-default-ref always uses the default ref; use-app-version-as-ref will use the app version (when available) as the ref, useful when versions are always commit hashes or tags; use-app-version-commit-as-ref will use the app version's commit (when available) as the ref, useful when the repo is configured to fully report app versions to Sherlock.
-     * @type {SherlockGithubActionsDeployHookV3EditGithubActionsRefBehaviorEnum}
-     * @memberof SherlockGithubActionsDeployHookV3Edit
      */
     githubActionsRefBehavior?: SherlockGithubActionsDeployHookV3EditGithubActionsRefBehaviorEnum;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3Edit
      */
     githubActionsRepo?: string;
     /**
      * These workflow inputs will be passed statically as-is to GitHub's workflow dispatch API (https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event) as the `inputs` parameter object.
-     * @type {object}
-     * @memberof SherlockGithubActionsDeployHookV3Edit
      */
     githubActionsWorkflowInputs?: object;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockGithubActionsDeployHookV3Edit
      */
     githubActionsWorkflowPath?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockGithubActionsDeployHookV3Edit
      */
     onFailure?: boolean;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockGithubActionsDeployHookV3Edit
      */
     onSuccess?: boolean;
 }
@@ -76,7 +60,7 @@ export interface SherlockGithubActionsDeployHookV3Edit {
 export const SherlockGithubActionsDeployHookV3EditGithubActionsRefBehaviorEnum = {
     AlwaysUseDefaultRef: 'always-use-default-ref',
     UseAppVersionAsRef: 'use-app-version-as-ref',
-    UseAppVersionCommitAsRef: 'use-app-version-commit-as-ref'
+    UseAppVersionCommitAsRef: 'use-app-version-commit-as-ref',
 } as const;
 export type SherlockGithubActionsDeployHookV3EditGithubActionsRefBehaviorEnum = typeof SherlockGithubActionsDeployHookV3EditGithubActionsRefBehaviorEnum[keyof typeof SherlockGithubActionsDeployHookV3EditGithubActionsRefBehaviorEnum];
 

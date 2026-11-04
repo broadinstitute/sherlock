@@ -21,32 +21,22 @@ import { mapValues } from '../runtime';
 export interface SherlockIncidentV3Edit {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockIncidentV3Edit
      */
     description?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockIncidentV3Edit
      */
     remediatedAt?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockIncidentV3Edit
      */
     reviewCompletedAt?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockIncidentV3Edit
      */
     startedAt?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockIncidentV3Edit
      */
     ticket?: string;
 }

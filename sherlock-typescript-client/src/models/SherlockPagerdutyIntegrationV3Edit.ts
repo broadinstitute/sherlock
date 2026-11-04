@@ -21,20 +21,14 @@ import { mapValues } from '../runtime';
 export interface SherlockPagerdutyIntegrationV3Edit {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockPagerdutyIntegrationV3Edit
      */
     key?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockPagerdutyIntegrationV3Edit
      */
     name?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockPagerdutyIntegrationV3Edit
      */
     type?: string;
 }

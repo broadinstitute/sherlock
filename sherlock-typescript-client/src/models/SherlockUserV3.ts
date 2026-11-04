@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 import type { SherlockRoleAssignmentV3 } from './SherlockRoleAssignmentV3';
 import {
     SherlockRoleAssignmentV3FromJSON,
@@ -29,92 +29,62 @@ import {
 export interface SherlockUserV3 {
     /**
      * 
-     * @type {Array<SherlockRoleAssignmentV3>}
-     * @memberof SherlockUserV3
      */
     assignments?: Array<SherlockRoleAssignmentV3>;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockUserV3
      */
     createdAt?: Date;
     /**
      * If set, indicates that the user is currently deactivated
-     * @type {string}
-     * @memberof SherlockUserV3
      */
     deactivatedAt?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockUserV3
      */
     email?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockUserV3
      */
     githubID?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockUserV3
      */
     githubUsername?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockUserV3
      */
     googleID?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockUserV3
      */
     id?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockUserV3
      */
     name?: string;
     /**
      * 
-     * @type {SherlockUserV3NameFromEnum}
-     * @memberof SherlockUserV3
      */
     nameFrom?: SherlockUserV3NameFromEnum;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockUserV3
      */
     slackID?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockUserV3
      */
     slackUsername?: string;
     /**
      * Available only in responses; describes the user's production-suitability
-     * @type {string}
-     * @memberof SherlockUserV3
      */
     suitabilityDescription?: string;
     /**
      * Available only in responses; indicates whether the user is production-suitable
-     * @type {boolean}
-     * @memberof SherlockUserV3
      */
     suitable?: boolean;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockUserV3
      */
     updatedAt?: Date;
 }
@@ -126,7 +96,7 @@ export interface SherlockUserV3 {
 export const SherlockUserV3NameFromEnum = {
     Sherlock: 'sherlock',
     Github: 'github',
-    Slack: 'slack'
+    Slack: 'slack',
 } as const;
 export type SherlockUserV3NameFromEnum = typeof SherlockUserV3NameFromEnum[keyof typeof SherlockUserV3NameFromEnum];
 
@@ -149,7 +119,7 @@ export function SherlockUserV3FromJSONTyped(json: any, ignoreDiscriminator: bool
     return {
         
         'assignments': json['assignments'] == null ? undefined : ((json['assignments'] as Array<any>).map(SherlockRoleAssignmentV3FromJSON)),
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'deactivatedAt': json['deactivatedAt'] == null ? undefined : json['deactivatedAt'],
         'email': json['email'] == null ? undefined : json['email'],
         'githubID': json['githubID'] == null ? undefined : json['githubID'],
@@ -162,7 +132,7 @@ export function SherlockUserV3FromJSONTyped(json: any, ignoreDiscriminator: bool
         'slackUsername': json['slackUsername'] == null ? undefined : json['slackUsername'],
         'suitabilityDescription': json['suitabilityDescription'] == null ? undefined : json['suitabilityDescription'],
         'suitable': json['suitable'] == null ? undefined : json['suitable'],
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -178,7 +148,7 @@ export function SherlockUserV3ToJSONTyped(value?: SherlockUserV3 | null, ignoreD
     return {
         
         'assignments': value['assignments'] == null ? undefined : ((value['assignments'] as Array<any>).map(SherlockRoleAssignmentV3ToJSON)),
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'deactivatedAt': value['deactivatedAt'],
         'email': value['email'],
         'githubID': value['githubID'],
@@ -191,7 +161,7 @@ export function SherlockUserV3ToJSONTyped(value?: SherlockUserV3 | null, ignoreD
         'slackUsername': value['slackUsername'],
         'suitabilityDescription': value['suitabilityDescription'],
         'suitable': value['suitable'],
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

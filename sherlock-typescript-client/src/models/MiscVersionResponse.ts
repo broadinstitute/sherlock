@@ -21,20 +21,14 @@ import { mapValues } from '../runtime';
 export interface MiscVersionResponse {
     /**
      * 
-     * @type {{ [key: string]: string; }}
-     * @memberof MiscVersionResponse
      */
     buildInfo?: { [key: string]: string; };
     /**
      * 
-     * @type {string}
-     * @memberof MiscVersionResponse
      */
     goVersion?: string;
     /**
      * 
-     * @type {string}
-     * @memberof MiscVersionResponse
      */
     version?: string;
 }

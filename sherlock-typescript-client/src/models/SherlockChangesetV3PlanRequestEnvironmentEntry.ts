@@ -21,38 +21,26 @@ import { mapValues } from '../runtime';
 export interface SherlockChangesetV3PlanRequestEnvironmentEntry {
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestEnvironmentEntry
      */
     environment?: string;
     /**
      * 
-     * @type {Array<string>}
-     * @memberof SherlockChangesetV3PlanRequestEnvironmentEntry
      */
     excludeCharts?: Array<string>;
     /**
      * If true, chart releases app versions will only be updated if doing so wouldn't change the detected Git branch. This flag has no effect if the updated chart release has no app version branch.
-     * @type {boolean}
-     * @memberof SherlockChangesetV3PlanRequestEnvironmentEntry
      */
     filterToMatchingBranches?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestEnvironmentEntry
      */
     followVersionsFromOtherEnvironment?: string;
     /**
      * If omitted, will include all chart releases that haven't opted out of bulk updates
-     * @type {Array<string>}
-     * @memberof SherlockChangesetV3PlanRequestEnvironmentEntry
      */
     includeCharts?: Array<string>;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestEnvironmentEntry
      */
     useExactVersionsFromOtherEnvironment?: string;
 }

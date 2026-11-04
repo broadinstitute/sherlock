@@ -39,9 +39,9 @@ class TestSherlockClusterV3(unittest.TestCase):
                 address = '',
                 azure_subscription = '',
                 base = '',
-                ci_identifier = sherlock_python_client.models.sherlock/ci_identifier_v3.sherlock.CiIdentifierV3(
+                ci_identifier = sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
                     ci_runs = [
-                        sherlock_python_client.models.sherlock/ci_run_v3.sherlock.CiRunV3(
+                        sherlock_python_client.models.sherlock_ci_run_v3.SherlockCiRunV3(
                             argo_workflows_name = '', 
                             argo_workflows_namespace = '', 
                             argo_workflows_template = '', 
@@ -64,7 +64,7 @@ class TestSherlockClusterV3(unittest.TestCase):
                             notify_slack_custom_icon = '', 
                             platform = '', 
                             related_resources = [
-                                sherlock_python_client.models.sherlock/ci_identifier_v3.sherlock.CiIdentifierV3(
+                                sherlock_python_client.models.sherlock_ci_identifier_v3.SherlockCiIdentifierV3(
                                     created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                                     id = 56, 
                                     resource_id = 56, 
@@ -93,18 +93,18 @@ class TestSherlockClusterV3(unittest.TestCase):
                 name = '',
                 provider = 'google',
                 required_role = '',
-                required_role_info = sherlock_python_client.models.sherlock/role_v3.sherlock.RoleV3(
+                required_role_info = sherlock_python_client.models.sherlock_role_v3.SherlockRoleV3(
                     assignments = [
-                        sherlock_python_client.models.sherlock/role_assignment_v3.sherlock.RoleAssignmentV3(
+                        sherlock_python_client.models.sherlock_role_assignment_v3.SherlockRoleAssignmentV3(
                             expires_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                             expires_in = '', 
-                            role_info = sherlock_python_client.models.role_info.roleInfo(), 
+                            role_info = { }, 
                             suspended = True, 
-                            user_info = sherlock_python_client.models.user_info.userInfo(), )
+                            user_info = { }, )
                         ], 
                     auto_assign_all_users = True, 
                     can_be_glass_broken_by_role = 56, 
-                    can_be_glass_broken_by_role_info = sherlock_python_client.models.can_be_glass_broken_by_role_info.canBeGlassBrokenByRoleInfo(), 
+                    can_be_glass_broken_by_role_info = { }, 
                     created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                     default_glass_break_duration = '', 
                     grants_broad_institute_group = '', 

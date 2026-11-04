@@ -21,32 +21,22 @@ import { mapValues } from '../runtime';
 export interface SherlockDatabaseInstanceV3Create {
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockDatabaseInstanceV3Create
      */
     chartRelease?: string;
     /**
      * When creating, defaults to the chart name
-     * @type {string}
-     * @memberof SherlockDatabaseInstanceV3Create
      */
     defaultDatabase?: string;
     /**
      * Required if platform is 'google'
-     * @type {string}
-     * @memberof SherlockDatabaseInstanceV3Create
      */
     googleProject?: string;
     /**
      * Required if platform is 'google' or 'azure'
-     * @type {string}
-     * @memberof SherlockDatabaseInstanceV3Create
      */
     instanceName?: string;
     /**
      * 'google', 'azure', or default 'kubernetes'
-     * @type {string}
-     * @memberof SherlockDatabaseInstanceV3Create
      */
     platform?: string;
 }

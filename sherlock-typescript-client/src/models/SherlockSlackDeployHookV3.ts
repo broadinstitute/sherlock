@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 /**
  * 
  * @export
@@ -21,56 +21,38 @@ import { mapValues } from '../runtime';
 export interface SherlockSlackDeployHookV3 {
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockSlackDeployHookV3
      */
     createdAt?: Date;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockSlackDeployHookV3
      */
     id?: number;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockSlackDeployHookV3
      */
     mentionPeople?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockSlackDeployHookV3
      */
     onChartRelease?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockSlackDeployHookV3
      */
     onEnvironment?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockSlackDeployHookV3
      */
     onFailure?: boolean;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockSlackDeployHookV3
      */
     onSuccess?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockSlackDeployHookV3
      */
     slackChannel?: string;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockSlackDeployHookV3
      */
     updatedAt?: Date;
 }
@@ -92,7 +74,7 @@ export function SherlockSlackDeployHookV3FromJSONTyped(json: any, ignoreDiscrimi
     }
     return {
         
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'id': json['id'] == null ? undefined : json['id'],
         'mentionPeople': json['mentionPeople'] == null ? undefined : json['mentionPeople'],
         'onChartRelease': json['onChartRelease'] == null ? undefined : json['onChartRelease'],
@@ -100,7 +82,7 @@ export function SherlockSlackDeployHookV3FromJSONTyped(json: any, ignoreDiscrimi
         'onFailure': json['onFailure'] == null ? undefined : json['onFailure'],
         'onSuccess': json['onSuccess'] == null ? undefined : json['onSuccess'],
         'slackChannel': json['slackChannel'] == null ? undefined : json['slackChannel'],
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -115,7 +97,7 @@ export function SherlockSlackDeployHookV3ToJSONTyped(value?: SherlockSlackDeploy
 
     return {
         
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'id': value['id'],
         'mentionPeople': value['mentionPeople'],
         'onChartRelease': value['onChartRelease'],
@@ -123,7 +105,7 @@ export function SherlockSlackDeployHookV3ToJSONTyped(value?: SherlockSlackDeploy
         'onFailure': value['onFailure'],
         'onSuccess': value['onSuccess'],
         'slackChannel': value['slackChannel'],
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

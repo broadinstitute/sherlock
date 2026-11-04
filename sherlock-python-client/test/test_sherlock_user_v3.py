@@ -37,12 +37,12 @@ class TestSherlockUserV3(unittest.TestCase):
         if include_optional:
             return SherlockUserV3(
                 assignments = [
-                    sherlock_python_client.models.sherlock/role_assignment_v3.sherlock.RoleAssignmentV3(
+                    sherlock_python_client.models.sherlock_role_assignment_v3.SherlockRoleAssignmentV3(
                         expires_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
                         expires_in = '', 
-                        role_info = sherlock_python_client.models.role_info.roleInfo(), 
+                        role_info = { }, 
                         suspended = True, 
-                        user_info = sherlock_python_client.models.user_info.userInfo(), )
+                        user_info = { }, )
                     ],
                 created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'),
                 deactivated_at = '',

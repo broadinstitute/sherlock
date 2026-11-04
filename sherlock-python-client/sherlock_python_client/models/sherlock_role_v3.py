@@ -102,8 +102,7 @@ class SherlockRoleV3(BaseModel):
         _items = []
         if self.assignments:
             for _item_assignments in self.assignments:
-                if _item_assignments:
-                    _items.append(_item_assignments.to_dict())
+                _items.append(_item_assignments.to_dict() if _item_assignments is not None else None)
             _dict['assignments'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:

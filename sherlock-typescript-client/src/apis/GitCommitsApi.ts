@@ -30,6 +30,9 @@ import {
 } from '../models/SherlockGitCommitV3Upsert';
 
 export interface ApiGitCommitsV3PutRequest {
+    /**
+     * The GitCommit to upsert
+     */
     gitCommit: SherlockGitCommitV3Upsert;
 }
 

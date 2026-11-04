@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
 import type { SherlockClusterV3 } from './SherlockClusterV3';
 import {
     SherlockClusterV3FromJSON,
@@ -57,224 +57,150 @@ import {
 export interface SherlockEnvironmentV3 {
     /**
      * If true when creating, dynamic environments copy from template and template environments get the honeycomb chart
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3
      */
     autoPopulateChartReleases?: boolean;
     /**
      * Required when creating
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     base?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     baseDomain?: string;
     /**
      * 
-     * @type {SherlockCiIdentifierV3}
-     * @memberof SherlockEnvironmentV3
      */
     ciIdentifier?: SherlockCiIdentifierV3;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockEnvironmentV3
      */
     createdAt?: Date;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     defaultCluster?: string;
     /**
      * 
-     * @type {SherlockClusterV3}
-     * @memberof SherlockEnvironmentV3
      */
     defaultClusterInfo?: SherlockClusterV3;
     /**
      * When creating, will be calculated if left empty
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     defaultNamespace?: string;
     /**
      * If set, the BEE will be automatically deleted after this time. Can be set to "" or Go's zero time value to clear the field.
-     * @type {Date}
-     * @memberof SherlockEnvironmentV3
      */
     deleteAfter?: Date;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     description?: string;
     /**
      * If true, janitor resource cleanup will be enabled for this environment. BEEs default to template's value, templates default to true, and static/live environments default to false.
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3
      */
     enableJanitor?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     helmfileRef?: string;
     /**
      * 
-     * @type {number}
-     * @memberof SherlockEnvironmentV3
      */
     id?: number;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     lifecycle?: string;
     /**
      * When creating, will be calculated if dynamic, required otherwise
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     name?: string;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3
      */
     namePrefixesDomain?: boolean;
     /**
      * Applicable for BEEs only, whether Thelma should render the BEE as "offline" zero replicas (this field is a target state, not a status)
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3
      */
     offline?: boolean;
     /**
      * When enabled, the BEE will be slated to go offline around the begin time each day
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3
      */
     offlineScheduleBeginEnabled?: boolean;
     /**
      * Stored with timezone to determine day of the week
-     * @type {Date}
-     * @memberof SherlockEnvironmentV3
      */
     offlineScheduleBeginTime?: Date;
     /**
      * When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3
      */
     offlineScheduleEndEnabled?: boolean;
     /**
      * Stored with timezone to determine day of the week
-     * @type {Date}
-     * @memberof SherlockEnvironmentV3
      */
     offlineScheduleEndTime?: Date;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3
      */
     offlineScheduleEndWeekends?: boolean;
     /**
      * When creating, will default to you
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     owner?: string;
     /**
      * 
-     * @type {SherlockUserV3}
-     * @memberof SherlockEnvironmentV3
      */
     ownerInfo?: SherlockUserV3;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     pactIdentifier?: string;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     pagerdutyIntegration?: string;
     /**
      * 
-     * @type {SherlockPagerdutyIntegrationV3}
-     * @memberof SherlockEnvironmentV3
      */
     pagerdutyIntegrationInfo?: SherlockPagerdutyIntegrationV3;
     /**
      * Used to protect specific BEEs from deletion (thelma checks this field)
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3
      */
     preventDeletion?: boolean;
     /**
      * If present, requires membership in the given role for mutations. Set to an empty string to clear.
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     requiredRole?: string;
     /**
      * 
-     * @type {SherlockRoleV3}
-     * @memberof SherlockEnvironmentV3
      */
     requiredRoleInfo?: SherlockRoleV3;
     /**
      * 
-     * @type {boolean}
-     * @memberof SherlockEnvironmentV3
      */
     requiresSuitability?: boolean;
     /**
      * 
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     serviceBannerBucket?: string;
     /**
      * Required for dynamic environments
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     templateEnvironment?: string;
     /**
      * 
-     * @type {object}
-     * @memberof SherlockEnvironmentV3
      */
     templateEnvironmentInfo?: object;
     /**
      * When creating, will be calculated if left empty
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     uniqueResourcePrefix?: string;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockEnvironmentV3
      */
     updatedAt?: Date;
     /**
      * When creating, defaults to template name or environment name
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
      */
     valuesName?: string;
 }
@@ -300,11 +226,11 @@ export function SherlockEnvironmentV3FromJSONTyped(json: any, ignoreDiscriminato
         'base': json['base'] == null ? undefined : json['base'],
         'baseDomain': json['baseDomain'] == null ? undefined : json['baseDomain'],
         'ciIdentifier': json['ciIdentifier'] == null ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
         'defaultCluster': json['defaultCluster'] == null ? undefined : json['defaultCluster'],
         'defaultClusterInfo': json['defaultClusterInfo'] == null ? undefined : SherlockClusterV3FromJSON(json['defaultClusterInfo']),
         'defaultNamespace': json['defaultNamespace'] == null ? undefined : json['defaultNamespace'],
-        'deleteAfter': json['deleteAfter'] == null ? undefined : (new Date(json['deleteAfter'])),
+        'deleteAfter': json['deleteAfter'] == null ? undefined : (parseDateTime(json['deleteAfter'])),
         'description': json['description'] == null ? undefined : json['description'],
         'enableJanitor': json['enableJanitor'] == null ? undefined : json['enableJanitor'],
         'helmfileRef': json['helmfileRef'] == null ? undefined : json['helmfileRef'],
@@ -314,9 +240,9 @@ export function SherlockEnvironmentV3FromJSONTyped(json: any, ignoreDiscriminato
         'namePrefixesDomain': json['namePrefixesDomain'] == null ? undefined : json['namePrefixesDomain'],
         'offline': json['offline'] == null ? undefined : json['offline'],
         'offlineScheduleBeginEnabled': json['offlineScheduleBeginEnabled'] == null ? undefined : json['offlineScheduleBeginEnabled'],
-        'offlineScheduleBeginTime': json['offlineScheduleBeginTime'] == null ? undefined : (new Date(json['offlineScheduleBeginTime'])),
+        'offlineScheduleBeginTime': json['offlineScheduleBeginTime'] == null ? undefined : (parseDateTime(json['offlineScheduleBeginTime'])),
         'offlineScheduleEndEnabled': json['offlineScheduleEndEnabled'] == null ? undefined : json['offlineScheduleEndEnabled'],
-        'offlineScheduleEndTime': json['offlineScheduleEndTime'] == null ? undefined : (new Date(json['offlineScheduleEndTime'])),
+        'offlineScheduleEndTime': json['offlineScheduleEndTime'] == null ? undefined : (parseDateTime(json['offlineScheduleEndTime'])),
         'offlineScheduleEndWeekends': json['offlineScheduleEndWeekends'] == null ? undefined : json['offlineScheduleEndWeekends'],
         'owner': json['owner'] == null ? undefined : json['owner'],
         'ownerInfo': json['ownerInfo'] == null ? undefined : SherlockUserV3FromJSON(json['ownerInfo']),
@@ -331,7 +257,7 @@ export function SherlockEnvironmentV3FromJSONTyped(json: any, ignoreDiscriminato
         'templateEnvironment': json['templateEnvironment'] == null ? undefined : json['templateEnvironment'],
         'templateEnvironmentInfo': json['templateEnvironmentInfo'] == null ? undefined : json['templateEnvironmentInfo'],
         'uniqueResourcePrefix': json['uniqueResourcePrefix'] == null ? undefined : json['uniqueResourcePrefix'],
-        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
         'valuesName': json['valuesName'] == null ? undefined : json['valuesName'],
     };
 }
@@ -351,11 +277,11 @@ export function SherlockEnvironmentV3ToJSONTyped(value?: SherlockEnvironmentV3 |
         'base': value['base'],
         'baseDomain': value['baseDomain'],
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
-        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'defaultCluster': value['defaultCluster'],
         'defaultClusterInfo': SherlockClusterV3ToJSON(value['defaultClusterInfo']),
         'defaultNamespace': value['defaultNamespace'],
-        'deleteAfter': value['deleteAfter'] == null ? value['deleteAfter'] : value['deleteAfter'].toISOString(),
+        'deleteAfter': value['deleteAfter'] == null ? value['deleteAfter'] : serializeDateTime(value['deleteAfter']),
         'description': value['description'],
         'enableJanitor': value['enableJanitor'],
         'helmfileRef': value['helmfileRef'],
@@ -365,9 +291,9 @@ export function SherlockEnvironmentV3ToJSONTyped(value?: SherlockEnvironmentV3 |
         'namePrefixesDomain': value['namePrefixesDomain'],
         'offline': value['offline'],
         'offlineScheduleBeginEnabled': value['offlineScheduleBeginEnabled'],
-        'offlineScheduleBeginTime': value['offlineScheduleBeginTime'] == null ? value['offlineScheduleBeginTime'] : value['offlineScheduleBeginTime'].toISOString(),
+        'offlineScheduleBeginTime': value['offlineScheduleBeginTime'] == null ? value['offlineScheduleBeginTime'] : serializeDateTime(value['offlineScheduleBeginTime']),
         'offlineScheduleEndEnabled': value['offlineScheduleEndEnabled'],
-        'offlineScheduleEndTime': value['offlineScheduleEndTime'] == null ? value['offlineScheduleEndTime'] : value['offlineScheduleEndTime'].toISOString(),
+        'offlineScheduleEndTime': value['offlineScheduleEndTime'] == null ? value['offlineScheduleEndTime'] : serializeDateTime(value['offlineScheduleEndTime']),
         'offlineScheduleEndWeekends': value['offlineScheduleEndWeekends'],
         'owner': value['owner'],
         'ownerInfo': SherlockUserV3ToJSON(value['ownerInfo']),
@@ -382,7 +308,7 @@ export function SherlockEnvironmentV3ToJSONTyped(value?: SherlockEnvironmentV3 |
         'templateEnvironment': value['templateEnvironment'],
         'templateEnvironmentInfo': value['templateEnvironmentInfo'],
         'uniqueResourcePrefix': value['uniqueResourcePrefix'],
-        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
         'valuesName': value['valuesName'],
     };
 }
