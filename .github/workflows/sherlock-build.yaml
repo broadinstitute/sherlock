@@ -172,7 +172,7 @@ jobs:
           npm run build
 
       - name: Assemble Docker tags
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         id: meta
         with:
           images: |
