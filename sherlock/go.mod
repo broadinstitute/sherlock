@@ -20,7 +20,7 @@ require (
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/secure v1.1.2
 	github.com/gin-gonic/gin v1.11.0
-	github.com/go-jose/go-jose/v4 v4.1.3
+	github.com/go-jose/go-jose/v4 v4.1.4
 	github.com/golang-migrate/migrate/v4 v4.19.0
 	github.com/google/go-cmp v0.7.0
 	github.com/google/go-github/v58 v58.0.0
