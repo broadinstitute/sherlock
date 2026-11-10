@@ -24,8 +24,8 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/logger"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/security"
 	"github.com/broadinstitute/sherlock/sherlock/internal/oidc_models"
+	"github.com/broadinstitute/sherlock/sherlock/swaggerui"
 	"github.com/gin-gonic/gin"
-	swaggo_files "github.com/swaggo/files/v2"
 	swaggo_gin "github.com/swaggo/gin-swagger"
 	"golang.org/x/net/webdav"
 	"gorm.io/gorm"
@@ -89,7 +89,7 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 
 	router.GET("/swagger/*any", swaggo_gin.WrapHandler(
 		&webdav.Handler{
-			FileSystem: &webdavFilesystem{http.FS(swaggo_files.FS)},
+			FileSystem: &webdavFilesystem{http.FS(swaggerui.FS)},
 			LockSystem: webdav.NewMemLS(),
 		}, func(c *swaggo_gin.Config) {
 			c.Title = "Sherlock Swagger UI"
@@ -132,8 +132,9 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 // popular and this is so small I judge it makes sense to just write what we actually need ourselves.
 //
 // For context -- why does swaggo_gin.WrapHandler expect a webdav.Handler if swaggo_files.FS is a http.FileSystem?
-// Because we're using an updated version of swaggo_files to pull in a more recent non-vulnerable version of
-// swagger-ui. swaggo_gin never got an update to match, so we're stuck with this weirdness.
+// Because we're using our own vendored, more recent, non-vulnerable version of swagger-ui (see the swaggerui package)
+// in a layout that matches the newer swaggo/files. swaggo_gin never got an update to match, so we're stuck with this
+// weirdness.
 type webdavFilesystem struct {
 	http.FileSystem
 }
